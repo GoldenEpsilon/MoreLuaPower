@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<WorkshopItemInfo xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <PublishedFileId>2066323921</PublishedFileId>
+  <Name>MoreLuaPower</Name>
+  <Description>Gives your lua mods MOOOORE POOOWERRRR</Description>
+  <IconFileName>workshopIcon.png</IconFileName>
+  <Tags />
+  <Priority>0</Priority>
+  <ModVersion>2</ModVersion>
+  <GameVersion>1.4.2</GameVersion>
+</WorkshopItemInfo>

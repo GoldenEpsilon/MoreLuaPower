@@ -1,0 +1,228 @@
+﻿/*
+ *  More Lua Power, made by Golden Epsilon
+ *  Audio loading added by Sunreal
+ *  Workshop URL: https://steamcommunity.com/sharedfiles/filedetails/?id=2066319533
+ *  
+ *  Please do not include the DLL in your mods directly:
+ *      Ask people to download the workshop version instead.
+ *      
+ *  That said, if there's something you want to modify from the code to make your own harmony mod, feel free!
+ *  I am also open to help; If you have something you want to add in here, just let me know! You will be credited.
+*/
+
+Welcome to the API! I'm going to try and organize this as much as possible, but there is only so much I can do.
+    If you have suggestions to improve this, let me know! I'm [Golden Epsilon#8656] on discord.
+
+I'm also going to have vanilla features in here as well, 
+    so that if you know how modding works already you can relate what I modified, 
+    and so if you don't know you can learn all the features at once.
+	
+
+[GLOBAL LUA FUNCTIONS]
+MoreLuaPower:
+    void MakeSprite			(string {path}, PATH, string {name})
+		//Takes the path to the image you want to turn into a sprite
+		// compared to your mod's base directory, the PATH global variable,
+		// and a name for the sprite. Keep track of that name, because
+		// that's how you use the |Sprite| later. More info in [custom data types].
+
+    void ParticleEffect		(Being {being}, |ParticleSystem| {system})
+		//Creates a particle effect attached to the Being you pass.
+		// More info on |ParticleSystem| is in [custom data types].
+
+    void NewEffect			(string {name}, |Sprite| {sprite})
+		//Creates a new |StatusEffect| named {name}, using {sprite} as the icon.
+
+    bool EffectExists		(string {effect})
+		//Checks to see if {effect} exists.
+		// In other words, it checks if NewEffect has been run for {effect}
+
+    void AddEffect			(Being {being}, |StatusEffect| {effect}, float {duration} = 0, float {amount} = 0)
+		//Adds {effect} to {being}.
+		// If {duration} is 0, the effect duration is infinite.
+		// Keep in mind when using this for vanilla effects that they don't always allow arbitrary {amount}s:
+		// As an example, Fragile cannot apply less than one stack.
+
+    void RemoveEffect		(Being {being}, |StatusEffect| {effect})
+		//Removes {effect} from {being}
+
+    bool GetEffect			(Being {being}, |StatusEffect| {effect})
+		//Checks to see if {being} has {effect}, and returns true or false.
+		// If the effect does not exist, returns false and logs that the effect does not exist in the chat.
+
+    float GetEffectAmount	(Being {being}, |StatusEffect| {effect})
+		//Checks to see if {being} has {effect}, and returns the amount of the effect if so.
+		// If the effect does not exist, returns 0 and logs that the effect does not exist in the chat.
+
+	void PlaySound			(Being {being}, |Sound| {sound})
+		//Plays the sound specified.
+		// If the sound does not exist, it logs that the effect does not exist in the chat.
+
+[GLOBAL LUA VARIABLES]
+MoreLuaPower:
+    Check:				Check
+    Shape:				Shape
+    Location:			Location
+    ArcType:			ArcType
+    GunPointSetting:	GunPointSetting
+    Time:				Time			//I HAVEN'T CHECKED IF THIS WORKS YET
+    TimeScale:			Time.timeScale
+    DeltaTime:			Time.deltaTime
+	PATH:				the path to your mod's directory
+Vanilla:
+	State:				State
+	Status:				Status
+	FireLoop:			FireLoop
+	FTrigger:			FTrigger
+	Direction:			Direction
+	ItemType:			ItemType
+	Target:				Target
+	Block:				Block
+	GunPointSetting:	GunPointSetting
+	BC:					BC
+
+[CUSTOM DATA TYPES]	
+//note: these are not actual data types, I just name it that because you need to treat them in special ways. 
+// Custom data types are differentiated in the API by ||, so for example there are |Sprite|s and |Status|es
+
+	|Sprite|
+		//You need to load these manually using MakeSprite, and then you use them by passing a string that is the same as the name.
+		//NOTE: You MUST leave at least a few frames between MakeSprite and using the new sprite. 
+		//		I personally recommend running all of your MakeSprites in Init.lua (don't put your code in a function, and it runs on mod load)
+
+	|Sound|
+		//These are loaded automatically, you pass them in by using a string that is the same as its name.
+
+	|StatusEffect|
+		//You create this by running NewEffect, and check to see if it exists with EffectExists. Pass it in with a string of the name.
+		//Also works with vanilla effects, so you can pass in "Shield" to AddEffect to give the Being shields.
+
+	|Material|
+		//As of right now this is only used internally for particle systems.
+
+	|ParticleSystem|
+		//This is just a table that looks for specific parameters and values.
+		//USED IN:
+		//	
+		//The values shown here are the default values, 
+		//if your ParticleSystem table doesn't have a certain parameter it defaults to these.
+        { sprite = "Normal" },				//sprite name from MakeSprite
+        { xOff = "0" },
+        { yOff = "0" },
+        { zOff = "0" },
+        { loop = "false" },					//true, True, TRUE, 1, false, False, FALSE, 0
+        { duration = "0.15" },
+        { startDelay = "0" },
+        { sstartLifetime = "0.5" },
+        { startSpeed = "500" },
+        { startSize = "2" },
+        { startSizeMin = "-1" },			//These overwrite startSize when both are a positive number
+        { startSizeMax = "-1" },			//This is the same as changing size over time.
+        { startRotation = "0" },			//Degrees
+        { startColor = "#FFF" },			//hex color (you can also pass alpha in the hex color)
+        { startColorMin = "" },				//These overwrite startColor when both are a valid color.
+        { startColorMax = "" },				//This is the same as changing color over time.
+        { gravityModifier = "0" },
+        { simulationSpace = "Local" },		//Local, Global
+        { emissionRate = "10" },
+        { burstCount = "1" },				//Integers only
+        { shape = "Sphere" },				//Sphere, Hemisphere, Cone, Donut, Box, Circle, Edge, Rectangle //TODO
+
+[ACCESSIBLE TYPES]
+MoreLuaPower:
+	Rewired.Player							//This is used for checking button presses
+    Run
+    SpellListCard
+    StatusEffect
+    HeroSelectCtrl
+    AnimatorOverrideController
+    Sprite
+    Check
+	Shape
+	Location
+	ArcType
+	GunPointSetting
+Vanilla:
+    Transform
+	Cardtridge
+	Vector3>
+	List<Being>
+	List<Cpu>
+	Animator
+	Quaternion
+	Rigidbody2D
+	BoxCollider2D
+	Time
+	State
+	Status
+	Direction
+	FTrigger
+	ItemType
+	GunPointSetting
+	TalkBox
+	RunCtrl
+	DuelDisk
+	EffectApp
+	Target
+	StatusApp
+	AmountApp
+	DeckScreen
+	HeroProfile
+	FireLoop
+	Player
+	List<Tile>
+	List<TileApp>
+	List<SpellObject>
+	List<string>
+	ShopCtrl
+	Block
+	BattleGrid
+	CastSlot
+	SpellObject
+	ArtifactObject
+	Spell
+	Artifact
+	Tile
+	Projectile
+	ProjectileFactory
+	Moveable
+	BeingObject
+	Enemy
+	Structure
+	BC
+	DeckCtrl
+	PostCtrl
+	ItemManager
+	TileApp
+	Health
+	StatsScreen
+	TI
+	Being
+
+[ORGANIZATION]
+	//note: this section is for looking through the c# source code.
+
+	CustomData.cs
+		LuaPowerData
+			|Sprite|			(sprites)
+			|StatusEffect|		(statuses)
+			|Material|			(materials)
+			|ParticleSystem|	(DPS)
+
+	CustomParticles.cs
+
+	CustomSound.cs
+
+	CustomSprites.cs
+
+	CustomStatusEffects.cs
+
+	GlobalLuaFunctions.cs
+
+	GlobalLuaTypes.cs
+
+	GlobalLuaVariables.cs
+
+	MoreLuaPower.cs
+
+	PowerMonoBehavior.cs

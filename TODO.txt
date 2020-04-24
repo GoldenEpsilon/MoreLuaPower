@@ -1,0 +1,55 @@
+﻿/*
+ *  More Lua Power, made by Golden Epsilon
+ *  Audio loading added by Sunreal
+ *  Workshop URL: https://steamcommunity.com/sharedfiles/filedetails/?id=2066319533
+ *  
+ *  Please do not include the DLL in your mods directly:
+ *      Ask people to download the workshop version instead.
+ *      
+ *  That said, if there's something you want to modify from the code to make your own harmony mod, feel free!
+ *  I am also open to help; If you have something you want to add in here, just let me know! You will be credited.
+*/
+
+PRIORITY:
+    Break up MoreLuaPower some more, to increase code readability
+    Get people to test/bug report
+
+TODO:
+    Follow up on custom brands
+    implement the rest of ParticleSystem
+    Look into sprite swapping
+    custom lua effects without having to go through hoops
+    lua function on combat start
+    lua function on game start
+    lua function every frame while there is a player
+    lua function every frame
+    params for beings via custom component
+    last PROJECTILE that hit the being
+    multiple inputs for cases like OnHit that have different objects, like the projectile that hit
+
+LOOK INTO:
+    input system
+    multiple weapons
+    this.duelDisk.currentCardtridges.Remove(this.cardtridgeFill);
+    custom save properties
+    custom buttons
+    changing the number of cast slots
+
+ENUMS TO FIGURE OUT:
+    Effect
+    Enhancement
+    FTrigger 
+    InputAction 
+    Location (?)
+    RewardType 
+    State
+    Tag 
+    Target 
+    TileType 
+    ZoneType 
+    Sort 
+    Brand 
+    BeingType 
+    ArcType 
+    AmountType (?)
+    Aim 
