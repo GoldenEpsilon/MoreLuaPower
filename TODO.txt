@@ -28,6 +28,7 @@ TODO:
     last PROJECTILE that hit the being
     multiple inputs for cases like OnHit that have different objects, like the projectile that hit
     add example file
+    add credits to credits
 
 LOOK INTO:
     input system
