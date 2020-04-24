@@ -27,7 +27,7 @@ class MoreLuaPower_ProgramAdvance
         {
             string str = __instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["ProgramAdvanceLinkWith"];
             int otherSlotNum = slotNum == 0 ? 1 : 0;
-            if (str != __instance.duelDisk.castSlots[otherSlotNum].spellObj.itemID)
+            if (__instance.duelDisk.castSlots[otherSlotNum] != null || str != __instance.duelDisk.castSlots[otherSlotNum].spellObj.itemID)
             {
                 return true;
             }
