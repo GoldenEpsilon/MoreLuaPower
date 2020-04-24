@@ -16,6 +16,14 @@ Hello! Thank you for looking at the readme.
 I'm trying to make the code nice to read, but I tend to focus on function rather than form, so apologies if it's still messy.
 If you have any recommendations for anything, from the API to the code to this readme, let me know! I'm [Golden Epsilon#8656] on discord.
 
+To use the code:
+ - Use Visual Studio (I'm using 2019)
+ - Open the .sln file
+ - Right click on MoreLuaPower (the csproj)
+ - Go to Reference Paths
+ - Add your version of steamapps\common\One Step From Eden\OSFE_Data\StreamingAssets\YourMods\MoreLuaPower
+Then you should be good to go!
+
 Files to look at:
 
     API.txt             is an explanation of all of the features of MoreLuaPower from the perspective of a lua modder. If you're here for making your mods crazier, this is the place to go.
