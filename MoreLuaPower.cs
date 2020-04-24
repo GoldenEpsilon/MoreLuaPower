@@ -24,11 +24,11 @@ using System.Collections.Generic;
 using UnityEngine.Networking;
 using System.Reflection.Emit;
 
-[HarmonyPatch(typeof(EffectActions), MethodType.Constructor)]
-[HarmonyPatch(new Type[] { typeof(string) })]
+[HarmonyPatch(typeof(S))]
+[HarmonyPatch("Awake")]
 class MoreLuaPower
 {
-    static void Postfix() {
+    static void Prepare() {
         Debug.Log("MoreLuaPower Version 1.0");
         LuaPowerStatus.Setup();
     }
