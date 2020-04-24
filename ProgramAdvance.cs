@@ -1,4 +1,10 @@
-﻿using HarmonyLib;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+using HarmonyLib;
 using I2.Loc;
 using UnityEngine;
 
@@ -6,6 +12,15 @@ using UnityEngine;
 [HarmonyPatch("CastSpell")]
 class MoreLuaPower_ProgramAdvance
 {
+    //Program advance is a mechanic from MMBN where you combine multiple chips into one powerful chip.
+    //Spells with the ProgramAdvance param will be parsed otherwise, do a normal spell cast
+    // ProgramAdvanceLinkWith is the name of the spell in the other slot needed to trigger the Advance Spell
+    // CostAdvancedMana is a boolean that determins if the Advance Spell drains mana
+    // ConsumeAfterAdvance is a boolean that consumes the chip after the Advance Spell
+    // AdvanceSpell is spell that ends up being casted
+    //EX: <Params ProgramAdvance="true" ProgramAdvanceLinkWith="Thunder" CostAdvancedMana="false" ConsumeAfterAdvance="true" AdvanceSpell="MegaThunder"></Params>
+    //EX: <Params ProgramAdvance="true" ProgramAdvanceLinkWith="MiniThunder" CostAdvancedMana="false" ConsumeAfterAdvance="true" AdvanceSpell="MegaThunder"></Params>
+
     static bool Prefix(ref Player __instance, int slotNum, ref int manaOverride, bool consumeOverride)
     {
         if (__instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary.ContainsKey("ProgramAdvance"))
@@ -18,7 +33,7 @@ class MoreLuaPower_ProgramAdvance
             }
             else
             {
-                //ADVANCE LINK
+                //ADVANCE LINK ACTIVATED
                 bool consumeAfterAdvance1 = __instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["ConsumeAfterAdvance"] == "true";
                 bool consumeAfterAdvance2 = __instance.duelDisk.castSlots[otherSlotNum].spellObj.spell.itemObj.paramDictionary["ConsumeAfterAdvance"] == "true";
                 if (slotNum >= __instance.duelDisk.castSlots.Count)
@@ -40,14 +55,14 @@ class MoreLuaPower_ProgramAdvance
                     else
                     {
                         SpellObject spellObj = S.I.deCtrl.CreateSpellBase(__instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["AdvanceSpell"], __instance);
-                        int num1 = Traverse.Create(__instance).Method("CalculateManaCost", spellObj).GetValue<int>();
+                        int ManaCost = Traverse.Create(__instance).Method("CalculateManaCost", spellObj).GetValue<int>();
                         if (__instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["CostAdvancedMana"] == "false")
                         {
-                            num1 = 0;
+                            ManaCost = 0;
                         }
                         if (manaOverride >= 0)
-                            num1 = manaOverride;
-                        if ((double)__instance.duelDisk.currentMana >= (double)num1)
+                            ManaCost = manaOverride;
+                        if ((double)__instance.duelDisk.currentMana >= (double)ManaCost)
                         {
 
                             spellObj.being = (Being)__instance;
@@ -57,7 +72,7 @@ class MoreLuaPower_ProgramAdvance
                             spellObj.castSlotNum = slotNum;
                             __instance.audioSource.PlayOneShot(__instance.castSound);
                             __instance.manaBeforeSpellCast = __instance.duelDisk.currentMana;
-                            __instance.duelDisk.currentMana -= (float)num1;
+                            __instance.duelDisk.currentMana -= (float)ManaCost;
                             __instance.TriggerArtifacts(FTrigger.OnManaBelow, (Being)null, 0);
                             __instance.lastSpellText = __instance.CreateSpellText(spellObj, 0.5f);
                             __instance.TriggerArtifacts(FTrigger.OnSpellCast, (Being)null, 0);
@@ -98,13 +113,16 @@ class MoreLuaPower_ProgramAdvance
                         }
                         else
                         {
+                            //Player didnt have enough mana for the special cast. Try a normal one.
                             return true;
                         }
                     }
                 }
+                //Special cast Completed!
                 return false;
             }
         }
+        //Do a normal spell cast.
         return true;
     }
 }
