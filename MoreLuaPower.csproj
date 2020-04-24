@@ -47,6 +47,7 @@
       <HintPath>..\Rewired_Core.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Sirenix.Serialization, Version=2.0.20.0, Culture=neutral, PublicKeyToken=null" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -108,6 +109,7 @@
     <Compile Include="GlobalLuaTypes.cs" />
     <Compile Include="MoreLuaPower.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SunrealProgramAdvance.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
