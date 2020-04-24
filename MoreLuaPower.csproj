@@ -102,14 +102,15 @@
     <Compile Include="CustomParticles.cs" />
     <Compile Include="CustomSound.cs" />
     <Compile Include="CustomSprites.cs" />
+    <Compile Include="Multicast.cs" />
     <Compile Include="PowerMonoBehavior.cs" />
     <Compile Include="CustomStatusEffects.cs" />
     <Compile Include="GlobalLuaFunctions.cs" />
     <Compile Include="GlobalLuaVariables.cs" />
     <Compile Include="GlobalLuaTypes.cs" />
     <Compile Include="MoreLuaPower.cs" />
+    <Compile Include="ProgramAdvance.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SunrealProgramAdvance.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
