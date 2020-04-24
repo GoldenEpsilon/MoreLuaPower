@@ -2,12 +2,13 @@
  *  More Lua Power, made by Golden Epsilon
  *  Audio loading added by Sunreal
  *  Workshop URL: https://steamcommunity.com/sharedfiles/filedetails/?id=2066319533
- *  
+ *  GitHub Page: https://github.com/GoldenEpsilon/MoreLuaPower
+ *
  *  Please do not include the DLL in your mods directly:
  *      Ask people to download the workshop version instead.
  *      
  *  That said, if there's something you want to modify from the code to make your own harmony mod, feel free!
- *  I am also open to help; If you have something you want to add in here, just let me know! You will be credited.
+ *  I am also open to help; If you have something you want to add in here, just let me know/add it in yourself! You will be credited.
 */
 
 //There are some libraries I don't need that are being called here, this is so that I can copy/paste when creating a new file no matter what it needs.
