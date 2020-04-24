@@ -218,24 +218,65 @@ Vanilla:
 		MoreLuaPower_SoundLoader
 			Patch of ModCtrl._InstallTheseMods
 				void Prefix(ref ModCtrl __instance, FileInfo[] fileInfo, string modsDir)
+					//loads all sounds from the directory. Calls PowerMonoBehavior.LoadSound()
+					//Adds PowerMonoBehavior to S.I's GameObject if it is not there already
 		LuaPowerSound
 			void PlaySound(Being being, string sound)
 
 	CustomSprites.cs
 		LuaPowerSprites
 			void MakeSprite(string image, string PATH, string name)
+				//loads the sound that is requested. Calls PowerMonoBehavior.LoadSprite()
+				//Adds PowerMonoBehavior to S.I's GameObject if it is not there already
 
 	CustomStatusEffects.cs
 		MoreLuaPower_CustomStatusTranspiler
 			Transpiler for StatusEffect.Set
 				Explanation is in file
+		MoreLuaPower_CustomStatusEffects
+			Patch of StatusEffect.Set
+				void Postfix(Being being, Status statusType, StatusEffect __instance, Image ___icon, Image ___iconBackground)
+		LuaPowerStatus
+			void Setup()
+				//adds vanilla status effects to the list of status effects
+			void NewEffect(string effect, string sprite)
+			bool EffectExists(string effect)
+			void AddEffect(Being being, string effect, float duration = 0, float amount = 0)
+			bool GetEffect(Being being, string effect)
+			float GetEffectAmount(Being being, string effect)
+			void RemoveEffect(Being being, string effect)
 
 	GlobalLuaFunctions.cs
+		MoreLuaPower_GlobalLuaFunctions
+			Patch of new EffectActions(string)
+				void Postfix()
+					//adds all of the global lua functions
 
 	GlobalLuaTypes.cs
+		MoreLuaPower_GlobalLuaTypes
+			Patch of new EffectActions(string)
+				void Postfix()
+					//adds all of the global lua types
 
 	GlobalLuaVariables.cs
+		MoreLuaPower_GlobalLuaTypes
+			Patch of new EffectActions(string)
+				void Postfix()
+					//adds all of the global lua variables except for PATH
+		MoreLuaPower_PATHVariable
+			Patch of EffectActions.AddScript
+				void Prefix(string scriptPath, Script ___myLuaScript)
+					//adds the PATH global variable
 
 	MoreLuaPower.cs
+		MoreLuaPower
+			Patch of new EffectActions(string)
+				void Postfix()
+					//calls LuaPowerStatus.Setup()
+		PowerHelpers
+			//any in-development features that don't have their own file yet can go here
 
 	PowerMonoBehavior.cs
+		PowerMonoBehavior
+			IEnumerator LoadSprite(string url, Action<Texture2D> response)
+			IEnumerator LoadSound(FileInfo file, AudioType audioType, Action<AudioClip> response)

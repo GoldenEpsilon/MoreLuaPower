@@ -6,9 +6,6 @@ using UnityEngine.Networking;
 
 class PowerMonoBehavior : MonoBehaviour
 {
-    public void FixedUpdate() {
-
-    }
     public static IEnumerator LoadSprite(string url, Action<Texture2D> response) {
         var request = UnityWebRequestTexture.GetTexture(url);
         yield return request.SendWebRequest();
