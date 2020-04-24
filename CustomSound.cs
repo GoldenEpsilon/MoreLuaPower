@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 [HarmonyPatch(typeof(ModCtrl))]
 [HarmonyPatch("_InstallTheseMods")]
-class MoreLuaPowerSoundLoader
+class MoreLuaPower_SoundLoader
 {
     static void Prefix(ref ModCtrl __instance, FileInfo[] fileInfo, string modsDir) {
         var AllAudioClips = Traverse.Create(S.I.itemMan).Field("allAudioClips").GetValue<Dictionary<String, AudioClip>>();

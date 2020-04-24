@@ -54,7 +54,7 @@ class MoreLuaPower_CustomStatusTranspiler
 
 [HarmonyPatch(typeof(StatusEffect))]
 [HarmonyPatch("Set")]
-class MoreLuaPowerCustomStatusEffects
+class MoreLuaPower_CustomStatusEffects
 {
     static void Postfix(Being being, Status statusType, StatusEffect __instance, Image ___icon, Image ___iconBackground) {
         string text = "";

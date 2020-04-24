@@ -28,7 +28,7 @@ MoreLuaPower:
 		// that's how you use the |Sprite| later. More info in [custom data types].
 
     void ParticleEffect		(Being {being}, |ParticleSystem| {system})
-		//Creates a particle effect attached to the Being you pass.
+		//Creates and runs a particle effect attached to the Being you pass.
 		// More info on |ParticleSystem| is in [custom data types].
 
     void NewEffect			(string {name}, |Sprite| {sprite})
@@ -211,12 +211,24 @@ Vanilla:
 			|ParticleSystem|	(DPS)
 
 	CustomParticles.cs
+		LuaPowerParticles
+			void ParticleEffect(Being being, Dictionary<string, string> system)
 
 	CustomSound.cs
+		MoreLuaPower_SoundLoader
+			Patch of ModCtrl._InstallTheseMods
+				void Prefix(ref ModCtrl __instance, FileInfo[] fileInfo, string modsDir)
+		LuaPowerSound
+			void PlaySound(Being being, string sound)
 
 	CustomSprites.cs
+		LuaPowerSprites
+			void MakeSprite(string image, string PATH, string name)
 
 	CustomStatusEffects.cs
+		MoreLuaPower_CustomStatusTranspiler
+			Transpiler for StatusEffect.Set
+				Explanation is in file
 
 	GlobalLuaFunctions.cs
 

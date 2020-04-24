@@ -97,14 +97,15 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CustomDataTypes.cs" />
+    <Compile Include="CustomData.cs" />
+    <Compile Include="CustomParticles.cs" />
+    <Compile Include="CustomSound.cs" />
+    <Compile Include="CustomSprites.cs" />
     <Compile Include="PowerMonoBehavior.cs" />
-    <Compile Include="CustomSoundLoader.cs" />
     <Compile Include="CustomStatusEffects.cs" />
     <Compile Include="GlobalLuaFunctions.cs" />
     <Compile Include="GlobalLuaVariables.cs" />
     <Compile Include="GlobalLuaTypes.cs" />
-    <Compile Include="CustomStatusTranspiler.cs" />
     <Compile Include="MoreLuaPower.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

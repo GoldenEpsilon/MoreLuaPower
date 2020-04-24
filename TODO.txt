@@ -27,6 +27,7 @@ TODO:
     params for beings via custom component
     last PROJECTILE that hit the being
     multiple inputs for cases like OnHit that have different objects, like the projectile that hit
+    add example file
 
 LOOK INTO:
     input system

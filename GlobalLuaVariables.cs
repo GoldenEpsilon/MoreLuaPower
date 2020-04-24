@@ -28,7 +28,7 @@ class MoreLuaPower_GlobalLuaVariables
 
 [HarmonyPatch(typeof(EffectActions))]
 [HarmonyPatch("AddScript")]
-class MoreLuaPowerPATHVariable
+class MoreLuaPower_PATHVariable
 {
     static void Prefix(string scriptPath, Script ___myLuaScript) {
         ___myLuaScript.Globals["PATH"] = Path.GetDirectoryName(scriptPath);
