@@ -7,7 +7,7 @@
  *      Ask people to download the workshop version instead.
  *      
  *  That said, if there's something you want to modify from the code to make your own harmony mod, feel free!
- *  I am also open to help; If you have something you want to add in here, just let me know! You will be credited.
+ *  I am also open to help; If you have something you want to add in here, just let me know/add it in yourself! You will be credited.
 */
 
 Hello! Thank you for looking at the readme.
