@@ -1,18 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-// your code, most likely in your own dll
-
-using HarmonyLib;
+﻿using HarmonyLib;
 using I2.Loc;
 using UnityEngine;
 
 [HarmonyPatch(typeof(Player))]
 [HarmonyPatch("CastSpell")]
-class SunrealProgramAdvance
+class MoreLuaPower_ProgramAdvance
 {
     static bool Prefix(ref Player __instance, int slotNum, ref int manaOverride, bool consumeOverride)
     {

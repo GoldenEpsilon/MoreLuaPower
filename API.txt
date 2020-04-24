@@ -81,6 +81,9 @@ Vanilla:
 	Block:				Block
 	GunPointSetting:	GunPointSetting
 	BC:					BC
+	
+[CUSTOM EFFECTS]	
+	something something Program Advance
 
 [CUSTOM DATA TYPES]	
 //note: these are not actual data types, I just name it that because you need to treat them in special ways. 
@@ -280,3 +283,7 @@ Vanilla:
 		PowerMonoBehavior
 			IEnumerator LoadSprite(string url, Action<Texture2D> response)
 			IEnumerator LoadSound(FileInfo file, AudioType audioType, Action<AudioClip> response)
+
+	ProgramAdvance.cs
+		MoreLuaPower_ProgramAdvance
+			bool Prefix(ref Player __instance, int slotNum, ref int manaOverride, bool consumeOverride)
