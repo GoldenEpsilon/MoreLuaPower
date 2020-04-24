@@ -8,18 +8,19 @@ using HarmonyLib;
 using I2.Loc;
 using UnityEngine;
 
+//Program advance is a mechanic from MMBN where you combine multiple chips into one powerful chip.
+//Spells with the ProgramAdvance param will be parsed otherwise, do a normal spell cast
+// ProgramAdvanceLinkWith is the name of the spell in the other slot needed to trigger the Advance Spell
+// CostAdvancedMana is a boolean that determins if the Advance Spell drains mana
+// ConsumeAfterAdvance is a boolean that consumes the chip after the Advance Spell
+// AdvanceSpell is spell that ends up being casted
+//EX: <Params ProgramAdvance="true" ProgramAdvanceLinkWith="Thunder" CostAdvancedMana="false" ConsumeAfterAdvance="true" AdvanceSpell="MegaThunder"></Params>
+//EX: <Params ProgramAdvance="true" ProgramAdvanceLinkWith="MiniThunder" CostAdvancedMana="false" ConsumeAfterAdvance="true" AdvanceSpell="MegaThunder"></Params>
+
 [HarmonyPatch(typeof(Player))]
 [HarmonyPatch("CastSpell")]
 class MoreLuaPower_ProgramAdvance
 {
-    //Program advance is a mechanic from MMBN where you combine multiple chips into one powerful chip.
-    //Spells with the ProgramAdvance param will be parsed otherwise, do a normal spell cast
-    // ProgramAdvanceLinkWith is the name of the spell in the other slot needed to trigger the Advance Spell
-    // CostAdvancedMana is a boolean that determins if the Advance Spell drains mana
-    // ConsumeAfterAdvance is a boolean that consumes the chip after the Advance Spell
-    // AdvanceSpell is spell that ends up being casted
-    //EX: <Params ProgramAdvance="true" ProgramAdvanceLinkWith="Thunder" CostAdvancedMana="false" ConsumeAfterAdvance="true" AdvanceSpell="MegaThunder"></Params>
-    //EX: <Params ProgramAdvance="true" ProgramAdvanceLinkWith="MiniThunder" CostAdvancedMana="false" ConsumeAfterAdvance="true" AdvanceSpell="MegaThunder"></Params>
 
     static bool Prefix(ref Player __instance, int slotNum, ref int manaOverride, bool consumeOverride)
     {
@@ -27,7 +28,7 @@ class MoreLuaPower_ProgramAdvance
         {
             string str = __instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["ProgramAdvanceLinkWith"];
             int otherSlotNum = slotNum == 0 ? 1 : 0;
-            if (__instance.duelDisk.castSlots[otherSlotNum] != null || str != __instance.duelDisk.castSlots[otherSlotNum].spellObj.itemID)
+            if (__instance.duelDisk.castSlots[otherSlotNum].spellObj == null || str != __instance.duelDisk.castSlots[otherSlotNum].spellObj.itemID)
             {
                 return true;
             }
@@ -46,8 +47,7 @@ class MoreLuaPower_ProgramAdvance
                     __instance.lastSpellText = __instance.CreateFloatText(__instance.ctrl.statusTextPrefab, string.Format(ScriptLocalization.UI.Deck_is_shuffling, (object[])newEmptyArray), -20, 65, 0.5f, (Sprite)null);
                 }
                 else
-                {
-                    slotNum = Traverse.Create(__instance).Method("GetSlotNum", slotNum).GetValue<int>();
+                {       
                     if ((UnityEngine.Object)__instance.duelDisk.castSlots[slotNum].cardtridgeFill == (UnityEngine.Object)null)
                     {
                         __instance.lastSpellText = __instance.CreateFloatText(__instance.ctrl.statusTextPrefab, ScriptLocalization.UI.NoMoreSpells, -20, 65, 0.5f, (Sprite)null);

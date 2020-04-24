@@ -8,15 +8,16 @@ using HarmonyLib;
 using I2.Loc;
 using UnityEngine;
 
+//Multicast is a mechanic that allows you to make spells that dont discard after the first use!
+//Spells with the DontDiscard param will be parsed otherwise, do a normal spell cast
+//ShotsRemaining is a number that keeps track of how many casts you have left
+//MaxShots is self explanitory
+//Ex: <Params DontDiscard="true" ShotsRemaining="5" MaxShots="5"></Params>
+
 [HarmonyPatch(typeof(Player))]
 [HarmonyPatch("CastSpell")]
 class MoreLuaPower_Multicast
 {
-    //Multicast is a mechanic that allows you to make spells that dont discard after the first use!
-    //Spells with the DontDiscard param will be parsed otherwise, do a normal spell cast
-    //ShotsRemaining is a number that keeps track of how many casts you have left
-    //MaxShots is self explanitory
-    //Ex: <Params DontDiscard="true" ShotsRemaining="5" MaxShots="5"></Params>
     static bool Prefix(ref Player __instance, int slotNum, ref int manaOverride, bool consumeOverride)
     {
         if (__instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary.ContainsKey("DontDiscard") && __instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["DontDiscard"] == "true")
