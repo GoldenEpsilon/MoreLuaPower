@@ -98,6 +98,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BeingVariables.cs" />
     <Compile Include="CustomData.cs" />
     <Compile Include="CustomParticles.cs" />
     <Compile Include="CustomSound.cs" />

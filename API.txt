@@ -1,6 +1,6 @@
 ﻿/*
  *  More Lua Power, made by Golden Epsilon
- *  Audio loading added by Sunreal
+ *  Audio loading, ProgramAdvance, and Multicast added by Sunreal
  *  Workshop URL: https://steamcommunity.com/sharedfiles/filedetails/?id=2066319533
  *  GitHub Page: https://github.com/GoldenEpsilon/MoreLuaPower
  *
@@ -19,8 +19,30 @@ I'm also going to have vanilla features in here as well,
     and so if you don't know you can learn all the features at once.
 	
 
+[NEW MECHANICS]	
+
+	ProgramAdvance
+		//Program advance is a mechanic from MMBN where you combine multiple chips into one powerful chip.
+		//Spells with the ProgramAdvance param will be parsed otherwise, do a normal spell cast
+		// ProgramAdvanceLinkWith is the name of the spell in the other slot needed to trigger the Advance Spell
+		// CostAdvancedMana is a boolean that determins if the Advance Spell drains mana
+		// ConsumeAfterAdvance is a boolean that consumes the chip after the Advance Spell
+		// AdvanceSpell is spell that ends up being casted
+		//Example: <Params ProgramAdvance="true" ProgramAdvanceLinkWith="Thunder" CostAdvancedMana="false" ConsumeAfterAdvance="true" AdvanceSpell="MegaThunder"></Params>
+		//Example: <Params ProgramAdvance="true" ProgramAdvanceLinkWith="MiniThunder" CostAdvancedMana="false" ConsumeAfterAdvance="true" AdvanceSpell="MegaThunder"></Params>
+
+	Multicast
+		//Multicast is a mechanic that allows you to make spells that dont discard after the first use!
+		//Spells with the DontDiscard param will be parsed otherwise, do a normal spell cast
+		//ShotsRemaining is a number that keeps track of how many casts you have left
+		//MaxShots is self explanitory
+		//Example: <Params DontDiscard="true" ShotsRemaining="5" MaxShots="5"></Params>
+
+
 [GLOBAL LUA FUNCTIONS]
+
 MoreLuaPower:
+
     void MakeSprite			(string {path}, PATH, string {name})
 		//Takes the path to the image you want to turn into a sprite
 		// compared to your mod's base directory, the PATH global variable,
@@ -59,7 +81,15 @@ MoreLuaPower:
 		//Plays the sound specified.
 		// If the sound does not exist, it logs that the effect does not exist in the chat.
 
+	void SetVariable		(Being {being}, string {variableName}, string {variable})
+		//Sets the Custom Variable {variableName} to {variable} for {being}, adding it if it doesn't exist.
+
+	string GetVariable		(Being {being}, string {variableName})
+		//Gets the Custom Variable {variableName} from {being}, returning "Variable Not Set" if it doesn't exist.
+
+
 [GLOBAL LUA VARIABLES]
+
 MoreLuaPower:
     Check:				Check
     Shape:				Shape
@@ -70,6 +100,7 @@ MoreLuaPower:
     TimeScale:			Time.timeScale
     DeltaTime:			Time.deltaTime
 	PATH:				the path to your mod's directory
+
 Vanilla:
 	State:				State
 	Status:				Status
@@ -81,9 +112,7 @@ Vanilla:
 	Block:				Block
 	GunPointSetting:	GunPointSetting
 	BC:					BC
-	
-[CUSTOM EFFECTS]	
-	something something Program Advance
+
 
 [CUSTOM DATA TYPES]	
 //note: these are not actual data types, I just name it that because you need to treat them in special ways. 
@@ -132,7 +161,9 @@ Vanilla:
         { burstCount = "1" },				//Integers only
         { shape = "Sphere" },				//Sphere, Hemisphere, Cone, Donut, Box, Circle, Edge, Rectangle //TODO
 
+
 [ACCESSIBLE TYPES]
+
 MoreLuaPower:
 	Rewired.Player							//This is used for checking button presses
     Run
@@ -146,6 +177,7 @@ MoreLuaPower:
 	Location
 	ArcType
 	GunPointSetting
+
 Vanilla:
     Transform
 	Cardtridge
@@ -202,6 +234,7 @@ Vanilla:
 	StatsScreen
 	TI
 	Being
+
 
 [ORGANIZATION]
 	//note: this section is for looking through the c# source code.
@@ -286,4 +319,11 @@ Vanilla:
 
 	ProgramAdvance.cs
 		MoreLuaPower_ProgramAdvance
-			bool Prefix(ref Player __instance, int slotNum, ref int manaOverride, bool consumeOverride)
+			Patch of Player.CastSpell
+				bool Prefix(ref Player __instance, int slotNum, ref int manaOverride, bool consumeOverride)
+				//adds the ProgramAdvance mechanic
+	Multicast.cs
+		MoreLuaPower_Multicast
+			Patch of Player.CastSpell
+				bool Prefix(ref Player __instance, int slotNum, ref int manaOverride, bool consumeOverride)
+				//adds the Multicast mechanic

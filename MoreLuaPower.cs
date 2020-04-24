@@ -1,6 +1,6 @@
 ﻿/*
  *  More Lua Power, made by Golden Epsilon
- *  Audio loading added by Sunreal
+ *  Audio loading, ProgramAdvance, and Multicast added by Sunreal
  *  Workshop URL: https://steamcommunity.com/sharedfiles/filedetails/?id=2066319533
  *  GitHub Page: https://github.com/GoldenEpsilon/MoreLuaPower
  *
@@ -29,6 +29,7 @@ using System.Reflection.Emit;
 class MoreLuaPower
 {
     static void Postfix() {
+        Debug.Log("MoreLuaPower Version 1.0");
         LuaPowerStatus.Setup();
     }
 }
