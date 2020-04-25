@@ -35,8 +35,13 @@ class MoreLuaPower_ProgramAdvance
                 return;
             }
             string str = pd["ProgramAdvanceLinkWith"];
-            int otherSlotNum = slotNum == 0 ? 1 : 0;
-            if (__instance.duelDisk.castSlots[otherSlotNum].spellObj != null && str == __instance.duelDisk.castSlots[otherSlotNum].spellObj.itemID && slotNum < __instance.duelDisk.castSlots.Count) {
+            int otherSlotNum = -1;
+            for (int i = 0; i < __instance.duelDisk.castSlots.Count; i++) {
+                if (__instance.duelDisk.castSlots[i].spellObj != null && str == __instance.duelDisk.castSlots[i].spellObj.itemID) {
+                    otherSlotNum = i;
+                }
+            }
+            if (otherSlotNum != -1 && slotNum < __instance.duelDisk.castSlots.Count) {
                 //ADVANCE LINK ACTIVATED
 
                 if (!consumeOverride && pd.ContainsKey("ConsumeAfterAdvance")) {

@@ -35,8 +35,13 @@ I'm also going to have vanilla features in here as well,
 		//Multicast is a mechanic that allows you to make spells that dont discard after the first use!
 		//Spells with the DontDiscard param will be parsed otherwise, do a normal spell cast
 		//ShotsRemaining is a number that keeps track of how many casts you have left
-		//MaxShots is self explanitory
-		//Example: <Params DontDiscard="true" ShotsRemaining="5" MaxShots="5"></Params>
+		//MaxShots is self-explanatory
+		//ManaCost is either "Start", "End", or "All", Defaulting to "All".
+		//  If it is set to "Start" the mana cost will only be used the first cast,
+		//  if it is set to "End" the mana cost will only be used the last cast,
+		//  and if it is set to "All" the mana cost will be used for all casts.
+		//Note: ManaCost does not affect anything if you don't have ShotsRemaining
+		//Example: <Params DontDiscard="true" ShotsRemaining="5" MaxShots="5" ManaCost="Start"></Params>
 
 
 [GLOBAL LUA FUNCTIONS]

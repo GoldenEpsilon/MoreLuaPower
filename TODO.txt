@@ -30,6 +30,7 @@ TODO:
     add example file
     add credits to credits
     debug menu on command
+    change ProgramAdvance and Multicast from Params to act more like other spells and allow stuff like spells that can advance with multiple other spells
 
 LOOK INTO:
     input system
