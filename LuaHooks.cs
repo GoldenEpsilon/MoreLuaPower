@@ -1,17 +1,4 @@
 ﻿using HarmonyLib;
-using MoonSharp.Interpreter;
-using System;
-using UnityEngine;
-using UnityEngine.UI;
-using System.IO;
-using System.Linq;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine.Networking;
-using System.Reflection.Emit;
-using System.Collections.ObjectModel;
-using Rewired.Utils.Classes.Data;
-using Rewired;
 
 class LuaPowerHooks 
 {
