@@ -124,7 +124,7 @@ Vanilla:
 		//		I personally recommend running all of your MakeSprites in Init.lua (don't put your code in a function, and it runs on mod load)
 
 	|Sound|
-		//These are loaded automatically, you pass them in by using a string that is the same as its name.
+		//These are loaded automatically just by being in your mod folder, you pass them in by using a string that is the same as its name.
 
 	|StatusEffect|
 		//You create this by running NewEffect, and check to see if it exists with EffectExists. Pass it in with a string of the name.
@@ -168,6 +168,7 @@ MoreLuaPower:
 	Rewired.Player							//This is used for checking button presses
     Run
     SpellListCard
+	ListCard
     StatusEffect
     HeroSelectCtrl
     AnimatorOverrideController
