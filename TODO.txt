@@ -29,6 +29,7 @@ TODO:
     multiple inputs for cases like OnHit that have different objects, like the projectile that hit
     add example file
     add credits to credits
+    debug menu on command
 
 LOOK INTO:
     input system
@@ -37,6 +38,8 @@ LOOK INTO:
     custom save properties
     custom buttons
     changing the number of cast slots
+    adding mod name to script variable
+    patching script bytecode on the fly. Because why not.
 
 ENUMS TO FIGURE OUT:
     Effect
