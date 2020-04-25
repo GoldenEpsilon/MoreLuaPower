@@ -32,7 +32,7 @@ using Rewired;
 class MoreLuaPower
 {
     static void Prepare() {
-        Debug.Log("MoreLuaPower Version 1.0");
+        Debug.Log("MoreLuaPower Version 1.1");
         LuaPowerStatus.Setup();
 	}
 }
