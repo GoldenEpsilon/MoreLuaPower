@@ -22,13 +22,12 @@ using UnityEngine;
 [HarmonyPatch("CastSpell")]
 class MoreLuaPower_ProgramAdvance
 {
-
     static void Prefix(ref Player __instance, int slotNum, ref int manaOverride, ref bool consumeOverride, out Tuple<int, SpellObject, SpellObject> __state) {
         __state = new Tuple<int, SpellObject, SpellObject>(-1, null, null);
 
         for (int slot = 0; slot < __instance.duelDisk.castSlots.Count; slot++) {
             Dictionary<string, string> pd = __instance.duelDisk.castSlots[slot].spellObj.spell.itemObj.paramDictionary;
-            if (!__instance.duelDisk.shuffling && __instance.duelDisk.castSlots[slot].cardtridgeFill != null && pd.ContainsKey("ProgramAdvance")) {
+            if (pd != null && !__instance.duelDisk.shuffling && __instance.duelDisk.castSlots[slot] != null && __instance.duelDisk.castSlots[slot].cardtridgeFill != null && pd.ContainsKey("ProgramAdvance")) {
                 if (!pd.ContainsKey("ProgramAdvanceLinkWith")) {
                     Debug.Log("ERROR: Spell has ProgramAdvance, but not ProgramAdvanceLinkWith");
                     return;

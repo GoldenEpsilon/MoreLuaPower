@@ -93,6 +93,9 @@ MoreLuaPower:
 	string GetVariable		(Being {being}, string {variableName})
 		//Gets the Custom Variable {variableName} from {being}, returning "Variable Not Set" if it doesn't exist.
 
+	void AddHook			(FTrigger {trigger}, string {functionName})
+		//Adds the function {functionName} as a hook, which means that it will be activated every time {trigger} is activated
+
 
 [GLOBAL LUA VARIABLES]
 

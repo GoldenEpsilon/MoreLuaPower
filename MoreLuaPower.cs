@@ -23,6 +23,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.Networking;
 using System.Reflection.Emit;
+using System.Collections.ObjectModel;
+using Rewired.Utils.Classes.Data;
+using Rewired;
 
 [HarmonyPatch(typeof(S))]
 [HarmonyPatch("Awake")]
@@ -31,9 +34,5 @@ class MoreLuaPower
     static void Prepare() {
         Debug.Log("MoreLuaPower Version 1.0");
         LuaPowerStatus.Setup();
-    }
-}
-
-static class LuaPowerHelpers
-{
+	}
 }
