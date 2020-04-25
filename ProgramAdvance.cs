@@ -10,12 +10,13 @@ using UnityEngine;
 
 //Program advance is a mechanic from MMBN where you combine multiple chips into one powerful chip.
 //Spells with the ProgramAdvance param will be parsed otherwise, do a normal spell cast
-// ProgramAdvanceLinkWith is the name of the spell in the other slot needed to trigger the Advance Spell
+// ProgramAdvanceLinkWith is the name of the spell in the other slot needed to trigger the Advance Spell - use commas to separate spells
 // CostAdvancedMana is a boolean that determins if the Advance Spell drains mana
 // ConsumeAfterAdvance is a boolean that consumes the chip after the Advance Spell
 // AdvanceSpell is spell that ends up being casted
-//EX: <Params ProgramAdvance="true" ProgramAdvanceLinkWith="Thunder" CostAdvancedMana="false" ConsumeAfterAdvance="true" AdvanceSpell="MegaThunder"></Params>
-//EX: <Params ProgramAdvance="true" ProgramAdvanceLinkWith="MiniThunder" CostAdvancedMana="false" ConsumeAfterAdvance="true" AdvanceSpell="MegaThunder"></Params>
+//EX: <Params ProgramAdvance="true" ProgramAdvanceLinkWith="Thunder" CostAdvancedMana="false" ConsumeAfterAdvance="true" AdvanceSpell="StormThunder"></Params>
+//EX: <Params ProgramAdvance="true" ProgramAdvanceLinkWith="MiniThunder" CostAdvancedMana="false" ConsumeAfterAdvance="true" AdvanceSpell="StormThunder"></Params>
+//EX: <Params ProgramAdvance="true" ProgramAdvanceLinkWith="Frostbolt,IceNeedle" CostAdvancedMana="true" ConsumeAfterAdvance="false" AdvanceSpell="Tundra"></Params>
 
 [HarmonyPatch(typeof(Player))]
 [HarmonyPatch("CastSpell")]
@@ -24,43 +25,48 @@ class MoreLuaPower_ProgramAdvance
 
     static void Prefix(ref Player __instance, int slotNum, ref int manaOverride, ref bool consumeOverride, out Tuple<int, SpellObject, SpellObject> __state) {
         __state = new Tuple<int, SpellObject, SpellObject>(-1, null, null);
-        Dictionary<string, string> pd = __instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary;
-        if (!__instance.duelDisk.shuffling && __instance.duelDisk.castSlots[slotNum].cardtridgeFill != null && pd.ContainsKey("ProgramAdvance")) {
-            if (!pd.ContainsKey("ProgramAdvanceLinkWith")) {
-                Debug.Log("ERROR: Spell has ProgramAdvance, but not ProgramAdvanceLinkWith");
-                return;
-            }
-            if (!pd.ContainsKey("AdvanceSpell")) {
-                Debug.Log("ERROR: Spell has ProgramAdvance, but not AdvanceSpell");
-                return;
-            }
-            string str = pd["ProgramAdvanceLinkWith"];
-            int otherSlotNum = -1;
-            for (int i = 0; i < __instance.duelDisk.castSlots.Count; i++) {
-                if (__instance.duelDisk.castSlots[i].spellObj != null && str == __instance.duelDisk.castSlots[i].spellObj.itemID) {
-                    otherSlotNum = i;
-                }
-            }
-            if (otherSlotNum != -1 && slotNum < __instance.duelDisk.castSlots.Count) {
-                //ADVANCE LINK ACTIVATED
 
-                if (!consumeOverride && pd.ContainsKey("ConsumeAfterAdvance")) {
-                    consumeOverride = pd["ConsumeAfterAdvance"] == "true";
+        for (int slot = 0; slot < __instance.duelDisk.castSlots.Count; slot++) {
+            Dictionary<string, string> pd = __instance.duelDisk.castSlots[slot].spellObj.spell.itemObj.paramDictionary;
+            if (!__instance.duelDisk.shuffling && __instance.duelDisk.castSlots[slot].cardtridgeFill != null && pd.ContainsKey("ProgramAdvance")) {
+                if (!pd.ContainsKey("ProgramAdvanceLinkWith")) {
+                    Debug.Log("ERROR: Spell has ProgramAdvance, but not ProgramAdvanceLinkWith");
+                    return;
                 }
-                if (__instance.duelDisk.castSlots[otherSlotNum].spellObj.spell.itemObj.paramDictionary.ContainsKey("ConsumeAfterAdvance")) {
-                    __instance.duelDisk.LaunchSlot(otherSlotNum, __instance.duelDisk.castSlots[otherSlotNum].spellObj.spell.itemObj.paramDictionary["ConsumeAfterAdvance"] == "true", null);
-                } else {
-                    __instance.duelDisk.LaunchSlot(otherSlotNum, false, null);
+                if (!pd.ContainsKey("AdvanceSpell")) {
+                    Debug.Log("ERROR: Spell has ProgramAdvance, but not AdvanceSpell");
+                    return;
                 }
+                List<string> str = pd["ProgramAdvanceLinkWith"].Split(',').ToList(); ;
+                int otherSlotNum = -1;
+                for (int i = 0; i < __instance.duelDisk.castSlots.Count; i++) {
+                    foreach (string i2 in str) {
+                        if (__instance.duelDisk.castSlots[i].spellObj != null && i2 == __instance.duelDisk.castSlots[i].spellObj.itemID) {
+                            otherSlotNum = i;
+                        }
+                    }
+                }
+                if (otherSlotNum != -1 && slotNum < __instance.duelDisk.castSlots.Count) {
+                    //ADVANCE LINK ACTIVATED
 
-                SpellObject Advance = S.I.deCtrl.CreateSpellBase(pd["AdvanceSpell"], __instance);
-                __state = new Tuple<int, SpellObject, SpellObject>(
-                    __instance.duelDisk.currentCardtridges.IndexOf(__instance.duelDisk.castSlots[slotNum].cardtridgeFill), 
-                    __instance.duelDisk.castSlots[slotNum].cardtridgeFill.spellObj, 
-                    Advance);
-                __instance.duelDisk.currentCardtridges.ElementAt(__state.Item1).spellObj = Advance;
-                if (pd.ContainsKey("CostAdvancedMana") && pd["CostAdvancedMana"] == "false" && manaOverride < 0) {
-                    manaOverride = 0;
+                    if (!consumeOverride && pd.ContainsKey("ConsumeAfterAdvance")) {
+                        consumeOverride = pd["ConsumeAfterAdvance"] == "true";
+                    }
+                    if (__instance.duelDisk.castSlots[otherSlotNum].spellObj.spell.itemObj.paramDictionary.ContainsKey("ConsumeAfterAdvance")) {
+                        __instance.duelDisk.LaunchSlot(otherSlotNum, __instance.duelDisk.castSlots[otherSlotNum].spellObj.spell.itemObj.paramDictionary["ConsumeAfterAdvance"] == "true", null);
+                    } else {
+                        __instance.duelDisk.LaunchSlot(otherSlotNum, false, null);
+                    }
+
+                    SpellObject Advance = S.I.deCtrl.CreateSpellBase(pd["AdvanceSpell"], __instance);
+                    __state = new Tuple<int, SpellObject, SpellObject>(
+                        __instance.duelDisk.currentCardtridges.IndexOf(__instance.duelDisk.castSlots[slotNum].cardtridgeFill),
+                        __instance.duelDisk.castSlots[slotNum].cardtridgeFill.spellObj,
+                        Advance);
+                    __instance.duelDisk.currentCardtridges.ElementAt(__state.Item1).spellObj = Advance;
+                    if (pd.ContainsKey("CostAdvancedMana") && pd["CostAdvancedMana"] == "false" && manaOverride < 0) {
+                        manaOverride = 0;
+                    }
                 }
             }
         }

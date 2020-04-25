@@ -23,6 +23,7 @@ using UnityEngine;
 [HarmonyPatch("CastSpell")]
 class MoreLuaPower_Multicast
 {
+    [HarmonyPriority(Priority.LowerThanNormal)]
     static void Prefix(ref Player __instance, int slotNum, ref int manaOverride, bool consumeOverride)
     {
         if (__instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary.ContainsKey("DontDiscard") && 
@@ -62,7 +63,8 @@ class MoreLuaPower_Multicast2
 {
     static bool Prefix(DuelDisk __instance, int slotNum, bool forceConsume) {
         if (__instance.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary.ContainsKey("DontDiscard") &&
-            __instance.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["DontDiscard"] == "true") {
+            __instance.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["DontDiscard"] == "true" &&
+            forceConsume == false) {
             if (__instance.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary.ContainsKey("ShotsRemaining")){
                 if (Int32.Parse(__instance.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["ShotsRemaining"]) < 1) {
                     if (__instance.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary.ContainsKey("MaxShots")) {

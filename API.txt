@@ -24,12 +24,13 @@ I'm also going to have vanilla features in here as well,
 	ProgramAdvance
 		//Program advance is a mechanic from MMBN where you combine multiple chips into one powerful chip.
 		//Spells with the ProgramAdvance param will be parsed otherwise, do a normal spell cast
-		// ProgramAdvanceLinkWith is the name of the spell in the other slot needed to trigger the Advance Spell
+		// ProgramAdvanceLinkWith is the name of the spell in the other slot needed to trigger the Advance Spell - use commas to separate spells
 		// CostAdvancedMana is a boolean that determins if the Advance Spell drains mana
 		// ConsumeAfterAdvance is a boolean that consumes the chip after the Advance Spell
 		// AdvanceSpell is spell that ends up being casted
-		//Example: <Params ProgramAdvance="true" ProgramAdvanceLinkWith="Thunder" CostAdvancedMana="false" ConsumeAfterAdvance="true" AdvanceSpell="MegaThunder"></Params>
-		//Example: <Params ProgramAdvance="true" ProgramAdvanceLinkWith="MiniThunder" CostAdvancedMana="false" ConsumeAfterAdvance="true" AdvanceSpell="MegaThunder"></Params>
+		//Example: <Params ProgramAdvance="true" ProgramAdvanceLinkWith="Thunder" CostAdvancedMana="false" ConsumeAfterAdvance="true" AdvanceSpell="StormThunder"></Params>
+		//Example: <Params ProgramAdvance="true" ProgramAdvanceLinkWith="MiniThunder" CostAdvancedMana="false" ConsumeAfterAdvance="true" AdvanceSpell="StormThunder"></Params>
+		//Example: <Params ProgramAdvance="true" ProgramAdvanceLinkWith="Frostbolt,IceNeedle" CostAdvancedMana="true" ConsumeAfterAdvance="false" AdvanceSpell="Tundra"></Params>
 
 	Multicast
 		//Multicast is a mechanic that allows you to make spells that dont discard after the first use!
