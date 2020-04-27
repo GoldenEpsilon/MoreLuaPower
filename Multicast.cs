@@ -11,99 +11,68 @@ using UnityEngine;
 //Multicast is a mechanic that allows you to make spells that dont discard after the first use!
 //Spells with the DontDiscard param will be parsed otherwise, do a normal spell cast
 //ShotsRemaining is a number that keeps track of how many casts you have left
-//MaxShots is self explanitory
-//Ex: <Params DontDiscard="true" ShotsRemaining="5" MaxShots="5"></Params>
+//MaxShots is self-explanatory
+//ManaCost is either "Start", "End", or "All", Defaulting to "All".
+//  If it is set to "Start" the mana cost will only be used the first cast,
+//  if it is set to "End" the mana cost will only be used the last cast,
+//  and if it is set to "All" the mana cost will be used for all casts.
+//Note: ManaCost does not affect anything if you don't have ShotsRemaining
+//Ex: <Params DontDiscard="true" ShotsRemaining="5" MaxShots="5" ManaCost="Start"></Params>
 
 [HarmonyPatch(typeof(Player))]
 [HarmonyPatch("CastSpell")]
 class MoreLuaPower_Multicast
 {
-    static bool Prefix(ref Player __instance, int slotNum, ref int manaOverride, bool consumeOverride)
+    [HarmonyPriority(Priority.LowerThanNormal)]
+    static void Prefix(ref Player __instance, int slotNum, ref int manaOverride, bool consumeOverride)
     {
-        if (__instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary.ContainsKey("DontDiscard") && __instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["DontDiscard"] == "true")
+        if (__instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary.ContainsKey("DontDiscard") && 
+            __instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["DontDiscard"] == "true" &&
+            __instance.duelDisk.currentMana > (manaOverride < 0 ? Traverse.Create(__instance).Method("CalculateManaCost", __instance.duelDisk.castSlots[slotNum].cardtridgeFill.spellObj).GetValue<int>() : manaOverride))
         {
-            if (__instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary.ContainsKey("ShotsRemaining") && Int32.Parse(__instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["ShotsRemaining"]) <= 1)
-            {
-                __instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["ShotsRemaining"] = __instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["MaxShots"];
-                manaOverride = 0;
-                return true;
-            }
-            if (slotNum >= __instance.duelDisk.castSlots.Count)
-                return false;
-            if ((UnityEngine.Object)__instance.lastSpellText != (UnityEngine.Object)null)
-                SimplePool.Despawn(__instance.lastSpellText.gameObject, 0.0f);
-            if (__instance.duelDisk.shuffling)
-            {
-                object[] newEmptyArray = { };
-                __instance.lastSpellText = __instance.CreateFloatText(__instance.ctrl.statusTextPrefab, string.Format(ScriptLocalization.UI.Deck_is_shuffling, newEmptyArray), -20, 65, 0.5f, (Sprite)null);
+            if (__instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary.ContainsKey("ShotsRemaining")) {
+                if (__instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary.ContainsKey("ManaCost")) {
+                    switch (__instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["ManaCost"]) {
+                        case "Start":
+                            if (__instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary.ContainsKey("MaxShots") &&
+                            __instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["ShotsRemaining"] !=
+                            __instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["MaxShots"]) { 
+                                manaOverride = 0; 
+                            }
+                            break;
+                        case "End":
+                            if (Int32.Parse(__instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["ShotsRemaining"]) > 1) {
+                                manaOverride = 0;
+                            }
+                            break;
+                        case "All":
+                            break;
+                        default:
+                            break;
+                    }
+                }
                 __instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["ShotsRemaining"] = (Int32.Parse(__instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["ShotsRemaining"]) - 1).ToString();
             }
-            else
-            {
-                slotNum = Traverse.Create(__instance).Method("GetSlotNum", slotNum).GetValue<int>();
-                if ((UnityEngine.Object)__instance.duelDisk.castSlots[slotNum].cardtridgeFill == (UnityEngine.Object)null)
-                {
-                    __instance.lastSpellText = __instance.CreateFloatText(__instance.ctrl.statusTextPrefab, ScriptLocalization.UI.NoMoreSpells, -20, 65, 0.5f, (Sprite)null);
+        }
+    }
+}
+
+[HarmonyPatch(typeof(DuelDisk))]
+[HarmonyPatch("LaunchSlot")]
+class MoreLuaPower_Multicast2
+{
+    static bool Prefix(DuelDisk __instance, int slotNum, bool forceConsume) {
+        if (__instance.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary.ContainsKey("DontDiscard") &&
+            __instance.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["DontDiscard"] == "true" &&
+            forceConsume == false) {
+            if (__instance.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary.ContainsKey("ShotsRemaining")){
+                if (Int32.Parse(__instance.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["ShotsRemaining"]) < 1) {
+                    if (__instance.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary.ContainsKey("MaxShots")) {
+                        __instance.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["ShotsRemaining"] = __instance.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["MaxShots"];
+                    }
+                    return true;
                 }
-                else
-                {
-                    SpellObject spellObj = __instance.duelDisk.castSlots[slotNum].cardtridgeFill.spellObj;
-                    int num1 = 0;
-                    if (__instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["ShotsRemaining"] == __instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["MaxShots"])
-                    {
-                        num1 = Traverse.Create(__instance).Method("CalculateManaCost", spellObj).GetValue<int>();
-                    }
-                    if (manaOverride >= 0)
-                        num1 = manaOverride;
-                    if ((double)__instance.duelDisk.currentMana >= (double)num1)
-                    {
-                        spellObj.being = (Being)__instance;
-                        spellObj.spell.being = (Being)__instance;
-                        __instance.anim.SetTrigger("spellCast");
-                        __instance.anim.ResetTrigger("toIdle");
-                        spellObj.castSlotNum = slotNum;
-                        __instance.audioSource.PlayOneShot(__instance.castSound);
-                        __instance.manaBeforeSpellCast = __instance.duelDisk.currentMana;
-                        __instance.duelDisk.currentMana -= (float)num1;
-                        __instance.TriggerArtifacts(FTrigger.OnManaBelow, (Being)null, 0);
-                        __instance.lastSpellText = __instance.CreateSpellText(spellObj, 0.5f);
-                        __instance.TriggerArtifacts(FTrigger.OnSpellCast, (Being)null, 0);
-                        __instance.TriggerAllArtifacts(FTrigger.OnPlayerSpellCast, (Being)null, 0);
-                        if (spellObj.itemID == "Jam")
-                            __instance.TriggerArtifacts(FTrigger.OnJamCast, (Being)null, 0);
-                        __instance.theSpellCast = spellObj;
-                        spellObj.PlayerCast();
-                        __instance.spellsCastThisBattle.Add(spellObj);
-                        if (__instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary.ContainsKey("ShotsRemaining"))
-                        {
-                            __instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["ShotsRemaining"] = (Int32.Parse(__instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["ShotsRemaining"]) - 1).ToString();
-                        }
-                        if (spellObj.channel)
-                            __instance.anim.SetTrigger("channel");
-                        foreach (Cpu currentPet in __instance.currentPets)
-                            currentPet.StartAction();
-                        if (AchievementsCtrl.IsUnlocked("Disguised_Toast") || __instance.player.IsReference())
-                            return false;
-                        float amountVar = 0.0f;
-                        if ((double)__instance.ctrl.GetAmount(new AmountApp(ref amountVar, "JamsCastThisBattle"), 0.0f, spellObj, (ArtifactObject)null, (PactObject)null, false) < 10.0)
-                            return false;
-                        AchievementsCtrl.UnlockAchievement("Disguised_Toast");
-                    }
-                    else
-                    {
-                        if ((double)__instance.duelDisk.currentMana >= (double)num1)
-                            return false;
-                        float max = (float)num1 - __instance.duelDisk.currentMana;
-                        double num2 = (double)Mathf.Clamp(max, 0.1f, max);
-                        if (num1 > __instance.maxMana)
-                        {
-                            __instance.lastSpellText = __instance.CreateFloatText(__instance.ctrl.statusTextPrefab, ScriptLocalization.UI.Max_Mana_too_low, -20, 65, 0.5f, (Sprite)null);
-                            --__instance.duelDisk.currentMana;
-                        }
-                        else
-                            __instance.lastSpellText = __instance.CreateFloatText(__instance.ctrl.statusTextPrefab, string.Format(ScriptLocalization.UI.NeedMoreMana + "({0})", (object)Mathf.Clamp(max, 0.1f, max).ToString("f1")), -20, 65, 0.5f, (Sprite)null);
-                    }
-                }
+                return false;
             }
             return false;
         }

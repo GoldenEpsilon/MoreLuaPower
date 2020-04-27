@@ -1,6 +1,6 @@
 ﻿/*
  *  More Lua Power, made by Golden Epsilon
- *  Audio loading added by Sunreal
+ *  Audio loading, ProgramAdvance, and Multicast added by Sunreal
  *  Workshop URL: https://steamcommunity.com/sharedfiles/filedetails/?id=2066319533
  *  GitHub Page: https://github.com/GoldenEpsilon/MoreLuaPower
  *
@@ -12,10 +12,10 @@
 */
 
 PRIORITY:
-    Break up MoreLuaPower some more, to increase code readability
     Get people to test/bug report
 
 TODO:
+    Reset Custom Data Types on reload
     Follow up on custom brands
     implement the rest of ParticleSystem
     Look into sprite swapping
@@ -24,11 +24,11 @@ TODO:
     lua function on game start
     lua function every frame while there is a player
     lua function every frame
-    params for beings via custom component
     last PROJECTILE that hit the being
     multiple inputs for cases like OnHit that have different objects, like the projectile that hit
     add example file
     add credits to credits
+    debug menu on command
 
 LOOK INTO:
     input system
@@ -37,6 +37,8 @@ LOOK INTO:
     custom save properties
     custom buttons
     changing the number of cast slots
+    adding mod name to script variable
+    patching script bytecode on the fly. Because why not.
 
 ENUMS TO FIGURE OUT:
     Effect

@@ -18,6 +18,10 @@ static class LuaPowerSprites
             S.I.gameObject.AddComponent<PowerMonoBehavior>();
         }
 
+        if (LuaPowerData.sprites.ContainsKey(name)) {
+            Debug.Log("ERROR: A Sprite exists with this name already.");
+        }
+
         S.I.GetComponent<PowerMonoBehavior>().StartCoroutine(
          PowerMonoBehavior.LoadSprite(str, (Texture2D content) => {
              if (content != null) {
@@ -27,5 +31,12 @@ static class LuaPowerSprites
                  Debug.Log("ERROR: MakeSprite didn't find anything in content");
              }
          }));
+    }
+    
+    static public Sprite GetSprite(string image) {
+        if (LuaPowerData.sprites.ContainsKey(image)) {
+            return LuaPowerData.sprites[image];
+        }
+        return null;
     }
 }

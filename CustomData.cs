@@ -1,11 +1,23 @@
 ﻿using UnityEngine;
+using MoonSharp.Interpreter;
 using System.Collections.Generic;
 
+class LuaPowerTrigger
+{
+    public FTrigger _trigger;
+    public string _func;
+    public LuaPowerTrigger(FTrigger trigger, string func) {
+        _trigger = trigger;
+        _func = func;
+    }
+}
 static class LuaPowerData
 {
     static public List<string> statuses = new List<string>();
     static public Dictionary<string, Sprite> sprites = new Dictionary<string, Sprite>();
     static public Dictionary<string, Material> materials = new Dictionary<string, Material>();
+    static public List<Script> scripts = new List<Script>();
+    static public List<LuaPowerTrigger> luaHooks = new List<LuaPowerTrigger>();
     static public Dictionary<string, string> DPS = new Dictionary<string, string>() //Default Particle System
     {
         { "sprite", "Normal" },             //sprite name from MakeSprite

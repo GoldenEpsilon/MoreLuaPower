@@ -1,6 +1,6 @@
 ﻿/*
  *  More Lua Power, made by Golden Epsilon
- *  Audio loading added by Sunreal
+ *  Audio loading, ProgramAdvance, and Multicast added by Sunreal
  *  Workshop URL: https://steamcommunity.com/sharedfiles/filedetails/?id=2066319533
  *  GitHub Page: https://github.com/GoldenEpsilon/MoreLuaPower
  *
@@ -23,16 +23,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.Networking;
 using System.Reflection.Emit;
+using System.Collections.ObjectModel;
+using Rewired.Utils.Classes.Data;
+using Rewired;
 
-[HarmonyPatch(typeof(EffectActions), MethodType.Constructor)]
-[HarmonyPatch(new Type[] { typeof(string) })]
+[HarmonyPatch(typeof(S))]
+[HarmonyPatch("Awake")]
 class MoreLuaPower
 {
-    static void Postfix() {
+    static void Prepare() {
+        Debug.Log("MoreLuaPower Version 1.1");
         LuaPowerStatus.Setup();
-    }
-}
-
-static class LuaPowerHelpers
-{
+	}
 }

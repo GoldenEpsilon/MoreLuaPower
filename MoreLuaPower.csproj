@@ -47,7 +47,9 @@
       <HintPath>..\Rewired_Core.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Sirenix.Serialization, Version=2.0.20.0, Culture=neutral, PublicKeyToken=null" />
+    <Reference Include="Sirenix.Serialization, Version=2.0.20.0, Culture=neutral, PublicKeyToken=null">
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -98,10 +100,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BeingVariables.cs" />
     <Compile Include="CustomData.cs" />
     <Compile Include="CustomParticles.cs" />
     <Compile Include="CustomSound.cs" />
     <Compile Include="CustomSprites.cs" />
+    <Compile Include="LuaHooks.cs" />
     <Compile Include="Multicast.cs" />
     <Compile Include="PowerMonoBehavior.cs" />
     <Compile Include="CustomStatusEffects.cs" />
