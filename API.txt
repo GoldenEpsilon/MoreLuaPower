@@ -31,6 +31,7 @@ I'm also going to have vanilla features in here as well,
 		//Example: <Params ProgramAdvance="true" ProgramAdvanceLinkWith="Thunder" CostAdvancedMana="false" ConsumeAfterAdvance="true" AdvanceSpell="StormThunder"></Params>
 		//Example: <Params ProgramAdvance="true" ProgramAdvanceLinkWith="MiniThunder" CostAdvancedMana="false" ConsumeAfterAdvance="true" AdvanceSpell="StormThunder"></Params>
 		//Example: <Params ProgramAdvance="true" ProgramAdvanceLinkWith="Frostbolt,IceNeedle" CostAdvancedMana="true" ConsumeAfterAdvance="false" AdvanceSpell="Tundra"></Params>
+		//			NOTE: This last example activates on EITHER Frostbolt or IceNeedle
 
 	Multicast
 		//Multicast is a mechanic that allows you to make spells that dont discard after the first use!

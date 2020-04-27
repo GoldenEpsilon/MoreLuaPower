@@ -80,8 +80,8 @@ class LuaPowerStatus
     }
     static public void NewEffect(string effect, string sprite) {
         if (LuaPowerData.sprites.ContainsKey(sprite)) {
-            LuaPowerData.statuses.Add(effect);
-            S.I.batCtrl.effectSpritesDict.Add(effect, LuaPowerData.sprites[sprite]);
+            if (!LuaPowerData.statuses.Contains(effect)) { LuaPowerData.statuses.Add(effect); }
+            if (!S.I.batCtrl.effectSpritesDict.ContainsKey(effect)) { S.I.batCtrl.effectSpritesDict.Add(effect, LuaPowerData.sprites[sprite]); }
         }
     }
     static public bool EffectExists(string effect) {
