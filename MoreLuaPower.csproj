@@ -108,6 +108,7 @@
     <Compile Include="KickerCast.cs" />
     <Compile Include="LuaHooks.cs" />
     <Compile Include="Multicast.cs" />
+    <Compile Include="PlayCustomBattleMusic.cs" />
     <Compile Include="PowerMonoBehavior.cs" />
     <Compile Include="CustomStatusEffects.cs" />
     <Compile Include="GlobalLuaFunctions.cs" />
