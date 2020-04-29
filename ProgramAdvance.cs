@@ -38,7 +38,7 @@ class MoreLuaPower_ProgramAdvance
                         Debug.Log("ERROR: Spell has ProgramAdvance, but not AdvanceSpell");
                         return;
                     }
-                    List<string> str = pd["ProgramAdvanceLinkWith"].Split(',').ToList(); ;
+                    List<string> str = pd["ProgramAdvanceLinkWith"].Split(',').ToList();
                     int otherSlotNum = -1;
                     for (int i = 0; i < __instance.duelDisk.castSlots.Count; i++) {
                         foreach (string i2 in str) {
