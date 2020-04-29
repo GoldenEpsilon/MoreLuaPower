@@ -1,10 +1,8 @@
 ﻿using HarmonyLib;
 using System;
 using UnityEngine;
-using UnityEngine.UI;
-using System.Linq;
 using System.Collections.Generic;
-using System.Reflection.Emit;
+
 
 class LuaPowerStatus
 {
@@ -27,6 +25,12 @@ class LuaPowerStatus
         if (!LuaPowerData.statuses.Contains(effect)) {
             Debug.Log("NewEffect was not called for effect " + effect);
             return;
+        }
+        if (duration == 0) {
+            duration = 9999f;
+        }
+        if (duration < 0) {
+            duration = 0;
         }
         Status eff = (Status)LuaPowerData.statuses.FindIndex(new Predicate<string>((string str) => str == effect));
         being.AddStatus(eff, amount, duration);
