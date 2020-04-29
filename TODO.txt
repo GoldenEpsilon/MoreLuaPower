@@ -12,20 +12,23 @@
 */
 
 PRIORITY:
-    Get people to test/bug report
+    SetEffect with 0 duration does not cause an effect without a duration
+    SetEffect with a custom effect when the effect already exists does nothing
 
 TODO:
     Reset Custom Data Types on reload
+    make custom statuses work with XML
+    Custom Trigger Stuff:
+        Add a Harmony patch that runs after DeckCtrl.RemoveArtifactCard(cardToRemove) and pass the cardToRemove to custom code based on custom triggers
+            Same for spells
+        last PROJECTILE that hit the being
+        multiple inputs for cases like OnHit that have different objects, like the projectile that hit
+        maybe make the system general enough that people can do those on their own?
     Follow up on custom brands
     implement the rest of ParticleSystem
     Look into sprite swapping
     custom lua effects without having to go through hoops
-    lua function on combat start
-    lua function on game start
-    lua function every frame while there is a player
-    lua function every frame
-    last PROJECTILE that hit the being
-    multiple inputs for cases like OnHit that have different objects, like the projectile that hit
+    make sure that lua hooks do stuff like run a function every frame
     add example file
     add credits to credits
     debug menu on command
