@@ -106,6 +106,7 @@
     <Compile Include="CustomParticles.cs" />
     <Compile Include="CustomSound.cs" />
     <Compile Include="CustomSprites.cs" />
+    <Compile Include="KickerCast.cs" />
     <Compile Include="LuaHooks.cs" />
     <Compile Include="Multicast.cs" />
     <Compile Include="PowerMonoBehavior.cs" />
