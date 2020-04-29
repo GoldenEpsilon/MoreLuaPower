@@ -1,6 +1,6 @@
 ﻿/*
  *  More Lua Power, made by Golden Epsilon
- *  Audio loading, ProgramAdvance, and Multicast added by Sunreal
+ *  Audio loading, ProgramAdvance, Kickers, and Multicast added by Sunreal
  *  Workshop URL: https://steamcommunity.com/sharedfiles/filedetails/?id=2066319533
  *  GitHub Page: https://github.com/GoldenEpsilon/MoreLuaPower
  *
@@ -21,7 +21,7 @@ I'm also going to have vanilla features in here as well,
 
 [NEW MECHANICS]	
 
-	ProgramAdvance
+	Program Advance
 		//Program advance is a mechanic from MMBN where you combine multiple chips into one powerful chip.
 		//Spells with the ProgramAdvance param will be parsed otherwise, do a normal spell cast
 		// ProgramAdvanceLinkWith is the name of the spell in the other slot needed to trigger the Advance Spell - use commas to separate spells
@@ -44,6 +44,13 @@ I'm also going to have vanilla features in here as well,
 		//  and if it is set to "All" the mana cost will be used for all casts.
 		//Note: ManaCost does not affect anything if you don't have ShotsRemaining
 		//Example: <Params DontDiscard="true" ShotsRemaining="5" MaxShots="5" ManaCost="Start"></Params>
+
+	Kicker Cast
+		//A kicker cast is a spell that behaves differently depending on how much mana the player has. Generally looks like this. Cast mini thunder for zero mana,
+		//but if the player has 3 mana cast thunderstorm instead.
+		//Example: <Params KickerCast="true" KickerManaCost="4" KickerSpell="StormThunder"></Params>
+		//Kicker cast also supports multiple kickers
+		//Examole: <Params KickerCast="true" KickerManaCost="1,4" KickerSpell="Thunder,StormThunder"></Params>
 
 
 [GLOBAL LUA FUNCTIONS]
