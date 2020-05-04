@@ -46,4 +46,15 @@ class LuaPowerSound
         }
         being.PlayOnce(AllAudioClips[sound]);
     }
+
+    static public void PlayBattleMusic(string music)
+    {
+        var AllAudioClips = Traverse.Create(S.I.itemMan).Field("allAudioClips").GetValue<Dictionary<String, AudioClip>>();
+        if (!AllAudioClips.ContainsKey(music))
+        {
+            Debug.Log(music + " does not exist");
+            return;
+        }
+        S.I.muCtrl.Play(AllAudioClips[music], true);
+    }
 }
