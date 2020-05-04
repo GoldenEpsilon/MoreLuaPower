@@ -100,22 +100,22 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BeingVariables.cs" />
-    <Compile Include="CustomData.cs" />
-    <Compile Include="CustomEnumStrings.cs" />
-    <Compile Include="CustomParticles.cs" />
-    <Compile Include="CustomSound.cs" />
-    <Compile Include="CustomSprites.cs" />
-    <Compile Include="KickerCast.cs" />
-    <Compile Include="LuaHooks.cs" />
-    <Compile Include="Multicast.cs" />
-    <Compile Include="PowerMonoBehavior.cs" />
-    <Compile Include="CustomStatusEffects.cs" />
-    <Compile Include="GlobalLuaFunctions.cs" />
-    <Compile Include="GlobalLuaVariables.cs" />
-    <Compile Include="GlobalLuaTypes.cs" />
-    <Compile Include="MoreLuaPower.cs" />
-    <Compile Include="ProgramAdvance.cs" />
+    <Compile Include="Lua\BeingVariables.cs" />
+    <Compile Include="Data\CustomData.cs" />
+    <Compile Include="Data\CustomEnums.cs" />
+    <Compile Include="Additions\CustomParticles.cs" />
+    <Compile Include="Additions\CustomSound.cs" />
+    <Compile Include="Additions\CustomSprites.cs" />
+    <Compile Include="Mechanics\KickerCast.cs" />
+    <Compile Include="Lua\LuaHooks.cs" />
+    <Compile Include="Mechanics\Multicast.cs" />
+    <Compile Include="Core\PowerMonoBehavior.cs" />
+    <Compile Include="Additions\CustomStatusEffects.cs" />
+    <Compile Include="Lua\GlobalLuaFunctions.cs" />
+    <Compile Include="Lua\GlobalLuaVariables.cs" />
+    <Compile Include="Lua\GlobalLuaTypes.cs" />
+    <Compile Include="Misc\MoreLuaPower.cs" />
+    <Compile Include="Mechanics\ProgramAdvance.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -126,5 +126,6 @@
     <Content Include="TODO.txt" />
     <Content Include="API.txt" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
