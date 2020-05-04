@@ -14,6 +14,8 @@ class LuaPowerTrigger
 static class LuaPowerData
 {
     static public List<string> statuses = new List<string>();
+    static public List<string> brands = new List<string>();
+    static public List<string> effects = new List<string>();
     static public Dictionary<string, Sprite> sprites = new Dictionary<string, Sprite>();
     static public Dictionary<string, Material> materials = new Dictionary<string, Material>();
     static public List<Script> scripts = new List<Script>();

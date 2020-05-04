@@ -1,6 +1,7 @@
 ﻿/*
  *  More Lua Power, made by Golden Epsilon
  *  Audio loading, ProgramAdvance, Kickers, and Multicast added by Sunreal
+ *  PetBuff for MoreLuaPower by stephanreiken
  *  Workshop URL: https://steamcommunity.com/sharedfiles/filedetails/?id=2066319533
  *  GitHub Page: https://github.com/GoldenEpsilon/MoreLuaPower
  *
@@ -11,13 +12,17 @@
  *  I am also open to help; If you have something you want to add in here, just let me know/add it in yourself! You will be credited.
 */
 
+KEEPING TRACK:
+    Add effect that calls a lua function
+    if the effect won't parse, make it call a lua function of the same name
+
+
 PRIORITY:
-    SetEffect with 0 duration does not cause an effect without a duration
     SetEffect with a custom effect when the effect already exists does nothing
 
 TODO:
-    Reset Custom Data Types on reload
     make custom statuses work with XML
+    add more math to XML rather than just addition
     Custom Trigger Stuff:
         Add a Harmony patch that runs after DeckCtrl.RemoveArtifactCard(cardToRemove) and pass the cardToRemove to custom code based on custom triggers
             Same for spells
@@ -32,6 +37,7 @@ TODO:
     add example file
     add credits to credits
     debug menu on command
+    add a hook to when Card Drops are randomly generated that, when a spell is chosen if that spell had the Parama 'DropCheck', it will attempt to run the function DropCheck states; that function must return a boolean. If true, its allowed to drop
 
 LOOK INTO:
     input system
