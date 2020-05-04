@@ -6,12 +6,6 @@ using System.Collections.Generic;
 
 class LuaPowerStatus
 {
-    static public void Setup() {
-        LuaPowerData.statuses = new List<string>();
-        foreach (string i in Status.GetNames(typeof(Status))) {
-            LuaPowerData.statuses.Add(i);
-        }
-    }
     static public void NewEffect(string effect, string sprite) {
         if (LuaPowerData.sprites.ContainsKey(sprite)) {
             if (!LuaPowerData.statuses.Contains(effect)) { LuaPowerData.statuses.Add(effect); }

@@ -1,6 +1,7 @@
 ﻿/*
  *  More Lua Power, made by Golden Epsilon
  *  Audio loading, ProgramAdvance, Kickers, and Multicast added by Sunreal
+ *  PetBuff for MoreLuaPower by stephanreiken
  *  Workshop URL: https://steamcommunity.com/sharedfiles/filedetails/?id=2066319533
  *  GitHub Page: https://github.com/GoldenEpsilon/MoreLuaPower
  *
@@ -33,6 +34,7 @@ class MoreLuaPower
 {
     static void Prepare() {
         Debug.Log("MoreLuaPower Version 1.2");
-        LuaPowerStatus.Setup();
+		LuaPowerCustomEnumsSetup.Setup();
+
     }
 }
