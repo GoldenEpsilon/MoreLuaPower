@@ -55,6 +55,7 @@ class LuaPowerSound
             Debug.Log(music + " does not exist");
             return;
         }
+        S.I.muCtrl.Stop();
         S.I.muCtrl.Play(AllAudioClips[music], true);
     }
 }
