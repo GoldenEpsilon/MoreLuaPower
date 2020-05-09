@@ -20,7 +20,8 @@ class MoreLuaPower_Kickercast
 {
     static bool Prefix(ref Player __instance, int slotNum, ref int manaOverride, bool consumeOverride)
     {
-        if (__instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary.ContainsKey("KickerCast"))          
+        if (__instance.duelDisk.castSlots[slotNum] != null &&
+            __instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary.ContainsKey("KickerCast"))          
         {
             Dictionary<string, string> pd = __instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary;
             if (!pd.ContainsKey("KickerManaCost")) {

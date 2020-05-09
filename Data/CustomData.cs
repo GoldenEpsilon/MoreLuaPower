@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using MoonSharp.Interpreter;
 using System.Collections.Generic;
+using System;
 
 class LuaPowerTrigger
 {
@@ -13,9 +14,8 @@ class LuaPowerTrigger
 }
 static class LuaPowerData
 {
-    static public List<string> statuses = new List<string>();
-    static public List<string> brands = new List<string>();
-    static public List<string> effects = new List<string>();
+    static public Dictionary<Type, List<string>> customEnums = new Dictionary<Type, List<string>>();
+    static public Dictionary<Enum, List<string>> enumAdditions = new Dictionary<Enum, List<string>>();
     static public Dictionary<string, Sprite> sprites = new Dictionary<string, Sprite>();
     static public Dictionary<string, Material> materials = new Dictionary<string, Material>();
     static public List<Script> scripts = new List<Script>();
@@ -45,4 +45,8 @@ static class LuaPowerData
         { "shape", "Sphere" },              //Sphere, Hemisphere, Cone, Donut, Box, Circle, Edge, Rectangle //TODO
         { "TEST", "TEST" }                  //To Add: Color Over Lifetime
     };
+    static public void Setup() {
+        customEnums.Add(typeof(Status), new List<string>());
+        customEnums.Add(typeof(Brand), new List<string>());
+    }
 }
