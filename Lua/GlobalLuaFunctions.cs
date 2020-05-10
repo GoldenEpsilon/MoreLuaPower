@@ -38,15 +38,22 @@ class MoreLuaPower_InitFunction
 {
     static void Postfix(Script ___myLuaScript)
     {
-        object obj = ___myLuaScript.Globals["Init"];
+        object obj;
+        obj = ___myLuaScript.Globals["Init"];
         if (obj != null)
         {
-            S.I.mainCtrl.StartCoroutine(MoreLuaPower_InitFunctionHelper.EffectRoutine(___myLuaScript.CreateCoroutine(obj)));
+            S.I.mainCtrl.StartCoroutine(MoreLuaPower_FunctionHelper.EffectRoutine(___myLuaScript.CreateCoroutine(obj)));
             ___myLuaScript.Globals.Remove("Init");
+        }
+        obj = ___myLuaScript.Globals["Update"];
+        if (obj != null)
+        {
+            PowerMonoBehavior.UpdateScripts.Add(obj);
+            ___myLuaScript.Globals.Remove("Update");
         }
     }
 }
-class MoreLuaPower_InitFunctionHelper
+class MoreLuaPower_FunctionHelper
 {
     public static IEnumerator EffectRoutine(DynValue result)
     {
