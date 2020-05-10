@@ -20,6 +20,7 @@ using UnityEngine.Internal;
 using UnityEngine.Networking;
 using System.Threading;
 
+//Prefix patches LoadItemData because it is called right before modloading ends.
 [HarmonyPatch]
 static class CustomFileLoader_Patches
 {
@@ -27,6 +28,7 @@ static class CustomFileLoader_Patches
     [HarmonyPatch(typeof(ItemManager), nameof(ItemManager.LoadItemData))]
     static bool LoadItems(ItemManager __instance)
     {
+        //Mod processing would not be marked as done when this is called during mod loading.
         if (S.I.modCtrl.processing)
         {
             CustomFileLoader.AfterInstall();
@@ -36,17 +38,21 @@ static class CustomFileLoader_Patches
     }
 }
 
+//Don't let anything access this.
+//Basically, this thing is written to stop the install button from switching back to its default when mods are being loaded again.
 internal static class CustomFileLoader
 {
+    //Keeps track of images being loaded.
     private static List<AsyncOperation> images_remaining = new List<AsyncOperation>();
 
+    //Mutex lock for images_remaining.
     private static Mutex image_lock = new Mutex();
 
+    //Function that is called when mod loading is almost done. Goes through all mods and looks for CustomFileTypes.xml, then passes it off to the loader for everything.
     public static void AfterInstall()
     {
         var modCtrl = S.I.modCtrl;
         images_remaining = new List<AsyncOperation>();
-        //Debug.Log("Round 1");
         string[] directories = Directory.GetDirectories(ModCtrl.MODS_PATH);
         string[] strArray = directories;
         var list = new List<CustomFileType>();
@@ -55,10 +61,9 @@ internal static class CustomFileLoader
             string path2 = strArray[index];
             string str = Path.Combine(ModCtrl.MODS_PATH, path2);
             DirectoryInfo directoryInfo = new DirectoryInfo(str);
-            //Debug.Log((object)("Installing " + directoryInfo.Name + " at " + str));
             var temp = new List<CustomFileType>();
             var tempAssemblies = new List<FileInfo>();
-            FindCustomDataInstructions(directoryInfo, temp, tempAssemblies, true);
+            FindCustomFileTypes(directoryInfo, temp, tempAssemblies, true);
             list.AddRange(temp);
         }
         if (SteamManager.Initialized)
@@ -67,11 +72,10 @@ internal static class CustomFileLoader
             {
                 if (workshopItem.IsActive)
                 {
-                    //Debug.Log((object)("Installing " + workshopItem.Name + " at " + workshopItem.InstalledLocalFolder));
                     DirectoryInfo dir = new DirectoryInfo(workshopItem.InstalledLocalFolder);
                     var temp = new List<CustomFileType>();
                     var tempAssemblies = new List<FileInfo>();
-                    FindCustomDataInstructions(dir, temp, tempAssemblies, true);
+                    FindCustomFileTypes(dir, temp, tempAssemblies, true);
                     list.AddRange(temp);
                 }
             }
@@ -79,81 +83,9 @@ internal static class CustomFileLoader
         ReadAllFiles(list, strArray);
     }
 
-    private static void ReadAllFiles(List<CustomFileType> types, string[] strArray)
+    //Looks for CustomFileTypes.xml throughout a mod. Looks for assemblies as well in order to load those file types with the correct handler.
+    private static void FindCustomFileTypes(DirectoryInfo dir, List<CustomFileType> re, List<FileInfo> assembly_files, bool first)
     {
-        for (int index = 0; index < strArray.Length; ++index)
-        {
-            string path2 = strArray[index];
-            string str = Path.Combine(ModCtrl.MODS_PATH, path2);
-            DirectoryInfo directoryInfo = new DirectoryInfo(str);
-            //Debug.Log((object)("Installing " + directoryInfo.Name + " at " + str));
-            ReadAllFilesInDirectory(types, directoryInfo, true);
-        }
-        if (SteamManager.Initialized)
-        {
-            foreach (LapinerTools.Steam.Data.WorkshopItem workshopItem in LapinerTools.Steam.SteamMainBase<LapinerTools.Steam.SteamWorkshopMain>.Instance.m_activeItems.Values)
-            {
-                if (workshopItem.IsActive)
-                {
-                    //Debug.Log((object)("Installing " + workshopItem.Name + " at " + workshopItem.InstalledLocalFolder));
-                    var directory = new DirectoryInfo(workshopItem.InstalledLocalFolder);
-                    ReadAllFilesInDirectory(types, directory, true);
-                }
-            }
-        }
-    }
-
-    private static void ReadAllFilesInDirectory(List<CustomFileType> types, DirectoryInfo dir, bool first)
-    {
-        Debug.Log(dir.FullName);
-        var files = dir.GetFiles();
-        var modCtrl = S.I.modCtrl;
-        if (!first)
-        {
-            var baseFiles = new List<FileInfo>(files);
-            for (int i = 0; i < baseFiles.Count(); i++)
-            {
-                if (baseFiles[i].Name.EndsWith(".png"))
-                {
-                    modCtrl.StartCoroutine(LoadImageFile(baseFiles[i]));
-                    baseFiles.Remove(baseFiles[i]);
-                    i--;
-                }
-            }
-            Debug.Log("Running default installing for folder " + dir.Name);
-            Debug.Log("Huh: " + dir.FullName);
-            var coroutine = modCtrl._InstallTheseMods(files, dir.FullName);
-            while (coroutine.MoveNext()) ;
-            Debug.Log("Loaded every default filetype in: " + dir.Name);
-        }
-
-        for (int i = 0; i < files.Length; i++)
-        {
-            FileInfo file = files[i];
-
-            if (!file.Name.Contains(".meta"))
-            {
-                var name = file.Name;
-
-                foreach (var type in types)
-                {
-                    if ((!type.contains && name == type.filename) || (type.contains && name.Contains(type.filename)))
-                    {
-                        Debug.Log("Loading file: " + file.FullName);
-                        type.handler.Invoke(null, new object[] { file });
-                    }
-                }
-            }
-        }
-        foreach (var directory in dir.GetDirectories())
-        {
-            ReadAllFilesInDirectory(types, directory, false);
-        }
-    }
-
-    private static void FindCustomDataInstructions(DirectoryInfo dir, List<CustomFileType> re, List<FileInfo> assembly_files, bool first)
-    {
-        Debug.Log(dir.FullName);
         var files = dir.GetFiles();
         var modCtrl = S.I.modCtrl;
         for (int i = 0; i < files.Length; i++)
@@ -164,7 +96,6 @@ internal static class CustomFileLoader
                 switch (file.Name)
                 {
                     case "CustomFileTypes.xml":
-                        Debug.Log("Found Data: " + file.FullName);
                         re.AddRange(ReadCustomFileTypeInstructions(file.FullName));
                         break;
                     default:
@@ -177,42 +108,44 @@ internal static class CustomFileLoader
 
             }
         }
+        //Go through sub folders.
         foreach (DirectoryInfo directory in dir.GetDirectories())
         {
-            FindCustomDataInstructions(directory, re, assembly_files, false);
+            if (directory.Name != "disabled") FindCustomFileTypes(directory, re, assembly_files, false);
         }
+        //If this is the base folder, find the correct handler for each file type.
         if (first)
         {
             foreach (CustomFileType customdatatype in re)
             {
+                //Mods have multiple assemblies sometimes, so you gotta check all of them...
                 foreach (var info in assembly_files)
                 {
                     try
                     {
                         var assem = Assembly.LoadFrom(info.FullName);
-                        Debug.Log(assem.FullName);
                         var type = assem.GetType(customdatatype.typename);
-                        Debug.Log(type);
                         customdatatype.handler = type.GetMethod(customdatatype.methodname);
                         break;
                     }
-                    catch (Exception e)
+                    catch
                     {
-                        Debug.Log(e.Message);
+                        //Errors are expected, just gotta deal with it.
                     }
                 }
             }
+            //Remove file types with null handler.
             re = (from c in re where c.handler != null select c).ToList();
         }
     }
 
+    //XML Parser for CustomFileTypes.xml
     private static List<CustomFileType> ReadCustomFileTypeInstructions(string file)
     {
         var list = new List<CustomFileType>();
         XDocument doc = XDocument.Load(file);
         foreach (var node in doc.Root.Elements())
         {
-            Debug.Log("node name: " + node.Name);
             if (node.Name == "CustomFileType")
             {
                 CustomFileType type = new CustomFileType();
@@ -222,7 +155,6 @@ internal static class CustomFileLoader
 
                     if (!el.IsEmpty)
                     {
-                        Debug.Log("inner node name: " + el.Name);
                         switch (el.Name.ToString())
                         {
                             case "Filename":
@@ -231,12 +163,12 @@ internal static class CustomFileLoader
                                     try
                                     {
                                         type.contains = bool.Parse(el.Attribute("contains").Value);
-                                    } 
-                                    catch (Exception e)
+                                    }
+                                    catch
                                     {
                                         Debug.Log("Error parsing filename of custom file type, should only have 'contains' attribute with boolean value");
                                     }
-                                   
+
                                 }
                                 type.filename = el.Value;
                                 break;
@@ -256,7 +188,6 @@ internal static class CustomFileLoader
                 {
                     if (type.methodname != "" && type.typename != "")
                     {
-                        Debug.Log("Adding file type to temporary list : " + type.filename);
                         list.Add(type);
 
                     }
@@ -275,6 +206,88 @@ internal static class CustomFileLoader
         return list;
     }
 
+    //Function that goes through all mods and calls the recursive ReadAllFilesInDirectory
+    private static void ReadAllFiles(List<CustomFileType> types, string[] strArray)
+    {
+        for (int index = 0; index < strArray.Length; ++index)
+        {
+            string path2 = strArray[index];
+            string str = Path.Combine(ModCtrl.MODS_PATH, path2);
+            DirectoryInfo directoryInfo = new DirectoryInfo(str);
+            ReadAllFilesInDirectory(types, directoryInfo, true);
+        }
+        if (SteamManager.Initialized)
+        {
+            foreach (LapinerTools.Steam.Data.WorkshopItem workshopItem in LapinerTools.Steam.SteamMainBase<LapinerTools.Steam.SteamWorkshopMain>.Instance.m_activeItems.Values)
+            {
+                if (workshopItem.IsActive)
+                {
+                    var directory = new DirectoryInfo(workshopItem.InstalledLocalFolder);
+                    ReadAllFilesInDirectory(types, directory, true);
+                }
+            }
+        }
+    }
+
+    //Recursive. 'first' indicates if it is the main directory(which was already loaded) and loads everything it can without calling a subroutine. 
+    private static void ReadAllFilesInDirectory(List<CustomFileType> types, DirectoryInfo dir, bool first)
+    {
+        var files = dir.GetFiles();
+        var modCtrl = S.I.modCtrl;
+        if (!first)
+        {
+            var baseFiles = new List<FileInfo>(files);
+            //Find image files and remove them from the default loading list.
+            for (int i = 0; i < baseFiles.Count(); i++)
+            {
+                if (baseFiles[i].Name.EndsWith(".png"))
+                {
+                    //Images are the only default type that requires a coroutine.
+                    modCtrl.StartCoroutine(LoadImageFile(baseFiles[i]));
+                    baseFiles.Remove(baseFiles[i]);
+                    i--;
+                }
+            }
+            Debug.Log("Running default installing for folder " + dir.Name);
+
+            //IMPORTANT: this section creates what would normally be a coroutine, but runs through its entirety while ignoring what would normally cause a delay.
+            //The reason this is done is because, do to loading every file in subfolders, images which are normally loaded through AnimInfo.xml files do not need to be loaded twice.
+            //By forcing through this routine, we dont make it take time to load the animations, since we will load them later anyway. The actual data in AnimInfo loads before image loading, and still works.
+            //Images are removed beforehand because they cannot be loaded this way.
+            var coroutine = modCtrl._InstallTheseMods(files, dir.FullName);
+            while (coroutine.MoveNext()) ;
+        }
+
+        //Go through files looking for the custom file types found earlier.
+        for (int i = 0; i < files.Length; i++)
+        {
+            FileInfo file = files[i];
+
+            if (!file.Name.Contains(".meta"))
+            {
+                var name = file.Name;
+
+                foreach (var type in types)
+                {
+                    if ((!type.contains && name == type.filename) || (type.contains && name.Contains(type.filename)))
+                    {
+                        //We don't break in this section so that files can be handled by multiple mods if necessary.
+                        Debug.Log("Loading file: " + file.FullName);
+                        type.handler.Invoke(null, new object[] { file });
+                    }
+                }
+            }
+        }
+        foreach (var directory in dir.GetDirectories())
+        {
+            //Now look through subfolders that arent named 'disabled'.
+            if (directory.Name != "disabled") ReadAllFilesInDirectory(types, directory, false);
+        }
+    }
+
+    
+
+    //Thread safe image loader.
     private static IEnumerator LoadImageFile(FileInfo theFile)
     {
         if (!theFile.Name.Contains(".meta"))
@@ -316,6 +329,7 @@ internal static class CustomFileLoader
         }
     }
 
+    //Self Explanatory
     private static IEnumerator LoadItemDataAfterInstall()
     {
         var modCtrl = S.I.modCtrl;
@@ -326,6 +340,7 @@ internal static class CustomFileLoader
         S.I.itemMan.LoadItemData();
     }
 
+    //Stores information for custom file types.
     internal class CustomFileType
     {
         public bool contains = false;
