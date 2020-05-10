@@ -107,6 +107,7 @@
   <ItemGroup>
     <Compile Include="Additions\CustomBrands.cs" />
     <Compile Include="Data\CustomFileLoader.cs" />
+    <Compile Include="Data\CustomLanguage.cs" />
     <Compile Include="Lua\BeingVariables.cs" />
     <Compile Include="Data\CustomData.cs" />
     <Compile Include="Data\CustomEnums.cs" />
