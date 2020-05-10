@@ -207,7 +207,8 @@ Vanilla:
 
 MoreLuaPower lets you add custom file loading to your mod. 
 Adding a CustomFileTypes.xml to your mod will allow it to handle any file under the specification you give. 
-Ask in the modding discord for help on this one. (TODO: name examples of mods using this)
+Ask in the modding discord for help on this one. @Shenanigans specifically. (TODO: name examples of mods using this)
+
 //Also loads subfolders of mods after all mods' main folders are loaded.
 
 
