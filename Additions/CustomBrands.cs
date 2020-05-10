@@ -2,11 +2,12 @@
 using I2.Loc;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 class LuaPowerBrands
 {
-    public static Brand MakeBrand(string name)
+    public static Brand MakeBrand(string name, string description)
     {
         if (LuaPowerData.customEnums[typeof(Brand)].Contains(name))
         {
@@ -17,6 +18,7 @@ class LuaPowerBrands
         LuaPowerData.customEnums[typeof(Brand)].Add(name);
         Array.Resize(ref S.I.deCtrl.brandSprites, Mathf.Max(S.I.deCtrl.brandSprites.Length, (int)brand + 1));
         Traverse.Create(S.I.foCtrl).Field("brandTypes").Method("Add", new Type[] { typeof(Brand) }).GetValue(new object[] { brand });
+        S.I.itemMan.brandTypes.Add(brand);
         BrandListCard brandListCard = UnityEngine.Object.Instantiate<BrandListCard>(S.I.foCtrl.brandListCardPrefab);
         brandListCard.transform.SetParent(S.I.foCtrl.focusGrid);
         brandListCard.foCtrl = S.I.foCtrl;
@@ -25,7 +27,8 @@ class LuaPowerBrands
         brandListCard.SetBrand(brand);
         brandListCard.tmpText.text = name;
         S.I.foCtrl.brandListCards.Add(brandListCard);
-        //S.I.itemMan.brandSpellLists.Add(brand, new List<SpellObject>());
+        LuaPowerLang.ImportTerm("BrandNames/"+name, "English", name);
+        LuaPowerLang.ImportTerm("BrandDescriptions/"+name, "English", description);
         return brand;
     }
     public static void SetBrandImage(Brand brand, string sprite, string BGSprite = null)
