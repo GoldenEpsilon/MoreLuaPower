@@ -24,6 +24,7 @@ Table of Contents:
 	[LUA FUNCTIONS]
 	[GLOBAL LUA VARIABLES]
 	[CUSTOM DATA TYPES]
+	[CUSTOM FILE TYPES]
 	[ACCESSIBLE TYPES]
 	[ORGANIZATION]
 	[PETS]
@@ -200,6 +201,15 @@ Vanilla:
         { emissionRate = "10" },
         { burstCount = "1" },				//Integers only
         { shape = "Sphere" },				//Sphere, Hemisphere, Cone, Donut, Box, Circle, Edge, Rectangle //TODO
+
+
+[CUSTOM FILE TYPES]
+
+MoreLuaPower lets you add custom file loading to your mod. 
+Adding a CustomFileTypes.xml to your mod will allow it to handle any file under the specification you give. 
+Ask in the modding discord for help on this one. @Shenanigans specifically. (TODO: name examples of mods using this)
+
+//Also loads subfolders of mods after all mods' main folders are loaded.
 
 
 [ACCESSIBLE TYPES]
