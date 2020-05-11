@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-class LuaPowerBrands
+public class LuaPowerBrands
 {
-    public static Brand MakeBrand(string name, string description)
+    public static Brand MakeBrand(string name, string description = null)
     {
         if (LuaPowerData.customEnums[typeof(Brand)].Contains(name))
         {
@@ -27,48 +27,16 @@ class LuaPowerBrands
         brandListCard.SetBrand(brand);
         brandListCard.tmpText.text = name;
         S.I.foCtrl.brandListCards.Add(brandListCard);
-        LuaPowerLang.ImportTerm("BrandNames/"+name, "English", name);
-        LuaPowerLang.ImportTerm("BrandDescriptions/"+name, "English", description);
+        LuaPowerLang.ImportTerm("BrandNames/"+name, name);
+        if (description != null)
+        {
+            LuaPowerLang.ImportTerm("BrandDescriptions/" + name, description);
+        }
         return brand;
     }
-    public static void SetBrandImage(Brand brand, string sprite, string BGSprite = null)
+    public static string GetBrand(Brand brand)
     {
-        if (LuaPowerData.customEnums[typeof(Brand)].Count < (int)brand)
-        {
-            Debug.Log("ERROR: A Brand does not exist with that number.\nYou should run MakeBrand first.");
-            return;
-        }
-        Array.Resize(ref S.I.deCtrl.brandSprites, Mathf.Max(S.I.deCtrl.brandSprites.Length, (int)brand + 1));
-        S.I.deCtrl.brandSprites[(int)brand] = LuaPowerSprites.GetSprite(sprite);
-        if (S.I.deCtrl.spellBackgroundBrands.Count <= (int)brand)
-        {
-            while (S.I.deCtrl.spellBackgroundBrands.Count <= (int)brand)
-            {
-                if (BGSprite != null)
-                {
-                    S.I.deCtrl.spellBackgroundBrands.Add(LuaPowerSprites.GetSprite(BGSprite));
-                }
-                else
-                {
-                    S.I.deCtrl.spellBackgroundBrands.Add(LuaPowerSprites.GetSprite(sprite));
-                }
-            }
-        }
-        else if (BGSprite != null && LuaPowerSprites.GetSprite(BGSprite) != null)
-        {
-            S.I.deCtrl.spellBackgroundBrands[(int)brand] = LuaPowerSprites.GetSprite(BGSprite);
-        }
-        else
-        {
-            S.I.deCtrl.spellBackgroundBrands[(int)brand] = LuaPowerSprites.GetSprite(sprite);
-        }
-        foreach (BrandListCard b in S.I.foCtrl.brandListCards)
-        {
-            if (b.brand == brand)
-            {
-                b.image.sprite = LuaPowerSprites.GetSprite(sprite);
-            }
-        }
+        return LuaPowerData.customEnums[typeof(Brand)][(int)brand];
     }
     public static void SetBrandImage(string name, string sprite, string BGSprite = null)
     {

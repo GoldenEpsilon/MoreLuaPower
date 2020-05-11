@@ -2,6 +2,7 @@
  *  More Lua Power, made by Golden Epsilon
  *  Audio loading, ProgramAdvance, Kickers, and Multicast added by Sunreal
  *  PetBuff for MoreLuaPower by stephanreiken
+ *  Subfolder loading by Shenanigans
  *  Workshop URL: https://steamcommunity.com/sharedfiles/filedetails/?id=2066319533
  *  GitHub Page: https://github.com/GoldenEpsilon/MoreLuaPower
  *

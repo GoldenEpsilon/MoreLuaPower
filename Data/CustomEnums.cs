@@ -8,9 +8,10 @@ using UnityEngine;
 public class LuaPowerCustomEnumsSetup
 {
     static public void Setup() {
-        LuaPowerData.customEnums = new Dictionary<Type, List<string>>();
-        foreach (Type i in LuaPowerData.customEnums.Keys) {
-            foreach(string i2 in Enum.GetNames(i))
+        foreach (Type i in LuaPowerData.customEnums.Keys)
+        {
+            LuaPowerData.customEnums[i].Clear();
+            foreach (string i2 in Enum.GetNames(i))
             {
                 LuaPowerData.customEnums[i].Add(i2);
             }

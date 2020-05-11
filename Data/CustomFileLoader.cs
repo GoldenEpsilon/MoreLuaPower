@@ -111,7 +111,7 @@ internal static class CustomFileLoader
         //Go through sub folders.
         foreach (DirectoryInfo directory in dir.GetDirectories())
         {
-            if (directory.Name != "disabled") FindCustomFileTypes(directory, re, assembly_files, false);
+            if (directory.Name.ToLower() != "disabled") FindCustomFileTypes(directory, re, assembly_files, false);
         }
         //If this is the base folder, find the correct handler for each file type.
         if (first)
@@ -232,6 +232,9 @@ internal static class CustomFileLoader
     //Recursive. 'first' indicates if it is the main directory(which was already loaded) and loads everything it can without calling a subroutine. 
     private static void ReadAllFilesInDirectory(List<CustomFileType> types, DirectoryInfo dir, bool first)
     {
+        if (dir.Name.ToLower() == "disabled") {
+            return;
+        }
         var files = dir.GetFiles();
         var modCtrl = S.I.modCtrl;
         if (!first)
@@ -281,7 +284,7 @@ internal static class CustomFileLoader
         foreach (var directory in dir.GetDirectories())
         {
             //Now look through subfolders that arent named 'disabled'.
-            if (directory.Name != "disabled") ReadAllFilesInDirectory(types, directory, false);
+            if (directory.Name.ToLower() != "disabled") ReadAllFilesInDirectory(types, directory, false);
         }
     }
 
