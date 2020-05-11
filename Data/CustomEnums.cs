@@ -8,42 +8,28 @@ using UnityEngine;
 class LuaPowerCustomEnumsSetup
 {
     static public void Setup() {
-        LuaPowerData.statuses = new List<string>();
-        foreach (string i in Enum.GetNames(typeof(Status))) {
-            LuaPowerData.statuses.Add(i);
+        foreach(Type i in LuaPowerData.customEnums.Keys) {
+            foreach(string i2 in Enum.GetNames(i))
+            {
+                LuaPowerData.customEnums[i].Add(i2);
+            }
         }
-        LuaPowerData.brands = new List<string>();
-        foreach (string i in Enum.GetNames(typeof(Brand))) {
-            LuaPowerData.brands.Add(i);
-        }
-        LuaPowerData.effects = new List<string>();
-        foreach (string i in Enum.GetNames(typeof(Effect))) {
-            LuaPowerData.effects.Add(i);
-        }
-        //LuaPowerData.effects.Add("CallLua"); not implemented yet
     }
 }
 
-[HarmonyPatch(typeof(Enum))]
-[HarmonyPatch("InternalFormat")]
+[HarmonyPatch(typeof(Type))]
+[HarmonyPatch("GetEnumData")]
 class MoreLuaPower_CustomEnums
 {
-    static bool Prefix(Type eT, object value, ref string __result) {
-        if (value is int n && n > 1) {
-            if (eT == typeof(Status) && LuaPowerData.statuses.Count > 0) {
-                __result = LuaPowerData.statuses[n];
-                return false;
-            }
-            if (eT == typeof(Brand) && LuaPowerData.brands.Count > 0) {
-                __result = LuaPowerData.brands[n];
-                return false;
-            }
-            if (eT == typeof(Effect) && LuaPowerData.effects.Count > 0) {
-                __result = LuaPowerData.effects[n];
-                return false;
+    static void Postfix(Enum __instance, ref string[] enumNames)
+    {
+        foreach (Type i in LuaPowerData.customEnums.Keys)
+        {
+            if (__instance.GetType() == i && LuaPowerData.customEnums[i].Count > 0)
+            {
+                enumNames = LuaPowerData.customEnums[i].ToArray();
             }
         }
-        return true;
     }
 }
 
@@ -55,35 +41,21 @@ class MoreLuaPower_CustomEnumsParse
         FieldInfo n = __result.GetType().GetField("Names", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
         FieldInfo v = __result.GetType().GetField("Values", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
 
-        if (enumType == typeof(Status) && LuaPowerData.statuses.Count > 0) {
-            if (getNames) {
-                n.SetValue(__result, LuaPowerData.statuses.ToArray());
+        foreach (Type i in LuaPowerData.customEnums.Keys)
+        {
+            if ((Type)enumType == i && LuaPowerData.customEnums[i].Count > 0)
+            {
+                if (getNames)
+                {
+                    n.SetValue(__result, LuaPowerData.customEnums[i].ToArray());
+                }
+                List<ulong> values = new List<ulong>();
+                for (int i2 = 0; i2 < LuaPowerData.customEnums[i].Count; i2++)
+                {
+                    values.Add((ulong)i2);
+                }
+                v.SetValue(__result, values.ToArray());
             }
-            List<ulong> values = new List<ulong>();
-            for (int i = 0; i < LuaPowerData.statuses.Count; i++) {
-                values.Add((ulong)i);
-            }
-            v.SetValue(__result, values.ToArray());
-        }
-        if (enumType == typeof(Brand) && LuaPowerData.brands.Count > 0) {
-            if (getNames) {
-                n.SetValue(__result, LuaPowerData.brands.ToArray());
-            }
-            List<ulong> values = new List<ulong>();
-            for (int i = 0; i < LuaPowerData.brands.Count; i++) {
-                values.Add((ulong)i);
-            }
-            v.SetValue(__result, values.ToArray());
-        }
-        if (enumType == typeof(Effect) && LuaPowerData.effects.Count > 0) {
-            if (getNames) {
-                n.SetValue(__result, LuaPowerData.effects.ToArray());
-            }
-            List<ulong> values = new List<ulong>();
-            for (int i = 0; i < LuaPowerData.effects.Count; i++) {
-                values.Add((ulong)i);
-            }
-            v.SetValue(__result, values.ToArray());
         }
         enumType.GetType().GetField("GenericCache", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static).SetValue(enumType, __result);
     }

@@ -23,6 +23,8 @@ PRIORITY:
 TODO:
     make custom statuses work with XML
     add more math to XML rather than just addition
+    add appending to XML
+    Add custom check for brands
     Custom Trigger Stuff:
         Add a Harmony patch that runs after DeckCtrl.RemoveArtifactCard(cardToRemove) and pass the cardToRemove to custom code based on custom triggers
             Same for spells

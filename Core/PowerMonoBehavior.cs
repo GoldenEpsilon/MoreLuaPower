@@ -1,11 +1,22 @@
 ﻿using System;
+using HarmonyLib;
+using MoonSharp.Interpreter;
 using UnityEngine;
 using System.IO;
 using System.Collections;
 using UnityEngine.Networking;
+using UnityEngine.Experimental.PlayerLoop;
+using System.Collections.Generic;
 
 class PowerMonoBehavior : MonoBehaviour
 {
+    public static List<object> UpdateScripts = new List<object>();
+    public void Update()
+    {
+        foreach (object script in UpdateScripts) {
+            S.I.mainCtrl.StartCoroutine(MoreLuaPower_FunctionHelper.EffectRoutine(Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().CreateCoroutine(script)));
+        }
+    }
     public static IEnumerator LoadSprite(string url, Action<Texture2D> response) {
         var request = UnityWebRequestTexture.GetTexture(url);
         yield return request.SendWebRequest();

@@ -24,6 +24,7 @@ Table of Contents:
 	[LUA FUNCTIONS]
 	[GLOBAL LUA VARIABLES]
 	[CUSTOM DATA TYPES]
+	[CUSTOM FILE TYPES]
 	[ACCESSIBLE TYPES]
 	[ORGANIZATION]
 	[PETS]
@@ -69,43 +70,46 @@ Table of Contents:
 
 MoreLuaPower:
 
-    void MakeSprite			(string {path}, PATH, string {name})
+	void MakeSprite			(string {path}, PATH, string {name})
 		//Takes the path to the image you want to turn into a sprite
 		// compared to your mod's base directory, the PATH global variable,
 		// and a name for the sprite. Keep track of that name, because
 		// that's how you use the |Sprite| later. More info in [custom data types].
 
-    void ParticleEffect		(Being {being}, |ParticleSystem| {system})
+	void ParticleEffect		(Being {being}, |ParticleSystem| {system})
 		//Creates and runs a particle effect attached to the Being you pass.
 		// More info on |ParticleSystem| is in [custom data types].
 
-    void NewEffect			(string {name}, |Sprite| {sprite})
+	void NewEffect			(string {name}, |Sprite| {sprite})
 		//Creates a new |StatusEffect| named {name}, using {sprite} as the icon.
 
-    bool EffectExists		(string {effect})
+	bool EffectExists		(string {effect})
 		//Checks to see if {effect} exists.
 		// In other words, it checks if NewEffect has been run for {effect}
 
-    void AddEffect			(Being {being}, |StatusEffect| {effect}, float {duration} = 0, float {amount} = 0)
+	void AddEffect			(Being {being}, |StatusEffect| {effect}, float {duration} = 0, float {amount} = 0)
 		//Adds {effect} to {being}.
 		// If {duration} is 0, the effect duration is infinite.
 		// Keep in mind when using this for vanilla effects that they don't always allow arbitrary {amount}s:
 		// As an example, Fragile cannot apply less than one stack.
 
-    void RemoveEffect		(Being {being}, |StatusEffect| {effect})
+	void RemoveEffect		(Being {being}, |StatusEffect| {effect})
 		//Removes {effect} from {being}
 
-    bool GetEffect			(Being {being}, |StatusEffect| {effect})
+	bool GetEffect			(Being {being}, |StatusEffect| {effect})
 		//Checks to see if {being} has {effect}, and returns true or false.
 		// If the effect does not exist, returns false and logs that the effect does not exist in the chat.
 
-    float GetEffectAmount	(Being {being}, |StatusEffect| {effect})
+	float GetEffectAmount		(Being {being}, |StatusEffect| {effect})
 		//Checks to see if {being} has {effect}, and returns the amount of the effect if so.
 		// If the effect does not exist, returns 0 and logs that the effect does not exist in the chat.
 
 	void PlaySound			(Being {being}, |Sound| {sound})
 		//Plays the sound specified.
 		// If the sound does not exist, it logs that the effect does not exist in the chat.
+	
+	void PlayBattleMusic		(|Sound| {music})
+		//plays the specified sound as music
 
 	void SetVariable		(Being {being}, string {variableName}, string {variable})
 		//Sets the Custom Variable {variableName} to {variable} for {being}, adding it if it doesn't exist.
@@ -197,6 +201,15 @@ Vanilla:
         { emissionRate = "10" },
         { burstCount = "1" },				//Integers only
         { shape = "Sphere" },				//Sphere, Hemisphere, Cone, Donut, Box, Circle, Edge, Rectangle //TODO
+
+
+[CUSTOM FILE TYPES]
+
+MoreLuaPower lets you add custom file loading to your mod. 
+Adding a CustomFileTypes.xml to your mod will allow it to handle any file under the specification you give. 
+Ask in the modding discord for help on this one. @Shenanigans specifically. (TODO: name examples of mods using this)
+
+//Also loads subfolders of mods after all mods' main folders are loaded.
 
 
 [ACCESSIBLE TYPES]
