@@ -5,10 +5,11 @@ using System.Dynamic;
 using System.Reflection;
 using UnityEngine;
 
-class LuaPowerCustomEnumsSetup
+public class LuaPowerCustomEnumsSetup
 {
     static public void Setup() {
-        foreach(Type i in LuaPowerData.customEnums.Keys) {
+        LuaPowerData.customEnums = new Dictionary<Type, List<string>>();
+        foreach (Type i in LuaPowerData.customEnums.Keys) {
             foreach(string i2 in Enum.GetNames(i))
             {
                 LuaPowerData.customEnums[i].Add(i2);

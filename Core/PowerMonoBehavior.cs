@@ -8,7 +8,7 @@ using UnityEngine.Networking;
 using UnityEngine.Experimental.PlayerLoop;
 using System.Collections.Generic;
 
-class PowerMonoBehavior : MonoBehaviour
+public class PowerMonoBehavior : MonoBehaviour
 {
     public static List<object> UpdateScripts = new List<object>();
     public void Update()
