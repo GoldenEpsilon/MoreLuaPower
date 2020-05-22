@@ -92,7 +92,7 @@ MoreLuaPower:
 		// The main purpose of this function for now is that
 		// it returns nil when the sprite asked for either doesn't exist
 		// or hasn't loaded in yet.
-
+	
 	void NewEffect			(string {name}, |Sprite| {sprite})
 		//Creates a new |StatusEffect| named {name}, using {sprite} as the icon.
 
@@ -170,6 +170,12 @@ MoreLuaPower:
 		//Adds a term to the language dictionary, optionally letting you choose a language other than english.
 		// Mainly used behind the scenes for adding brands right now, but also works for changing whatever 
 		// text you want if you look into the code.
+		
+	Player GetPlayer		()
+		//Simply returns the current player.
+		// Meant to be used in Update, GameUpdate, and other similar functions.
+
+Lua-based:
 
 	PetBuffArtifactFunction(item, target, status, amount, duration, extra)		
 		// Item needs to be a reference to the item that triggered this effect. 
@@ -188,7 +194,10 @@ MoreLuaPower:
 	//  Use global variables to make sure that it only runs once if you want that.
 
 	Update:
-	//Is called every frame.
+	//Is called every frame, including on menus and when time's stopped.
+
+	GameUpdate:
+	//Is called every physics update, does not run on certain menus intentionally like the main menu and the game over menu. Meant for updating during gameplay.
 
 [GLOBAL LUA VARIABLES]
 

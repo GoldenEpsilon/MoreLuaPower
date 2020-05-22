@@ -29,6 +29,7 @@ class MoreLuaPower_GlobalLuaFunctions
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["GetVariable"] = (Func<Being, string, string>)LuaPowerBeingVariables.GetVariable;
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["AddHook"] = (Action<FTrigger, string>)LuaPowerHooks.AddHook;
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["AddLangTerm"] = (Action<string, string, string>)LuaPowerLang.ImportTerm;
+        Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["GetPlayer"] = (Func<Player>)MoreLuaPower.GetPlayer;
     }
 }
 
@@ -48,8 +49,35 @@ class MoreLuaPower_InitFunction
         obj = ___myLuaScript.Globals["Update"];
         if (obj != null)
         {
-            PowerMonoBehavior.UpdateScripts.Add(obj);
+            bool unique = true;
+            foreach (object o in PowerMonoBehavior.UpdateScripts)
+            {
+                if (DynValue.FromObject(___myLuaScript, o).Function.EntryPointByteCodeLocation == DynValue.FromObject(___myLuaScript, obj).Function.EntryPointByteCodeLocation)
+                {
+                    unique = false;
+                }
+            }
+            if (unique)
+            {
+                PowerMonoBehavior.UpdateScripts.Add(obj);
+                PowerMonoBehavior.UpdateBaseScripts.Add(___myLuaScript);
+            }
             ___myLuaScript.Globals.Remove("Update");
+        }
+        obj = ___myLuaScript.Globals["GameUpdate"];
+        if (obj != null)
+        {
+            bool unique = true;
+            foreach (object o in PowerMonoBehavior.GameUpdateScripts) {
+                if (DynValue.FromObject(___myLuaScript, o).Function.EntryPointByteCodeLocation == DynValue.FromObject(___myLuaScript, obj).Function.EntryPointByteCodeLocation) {
+                    unique = false;
+                }
+            }
+            if (unique) {
+                PowerMonoBehavior.GameUpdateScripts.Add(obj);
+                PowerMonoBehavior.GameUpdateBaseScripts.Add(___myLuaScript);
+            }
+            ___myLuaScript.Globals.Remove("GameUpdate");
         }
     }
 }

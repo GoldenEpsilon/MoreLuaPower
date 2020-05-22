@@ -34,10 +34,16 @@ using Rewired;
 class MoreLuaPower
 {
     static void Prepare() {
-        Debug.Log("MoreLuaPower Version 1.4");
+		if (Harmony.HasAnyPatches("com.MoreLuaPower.patch")) {
+			return;
+		}
+		Debug.Log("MoreLuaPower Version 1.5");
 		LuaPowerData.Setup();
 		LuaPowerCustomEnumsSetup.Setup();
 		//MoreLuaPowerTesting.Test();
+	}
+	static public Player GetPlayer() {
+		return S.I.batCtrl.currentPlayer;
 	}
 }
 /*
