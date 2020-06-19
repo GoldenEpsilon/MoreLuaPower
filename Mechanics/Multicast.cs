@@ -24,19 +24,17 @@ using UnityEngine;
 class MoreLuaPower_Multicast
 {
     [HarmonyPriority(Priority.LowerThanNormal)]
-    static void Prefix(ref Player __instance, int slotNum, ref int manaOverride, bool consumeOverride)
-    {
-        if (__instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary.ContainsKey("DontDiscard") && 
-            __instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["DontDiscard"] == "true")
-        {
+    static void Prefix(ref Player __instance, int slotNum, ref int manaOverride, bool consumeOverride) {
+        if (__instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary.ContainsKey("DontDiscard") &&
+            __instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["DontDiscard"] == "true") {
             if (__instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary.ContainsKey("ShotsRemaining")) {
                 if (__instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary.ContainsKey("ManaCost")) {
                     switch (__instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["ManaCost"]) {
                         case "Start":
                             if (__instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary.ContainsKey("MaxShots") &&
                             __instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["ShotsRemaining"] !=
-                            __instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["MaxShots"]) { 
-                                manaOverride = 0; 
+                            __instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["MaxShots"]) {
+                                manaOverride = 0;
                             }
                             break;
                         case "End":
@@ -63,7 +61,7 @@ class MoreLuaPower_Multicast2
         if (__instance.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary.ContainsKey("DontDiscard") &&
             __instance.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["DontDiscard"] == "true" &&
             forceConsume == false) {
-            if (__instance.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary.ContainsKey("ShotsRemaining")){
+            if (__instance.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary.ContainsKey("ShotsRemaining")) {
                 __instance.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["ShotsRemaining"] = (Int32.Parse(__instance.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["ShotsRemaining"]) - 1).ToString();
                 if (Int32.Parse(__instance.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["ShotsRemaining"]) < 1) {
                     if (__instance.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary.ContainsKey("MaxShots")) {

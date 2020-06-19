@@ -9,8 +9,7 @@ using UnityEngine;
 [HarmonyPatch(new Type[] { typeof(string) })]
 class MoreLuaPower_GlobalLuaFunctions
 {
-    static void Postfix()
-    {
+    static void Postfix() {
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["MakeSprite"] = (Action<string, string, string>)LuaPowerSprites.MakeSprite;
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["GetSprite"] = (Func<string, Sprite>)LuaPowerSprites.GetSprite;
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["NewEffect"] = (Action<string, string>)LuaPowerStatus.NewEffect;
@@ -37,36 +36,29 @@ class MoreLuaPower_GlobalLuaFunctions
 [HarmonyPatch("AddScript")]
 class MoreLuaPower_InitFunction
 {
-    static void Postfix(Script ___myLuaScript)
-    {
+    static void Postfix(Script ___myLuaScript) {
         object obj;
         obj = ___myLuaScript.Globals["Init"];
-        if (obj != null)
-        {
+        if (obj != null) {
             S.I.mainCtrl.StartCoroutine(MoreLuaPower_FunctionHelper.EffectRoutine(___myLuaScript.CreateCoroutine(obj)));
             ___myLuaScript.Globals.Remove("Init");
         }
         obj = ___myLuaScript.Globals["Update"];
-        if (obj != null)
-        {
+        if (obj != null) {
             bool unique = true;
-            foreach (object o in PowerMonoBehavior.UpdateScripts)
-            {
-                if (DynValue.FromObject(___myLuaScript, o).Function.EntryPointByteCodeLocation == DynValue.FromObject(___myLuaScript, obj).Function.EntryPointByteCodeLocation)
-                {
+            foreach (object o in PowerMonoBehavior.UpdateScripts) {
+                if (DynValue.FromObject(___myLuaScript, o).Function.EntryPointByteCodeLocation == DynValue.FromObject(___myLuaScript, obj).Function.EntryPointByteCodeLocation) {
                     unique = false;
                 }
             }
-            if (unique)
-            {
+            if (unique) {
                 PowerMonoBehavior.UpdateScripts.Add(obj);
                 PowerMonoBehavior.UpdateBaseScripts.Add(___myLuaScript);
             }
             ___myLuaScript.Globals.Remove("Update");
         }
         obj = ___myLuaScript.Globals["GameUpdate"];
-        if (obj != null)
-        {
+        if (obj != null) {
             bool unique = true;
             foreach (object o in PowerMonoBehavior.GameUpdateScripts) {
                 if (DynValue.FromObject(___myLuaScript, o).Function.EntryPointByteCodeLocation == DynValue.FromObject(___myLuaScript, obj).Function.EntryPointByteCodeLocation) {
@@ -83,10 +75,8 @@ class MoreLuaPower_InitFunction
 }
 class MoreLuaPower_FunctionHelper
 {
-    public static IEnumerator EffectRoutine(DynValue result)
-    {
-        foreach (DynValue thr in result.Coroutine.AsTypedEnumerable())
-        {
+    public static IEnumerator EffectRoutine(DynValue result) {
+        foreach (DynValue thr in result.Coroutine.AsTypedEnumerable()) {
             yield return null;
         }
         yield break;

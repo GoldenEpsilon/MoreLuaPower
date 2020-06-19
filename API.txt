@@ -286,6 +286,7 @@ Ask in the modding discord for help on this one. @Shenanigans specifically. (TOD
 
 MoreLuaPower:
 	Rewired.Player							//This is used for checking button presses
+	S
     Run
     SpellListCard
 	ListCard

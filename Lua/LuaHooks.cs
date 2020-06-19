@@ -1,6 +1,6 @@
 ﻿using HarmonyLib;
 
-class LuaPowerHooks 
+class LuaPowerHooks
 {
 	public static void AddHook(FTrigger trigger, string func) {
 		LuaPowerData.luaHooks.Add(new LuaPowerTrigger(trigger, func));

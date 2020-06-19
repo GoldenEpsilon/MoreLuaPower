@@ -12,6 +12,7 @@ class MoreLuaPower_GlobalLuaTypes
 {
     static void Postfix() {
         UserData.RegisterType<Rewired.Player>(InteropAccessMode.Default, null);
+        UserData.RegisterType<S>(InteropAccessMode.Default, null);
         UserData.RegisterType<Run>(InteropAccessMode.Default, null);
         UserData.RegisterType<SpellListCard>(InteropAccessMode.Default, null);
         UserData.RegisterType<ListCard>(InteropAccessMode.Default, null);

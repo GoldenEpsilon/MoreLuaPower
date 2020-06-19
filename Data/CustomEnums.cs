@@ -8,11 +8,9 @@ using UnityEngine;
 public class LuaPowerCustomEnumsSetup
 {
     static public void Setup() {
-        foreach (Type i in LuaPowerData.customEnums.Keys)
-        {
+        foreach (Type i in LuaPowerData.customEnums.Keys) {
             LuaPowerData.customEnums[i].Clear();
-            foreach (string i2 in Enum.GetNames(i))
-            {
+            foreach (string i2 in Enum.GetNames(i)) {
                 LuaPowerData.customEnums[i].Add(i2);
             }
         }
@@ -23,12 +21,9 @@ public class LuaPowerCustomEnumsSetup
 [HarmonyPatch("GetEnumData")]
 class MoreLuaPower_CustomEnums
 {
-    static void Postfix(Enum __instance, ref string[] enumNames)
-    {
-        foreach (Type i in LuaPowerData.customEnums.Keys)
-        {
-            if (__instance.GetType() == i && LuaPowerData.customEnums[i].Count > 0)
-            {
+    static void Postfix(Enum __instance, ref string[] enumNames) {
+        foreach (Type i in LuaPowerData.customEnums.Keys) {
+            if (__instance.GetType() == i && LuaPowerData.customEnums[i].Count > 0) {
                 enumNames = LuaPowerData.customEnums[i].ToArray();
             }
         }
@@ -43,17 +38,13 @@ class MoreLuaPower_CustomEnumsParse
         FieldInfo n = __result.GetType().GetField("Names", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
         FieldInfo v = __result.GetType().GetField("Values", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
 
-        foreach (Type i in LuaPowerData.customEnums.Keys)
-        {
-            if ((Type)enumType == i && LuaPowerData.customEnums[i].Count > 0)
-            {
-                if (getNames)
-                {
+        foreach (Type i in LuaPowerData.customEnums.Keys) {
+            if ((Type)enumType == i && LuaPowerData.customEnums[i].Count > 0) {
+                if (getNames) {
                     n.SetValue(__result, LuaPowerData.customEnums[i].ToArray());
                 }
                 List<ulong> values = new List<ulong>();
-                for (int i2 = 0; i2 < LuaPowerData.customEnums[i].Count; i2++)
-                {
+                for (int i2 = 0; i2 < LuaPowerData.customEnums[i].Count; i2++) {
                     values.Add((ulong)i2);
                 }
                 v.SetValue(__result, values.ToArray());

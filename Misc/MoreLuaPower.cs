@@ -33,7 +33,7 @@ using Rewired;
 [HarmonyPatch("Awake")]
 class MoreLuaPower
 {
-    static void Prepare() {
+	static void Prepare() {
 		if (Harmony.HasAnyPatches("com.MoreLuaPower.patch")) {
 			return;
 		}

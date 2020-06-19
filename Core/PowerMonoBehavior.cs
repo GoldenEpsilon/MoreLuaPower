@@ -12,23 +12,20 @@ public class PowerMonoBehavior : MonoBehaviour
 {
     public static List<object> UpdateScripts = new List<object>();
     public static List<Script> UpdateBaseScripts = new List<Script>();
-    public void Update()
-    {
+    public void Update() {
         for (int i = 0; i < UpdateScripts.Count; i++) {
             S.I.mainCtrl.StartCoroutine(MoreLuaPower_FunctionHelper.EffectRoutine(UpdateBaseScripts[i].CreateCoroutine(UpdateScripts[i])));
         }
     }
     public static List<object> GameUpdateScripts = new List<object>();
     public static List<Script> GameUpdateBaseScripts = new List<Script>();
-    public void FixedUpdate()
-    {
-        if (S.I.batCtrl.GameState == GState.MainMenu || 
-            S.I.batCtrl.GameState == GState.HeroSelect || 
+    public void FixedUpdate() {
+        if (S.I.batCtrl.GameState == GState.MainMenu ||
+            S.I.batCtrl.GameState == GState.HeroSelect ||
             S.I.batCtrl.GameState == GState.GameOver) {
             return;
         }
-        for (int i = 0; i < GameUpdateScripts.Count; i++)
-        {
+        for (int i = 0; i < GameUpdateScripts.Count; i++) {
             S.I.mainCtrl.StartCoroutine(MoreLuaPower_FunctionHelper.EffectRoutine(GameUpdateBaseScripts[i].CreateCoroutine(GameUpdateScripts[i])));
         }
     }
