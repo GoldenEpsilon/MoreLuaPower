@@ -41,4 +41,22 @@ class PowerMonoBehavior : MonoBehaviour
             www.Dispose();
         }
     }
+
+    public static void EnableDeveloperTools(bool b)
+    {
+        if (b)
+        {
+            S.I.CONSOLE = true;
+            S.I.DEVELOPER_TOOLS = true;
+            S.I.consoleView.viewContainer.SetActive(true);
+            S.I.batCtrl.AddControlBlocks(Block.Console);
+            S.I.consoleView.inputField.ActivateInputField();
+            S.I.consoleView.inputField.Select();
+        }
+        else
+        {
+            S.I.CONSOLE = false;
+            S.I.DEVELOPER_TOOLS = false;
+        }
+    }
 }
