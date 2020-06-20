@@ -74,7 +74,7 @@ class MoreLuaPower_ProgramAdvance
         }
     }
     static void Postfix(ref Player __instance, Tuple<int, SpellObject, SpellObject> __state) {
-        if (__state != null && __state.Item1 != -1 && __state.Item1 < __instance.duelDisk.currentCardtridges.Count 
+        if (__state != null && __state.Item1 != -1 && __state.Item1 < __instance.duelDisk.currentCardtridges.Count
             && __instance.duelDisk.currentCardtridges.ElementAt(__state.Item1).spellObj == __state.Item3) {
             __instance.duelDisk.currentCardtridges.ElementAt(__state.Item1).spellObj = __state.Item2;
         }

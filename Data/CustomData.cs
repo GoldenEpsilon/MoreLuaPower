@@ -3,7 +3,7 @@ using MoonSharp.Interpreter;
 using System.Collections.Generic;
 using System;
 
-class LuaPowerTrigger
+public class LuaPowerTrigger
 {
     public FTrigger _trigger;
     public string _func;
@@ -12,7 +12,7 @@ class LuaPowerTrigger
         _func = func;
     }
 }
-static class LuaPowerData
+public static class LuaPowerData
 {
     static public Dictionary<Type, List<string>> customEnums = new Dictionary<Type, List<string>>();
     static public Dictionary<Enum, List<string>> enumAdditions = new Dictionary<Enum, List<string>>();

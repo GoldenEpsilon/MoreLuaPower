@@ -9,8 +9,7 @@ using UnityEngine;
 [HarmonyPatch(new Type[] { typeof(string) })]
 class MoreLuaPower_GlobalLuaFunctions
 {
-    static void Postfix()
-    {
+    static void Postfix() {
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["MakeSprite"] = (Action<string, string, string>)LuaPowerSprites.MakeSprite;
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["GetSprite"] = (Func<string, Sprite>)LuaPowerSprites.GetSprite;
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["NewEffect"] = (Action<string, string>)LuaPowerStatus.NewEffect;
@@ -20,7 +19,7 @@ class MoreLuaPower_GlobalLuaFunctions
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["RemoveEffect"] = (Action<Being, string>)LuaPowerStatus.RemoveEffect;
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["EffectExists"] = (Func<string, bool>)LuaPowerStatus.EffectExists;
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["MakeBrand"] = (Func<string, string, Brand>)LuaPowerBrands.MakeBrand;
-        Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["SetBrandImage"] = (Action<Brand, string, string>)LuaPowerBrands.SetBrandImage;
+        Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["GetBrand"] = (Func<Brand, string>)LuaPowerBrands.GetBrand;
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["SetBrandImage"] = (Action<string, string, string>)LuaPowerBrands.SetBrandImage;
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["ParticleEffect"] = (Action<Being, Dictionary<string, string>>)LuaPowerParticles.ParticleEffect;
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["PlaySound"] = (Action<Being, string>)LuaPowerSound.PlaySound;
@@ -29,6 +28,7 @@ class MoreLuaPower_GlobalLuaFunctions
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["GetVariable"] = (Func<Being, string, string>)LuaPowerBeingVariables.GetVariable;
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["AddHook"] = (Action<FTrigger, string>)LuaPowerHooks.AddHook;
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["AddLangTerm"] = (Action<string, string, string>)LuaPowerLang.ImportTerm;
+        Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["GetPlayer"] = (Func<Player>)MoreLuaPower.GetPlayer;
     }
 }
 
@@ -36,29 +36,47 @@ class MoreLuaPower_GlobalLuaFunctions
 [HarmonyPatch("AddScript")]
 class MoreLuaPower_InitFunction
 {
-    static void Postfix(Script ___myLuaScript)
-    {
+    static void Postfix(Script ___myLuaScript) {
         object obj;
         obj = ___myLuaScript.Globals["Init"];
-        if (obj != null)
-        {
+        if (obj != null) {
             S.I.mainCtrl.StartCoroutine(MoreLuaPower_FunctionHelper.EffectRoutine(___myLuaScript.CreateCoroutine(obj)));
             ___myLuaScript.Globals.Remove("Init");
         }
         obj = ___myLuaScript.Globals["Update"];
-        if (obj != null)
-        {
-            PowerMonoBehavior.UpdateScripts.Add(obj);
+        if (obj != null) {
+            bool unique = true;
+            foreach (object o in PowerMonoBehavior.UpdateScripts) {
+                if (DynValue.FromObject(___myLuaScript, o).Function.EntryPointByteCodeLocation == DynValue.FromObject(___myLuaScript, obj).Function.EntryPointByteCodeLocation) {
+                    unique = false;
+                }
+            }
+            if (unique) {
+                PowerMonoBehavior.UpdateScripts.Add(obj);
+                PowerMonoBehavior.UpdateBaseScripts.Add(___myLuaScript);
+            }
             ___myLuaScript.Globals.Remove("Update");
+        }
+        obj = ___myLuaScript.Globals["GameUpdate"];
+        if (obj != null) {
+            bool unique = true;
+            foreach (object o in PowerMonoBehavior.GameUpdateScripts) {
+                if (DynValue.FromObject(___myLuaScript, o).Function.EntryPointByteCodeLocation == DynValue.FromObject(___myLuaScript, obj).Function.EntryPointByteCodeLocation) {
+                    unique = false;
+                }
+            }
+            if (unique) {
+                PowerMonoBehavior.GameUpdateScripts.Add(obj);
+                PowerMonoBehavior.GameUpdateBaseScripts.Add(___myLuaScript);
+            }
+            ___myLuaScript.Globals.Remove("GameUpdate");
         }
     }
 }
 class MoreLuaPower_FunctionHelper
 {
-    public static IEnumerator EffectRoutine(DynValue result)
-    {
-        foreach (DynValue thr in result.Coroutine.AsTypedEnumerable())
-        {
+    public static IEnumerator EffectRoutine(DynValue result) {
+        foreach (DynValue thr in result.Coroutine.AsTypedEnumerable()) {
             yield return null;
         }
         yield break;

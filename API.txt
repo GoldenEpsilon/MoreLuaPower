@@ -2,6 +2,7 @@
  *  More Lua Power, made by Golden Epsilon
  *  Audio loading, ProgramAdvance, Kickers, and Multicast added by Sunreal
  *  PetBuff for MoreLuaPower by stephanreiken
+ *  Subfolder loading by Shenanigans
  *  Workshop URL: https://steamcommunity.com/sharedfiles/filedetails/?id=2066319533
  *  GitHub Page: https://github.com/GoldenEpsilon/MoreLuaPower
  *
@@ -20,14 +21,23 @@ I'm also going to have vanilla features in here as well,
     and so if you don't know you can learn all the features at once.
 	
 Table of Contents:
+	[MISC FEATURES]
 	[NEW MECHANICS]
 	[LUA FUNCTIONS]
+	[CALLED LUA FUNCTIONS]
 	[GLOBAL LUA VARIABLES]
 	[CUSTOM DATA TYPES]
 	[CUSTOM FILE TYPES]
 	[ACCESSIBLE TYPES]
 	[ORGANIZATION]
 	[PETS]
+
+[MISC FEATURES]
+	Subfolder Loading
+		//Files inside folders inside mod folders will now be loaded as part of the mod.
+		// There is an exception with folders named Disabled, for organization purposes,
+		// but if the mod is named disabled the directory itself still loads anyway. (it won't load subdirectories, however)
+		// NOTE: naming the folder disabled works with any capitalization.
 
 [NEW MECHANICS]	
 
@@ -76,25 +86,21 @@ MoreLuaPower:
 		// and a name for the sprite. Keep track of that name, because
 		// that's how you use the |Sprite| later. More info in [custom data types].
 
-	void ParticleEffect		(Being {being}, |ParticleSystem| {system})
-		//Creates and runs a particle effect attached to the Being you pass.
-		// More info on |ParticleSystem| is in [custom data types].
-
+	Sprite GetSprite		(|Sprite| {sprite})
+		//Turns the string-based sprite into a unity sprite - 
+		// I haven't had much luck messing with sprites directly in lua, however.
+		// The main purpose of this function for now is that
+		// it returns nil when the sprite asked for either doesn't exist
+		// or hasn't loaded in yet.
+	
 	void NewEffect			(string {name}, |Sprite| {sprite})
 		//Creates a new |StatusEffect| named {name}, using {sprite} as the icon.
-
-	bool EffectExists		(string {effect})
-		//Checks to see if {effect} exists.
-		// In other words, it checks if NewEffect has been run for {effect}
 
 	void AddEffect			(Being {being}, |StatusEffect| {effect}, float {duration} = 0, float {amount} = 0)
 		//Adds {effect} to {being}.
 		// If {duration} is 0, the effect duration is infinite.
 		// Keep in mind when using this for vanilla effects that they don't always allow arbitrary {amount}s:
 		// As an example, Fragile cannot apply less than one stack.
-
-	void RemoveEffect		(Being {being}, |StatusEffect| {effect})
-		//Removes {effect} from {being}
 
 	bool GetEffect			(Being {being}, |StatusEffect| {effect})
 		//Checks to see if {being} has {effect}, and returns true or false.
@@ -103,6 +109,46 @@ MoreLuaPower:
 	float GetEffectAmount		(Being {being}, |StatusEffect| {effect})
 		//Checks to see if {being} has {effect}, and returns the amount of the effect if so.
 		// If the effect does not exist, returns 0 and logs that the effect does not exist in the chat.
+
+	void RemoveEffect		(Being {being}, |StatusEffect| {effect})
+		//Removes {effect} from {being}
+
+	bool EffectExists		(string {effect})
+		//Checks to see if {effect} exists.
+		// In other words, it checks if NewEffect has been run for {effect}
+		
+	Brand MakeBrand			(string {name}, string {description} = null)
+		//Adds a brand called {name} to the game.
+		// MUST be called in either Init or from outside of any functions,
+		// because to work this must run the first frame that lua files are loaded.
+		// description is optional, but recommended.
+		// The recommendation for creating a brand is to use a variation of this in Init:
+
+		// MakeSprite("ExampleSprite.png", PATH, "ExampleSprite");
+		// MakeBrand("ExampleBrand");
+		// while(GetSprite("ExampleSprite") == nil) do
+		// 	WaitForFrames(1);
+		// end
+		// SetBrandImage("ExampleSprite", "SpaceCore");
+		
+	Brand GetBrand			(Brand {brand})
+		//Returns the name of {brand} as a string
+
+	void SetBrandImage		(string {name}, string {sprite}, string {BGSprite} = null)
+		//Sets the image(s) of the Brand named {name}.
+		// Must be called after all sprites to be used in the function are loaded.
+		// The recommendation for creating a brand is to use a variation of this in Init:
+
+		// MakeSprite("ExampleSprite.png", PATH, "ExampleSprite");
+		// MakeBrand("ExampleBrand");
+		// while(GetSprite("ExampleSprite") == nil) do
+		// 	WaitForFrames(1);
+		// end
+		// SetBrandImage("ExampleSprite", "SpaceCore");
+
+	void ParticleEffect		(Being {being}, |ParticleSystem| {system})
+		//Creates and runs a particle effect attached to the Being you pass.
+		// More info on |ParticleSystem| is in [custom data types].
 
 	void PlaySound			(Being {being}, |Sound| {sound})
 		//Plays the sound specified.
@@ -120,6 +166,17 @@ MoreLuaPower:
 	void AddHook			(FTrigger {trigger}, string {functionName})
 		//Adds the function {functionName} as a hook, which means that it will be activated every time {trigger} is activated
 
+	void AddLangTerm		(string {termName}, string {translation}, string {language} = "English")
+		//Adds a term to the language dictionary, optionally letting you choose a language other than english.
+		// Mainly used behind the scenes for adding brands right now, but also works for changing whatever 
+		// text you want if you look into the code.
+		
+	Player GetPlayer		()
+		//Simply returns the current player.
+		// Meant to be used in Update, GameUpdate, and other similar functions.
+
+Lua-based:
+
 	PetBuffArtifactFunction(item, target, status, amount, duration, extra)		
 		// Item needs to be a reference to the item that triggered this effect. 
 		// Look at the [PETS] section for more info
@@ -128,6 +185,19 @@ MoreLuaPower:
 		// Targeting by PetID runs this function instead
 		// Look at the [PETS] section for more info
 
+[CALLED LUA FUNCTIONS]
+//note: these do not come with an object as an input, you will want to use S.I.whatever to access objects.
+
+	Init:
+	//When put into a file will be called whenever the game loads/reloads lua mods.
+	// NOTE: This does not guarantee that it will run only once. 
+	//  Use global variables to make sure that it only runs once if you want that.
+
+	Update:
+	//Is called every frame, including on menus and when time's stopped.
+
+	GameUpdate:
+	//Is called every physics update, does not run on certain menus intentionally like the main menu and the game over menu. Meant for updating during gameplay.
 
 [GLOBAL LUA VARIABLES]
 
@@ -216,6 +286,7 @@ Ask in the modding discord for help on this one. @Shenanigans specifically. (TOD
 
 MoreLuaPower:
 	Rewired.Player							//This is used for checking button presses
+	S
     Run
     SpellListCard
 	ListCard
@@ -228,6 +299,7 @@ MoreLuaPower:
 	Location
 	ArcType
 	GunPointSetting
+	AnimationOverrider
 
 Vanilla:
     Transform
