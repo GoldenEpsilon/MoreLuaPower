@@ -18,20 +18,16 @@ using UnityEngine;
 [HarmonyPatch("CastSpell")]
 class MoreLuaPower_Kickercast
 {
-    static bool Prefix(ref Player __instance, int slotNum, ref int manaOverride, bool consumeOverride)
-    {
+    static bool Prefix(ref Player __instance, int slotNum, ref int manaOverride, bool consumeOverride) {
         if (__instance.duelDisk.castSlots[slotNum] != null &&
             __instance.duelDisk.castSlots[slotNum].spellObj.spell != null &&
-            __instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary.ContainsKey("KickerCast"))          
-        {
+            __instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary.ContainsKey("KickerCast")) {
             Dictionary<string, string> pd = __instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary;
-            if (!pd.ContainsKey("KickerSpell"))
-            {
+            if (!pd.ContainsKey("KickerSpell")) {
                 Debug.Log("ERROR: Spell has KickerCast, but not KickerSpell");
                 return true;
             }
-            if (!pd.ContainsKey("KickerManaCost"))
-            {
+            if (!pd.ContainsKey("KickerManaCost")) {
                 Debug.Log("ERROR: Spell has KickerCast, but not KickerManaCost");
                 return true;
             }
@@ -39,10 +35,8 @@ class MoreLuaPower_Kickercast
             List<string> SpellNames = pd["KickerSpell"].Split(',').ToList();
             List<string> ManaCosts = pd["KickerManaCost"].Split(',').ToList();
 
-            for (int i = SpellNames.Count-1; i >= 0; i--)
-            {
-                if (__instance.duelDisk.currentMana >= (manaOverride < 0 ? Int32.Parse(ManaCosts[i]) : manaOverride))
-                {
+            for (int i = SpellNames.Count - 1; i >= 0; i--) {
+                if (__instance.duelDisk.currentMana >= (manaOverride < 0 ? Int32.Parse(ManaCosts[i]) : manaOverride)) {
                     SpellObject Kicker = S.I.deCtrl.CreateSpellBase(SpellNames[i], __instance);
                     Kicker.PlayerCast();
                     var manaCost = (manaOverride < 0 ? Int32.Parse(ManaCosts[i]) : manaOverride);

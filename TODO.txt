@@ -2,6 +2,7 @@
  *  More Lua Power, made by Golden Epsilon
  *  Audio loading, ProgramAdvance, Kickers, and Multicast added by Sunreal
  *  PetBuff for MoreLuaPower by stephanreiken
+ *  Subfolder loading by Shenanigans
  *  Workshop URL: https://steamcommunity.com/sharedfiles/filedetails/?id=2066319533
  *  GitHub Page: https://github.com/GoldenEpsilon/MoreLuaPower
  *
@@ -18,10 +19,12 @@ KEEPING TRACK:
 
 
 PRIORITY:
-    SetEffect with a custom effect when the effect already exists does nothing
+    make custom statuses work with XML checks (make it work like brands)
+        add the status to Check
+    setting custom effect replaces parameters
 
 TODO:
-    make custom statuses work with XML
+    Add grid modification stuff
     add more math to XML rather than just addition
     add appending to XML
     Add custom check for brands

@@ -2,6 +2,7 @@
  *  More Lua Power, made by Golden Epsilon
  *  Audio loading, ProgramAdvance, Kickers, and Multicast added by Sunreal
  *  PetBuff for MoreLuaPower by stephanreiken
+ *  Subfolder loading by Shenanigans
  *  Workshop URL: https://steamcommunity.com/sharedfiles/filedetails/?id=2066319533
  *  GitHub Page: https://github.com/GoldenEpsilon/MoreLuaPower
  *
@@ -32,11 +33,17 @@ using Rewired;
 [HarmonyPatch("Awake")]
 class MoreLuaPower
 {
-    static void Prepare() {
-        Debug.Log("MoreLuaPower Version 1.4");
+	static void Prepare() {
+		if (Harmony.HasAnyPatches("com.MoreLuaPower.patch")) {
+			return;
+		}
+		Debug.Log("MoreLuaPower Version 1.5");
 		LuaPowerData.Setup();
 		LuaPowerCustomEnumsSetup.Setup();
 		//MoreLuaPowerTesting.Test();
+	}
+	static public Player GetPlayer() {
+		return S.I.batCtrl.currentPlayer;
 	}
 }
 /*

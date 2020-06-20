@@ -32,7 +32,7 @@ static class LuaPowerSprites
              }
          }));
     }
-    
+
     static public Sprite GetSprite(string image) {
         if (LuaPowerData.sprites.ContainsKey(image)) {
             return LuaPowerData.sprites[image];
