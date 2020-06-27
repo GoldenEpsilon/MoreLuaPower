@@ -46,7 +46,11 @@ public static class LuaPowerData
         { "TEST", "TEST" }                  //To Add: Color Over Lifetime
     };
     static public void Setup() {
-        customEnums.Add(typeof(Status), new List<string>());
-        customEnums.Add(typeof(Brand), new List<string>());
+        if (!customEnums.ContainsKey(typeof(Status))) {
+            customEnums.Add(typeof(Status), new List<string>());
+        }
+        if (!customEnums.ContainsKey(typeof(Brand))) {
+            customEnums.Add(typeof(Brand), new List<string>());
+        }
     }
 }
