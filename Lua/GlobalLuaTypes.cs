@@ -27,6 +27,5 @@ class MoreLuaPower_GlobalLuaTypes
         UserData.RegisterType<ArcType>(InteropAccessMode.Default, null);
         UserData.RegisterType<GunPointSetting>(InteropAccessMode.Default, null);
         UserData.RegisterType<AnimationOverrider>(InteropAccessMode.Default, null);
-        UserData.RegisterType<Input>(InteropAccessMode.Default, null);
     }
 }
