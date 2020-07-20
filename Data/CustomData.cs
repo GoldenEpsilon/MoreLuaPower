@@ -2,6 +2,7 @@
 using MoonSharp.Interpreter;
 using System.Collections.Generic;
 using System;
+using E7.Introloop;
 
 public class LuaPowerTrigger
 {
@@ -16,6 +17,7 @@ public static class LuaPowerData
 {
     static public Dictionary<Type, List<string>> customEnums = new Dictionary<Type, List<string>>();
     static public Dictionary<Enum, List<string>> enumAdditions = new Dictionary<Enum, List<string>>();
+    static public Dictionary<String, CustomMusic> customMusic = new Dictionary<string, CustomMusic>();
     static public Dictionary<string, Sprite> sprites = new Dictionary<string, Sprite>();
     static public Dictionary<string, Material> materials = new Dictionary<string, Material>();
     static public List<Script> scripts = new List<Script>();
@@ -51,6 +53,20 @@ public static class LuaPowerData
         }
         if (!customEnums.ContainsKey(typeof(Brand))) {
             customEnums.Add(typeof(Brand), new List<string>());
+        }
+    }
+
+    public class CustomMusic
+    {
+        public AudioClip AudioClip;
+        public float StartTime;
+        public float Volume;
+
+        public CustomMusic(AudioClip clip, float vol, float startTime)
+        {
+            AudioClip = clip;
+            Volume = vol;
+            StartTime = startTime;
         }
     }
 }

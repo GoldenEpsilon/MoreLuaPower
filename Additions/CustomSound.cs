@@ -3,6 +3,43 @@ using System;
 using UnityEngine;
 using System.IO;
 using System.Collections.Generic;
+using E7.Introloop;
+
+[HarmonyPatch(typeof(MusicCtrl))]
+[HarmonyPatch("PlayBattle")]
+class MoreLuaPower_MusicBattle
+{
+    static bool Prefix(ref MusicCtrl __instance, int tier)
+    {
+        if (!__instance.battleEnvironmentsLate.ContainsKey(__instance.runCtrl.currentWorld.background) && !__instance.battleEnvironments.ContainsKey(__instance.runCtrl.currentWorld.background))
+        {
+            if (LuaPowerData.customMusic.ContainsKey(__instance.runCtrl.currentWorld.background + "_Idle"))
+            {
+                LuaPowerSound.PlayCustomMusic(__instance.runCtrl.currentWorld.background + "_Battle");
+                return false;
+            }
+        }
+        return true;
+    }
+}
+
+[HarmonyPatch(typeof(MusicCtrl))]
+[HarmonyPatch("PlayIdle")]
+class MoreLuaPower_MusicIdle
+{
+    static bool Prefix(ref MusicCtrl __instance)
+    {
+        if (!__instance.idleEnvironments.ContainsKey(__instance.runCtrl.currentWorld.background))
+        {
+            if (LuaPowerData.customMusic.ContainsKey(__instance.runCtrl.currentWorld.background + "_Idle"))
+            {
+                LuaPowerSound.PlayCustomMusic(__instance.runCtrl.currentWorld.background + "_Idle");
+                return false;
+            }
+        }
+        return true;
+    }
+}
 
 [HarmonyPatch(typeof(ModCtrl))]
 [HarmonyPatch("_InstallTheseMods")]
@@ -59,15 +96,17 @@ class LuaPowerSound
         being.PlayOnce(AllAudioClips[sound]);
     }
 
-    static public void PlayBattleMusic(string music)
+    static public void PlayCustomMusic(string MusicName)
     {
-        var AllAudioClips = Traverse.Create(S.I.itemMan).Field("allAudioClips").GetValue<Dictionary<String, AudioClip>>();
-        if (!AllAudioClips.ContainsKey(music))
+        if (LuaPowerData.customMusic.ContainsKey(MusicName))
         {
-            Debug.Log(music + " does not exist");
-            return;
+            S.I.StartCoroutine(PowerMonoBehavior.FadeAudioOut(S.I.muCtrl.audioSource, .3f, S.I.muCtrl.audioSource.volume));
+
+            S.I.muCtrl.StopIntroLoop();
+            S.I.muCtrl.audioSource.volume = 0;
+            S.I.muCtrl.audioSource.time = LuaPowerData.customMusic[MusicName].StartTime;
+            S.I.StartCoroutine(PowerMonoBehavior.FadeAudioIn(S.I.muCtrl.audioSource, 1f, LuaPowerData.customMusic[MusicName].Volume));
+            S.I.muCtrl.Play(LuaPowerData.customMusic[MusicName].AudioClip);
         }
-        S.I.muCtrl.Stop();
-        S.I.muCtrl.Play(AllAudioClips[music], true);
     }
 }

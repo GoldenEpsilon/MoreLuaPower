@@ -43,6 +43,7 @@
       <HintPath>..\..\..\Managed\Assembly-CSharp-firstpass.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="E7.Introloop, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null" />
     <Reference Include="Rewired_Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\..\Managed\Rewired_Core.dll</HintPath>
       <Private>False</Private>

@@ -7,6 +7,7 @@ using System.Collections;
 using UnityEngine.Networking;
 using UnityEngine.Experimental.PlayerLoop;
 using System.Collections.Generic;
+using E7.Introloop;
 
 public class PowerMonoBehavior : MonoBehaviour
 {
@@ -51,6 +52,106 @@ public class PowerMonoBehavior : MonoBehaviour
                 response(null);
             }
             www.Dispose();
+        }
+    }
+
+    public static void GetCustomInput(bool b)
+    {
+        if (Input.GetKeyDown(KeyCode.Equals))
+        {
+            EnableDeveloperTools();
+        }
+    }
+
+    public static void AddZoneIcon(string spriteName, string dotName)
+    {
+        S.I.runCtrl.worldBar.zoneSprites.Add(dotName, S.I.itemMan.GetSprite(spriteName));
+    }
+
+    public static void MakeCustomMusic(string AudioName, string zoneBgName, float volume, float startTime, string type)
+    {
+        S.I.StartCoroutine(AudioDoesExist(AudioName, zoneBgName, volume, startTime, type));
+    }
+
+
+    public static IEnumerator FadeAudioIn(AudioSource source, float duration, float maxVolume)
+    {
+        float t = 0;
+        while (t < duration)
+        {
+            yield return new WaitForSeconds(.02f);
+            t += .02f;
+            source.volume = Math.Max(.05f, Mathf.Lerp(0, maxVolume, t / duration));
+        }
+    }
+
+    public static IEnumerator FadeAudioOut(AudioSource source, float duration, float maxVolume)
+    {
+        float t = 0;
+        while (t < duration)
+        {
+            yield return new WaitForSeconds(.02f);
+            t += .02f;
+            source.volume = Math.Max(.05f, Mathf.Lerp(maxVolume, 0, t / duration));
+        }
+        source.volume = 0;
+    }
+
+    public static IEnumerator AudioDoesExist(string AudioName, string zoneBgName, float volume, float startTime, string type)
+    {
+        Dictionary<string, AudioClip> d = Traverse.Create(S.I.itemMan).Field("allAudioClips").GetValue<Dictionary<string, AudioClip>>();
+        yield return new WaitWhile(() => d.ContainsKey(AudioName) == false);
+        LuaPowerData.CustomMusic myAudio = new LuaPowerData.CustomMusic(S.I.itemMan.GetAudioClip(AudioName), volume, startTime);
+
+        if (type == "Battle")
+        {
+            LuaPowerData.customMusic[zoneBgName + "_Battle"] = myAudio;
+        }
+        if (type == "Idle")
+        {
+            LuaPowerData.customMusic[zoneBgName + "_Idle"] = myAudio;
+        }
+        if (type == "Boss")
+        {
+            //In this case zoneBgName is actually the track name
+            LuaPowerData.customMusic[zoneBgName] = myAudio;
+        }
+    }
+
+    public static void EnableDeveloperTools()
+    {
+        
+        if (!S.I.consoleView.viewContainer.active)
+        {
+            S.I.CONSOLE = true;
+            S.I.DEVELOPER_TOOLS = true;
+            S.I.consoleView.viewContainer.SetActive(true);
+            S.I.batCtrl.AddControlBlocks(Block.Console);
+            S.I.consoleView.inputField.ActivateInputField();
+            S.I.consoleView.inputField.Select();
+        }
+        else
+        {
+            S.I.consoleView.viewContainer.SetActive(false);
+            S.I.batCtrl.RemoveControlBlocks(Block.Console);
+            S.I.consoleView.inputField.DeactivateInputField();
+        }
+    }
+
+    public static void RunDev(string str)
+    {
+        if (S.I.consoleView.GetComponent<ConsoleCtrl>() != null)
+        {
+            ConsoleCtrl conRef = S.I.consoleView.GetComponent<ConsoleCtrl>();
+            conRef.runCommandString(str);
+        }
+    }
+    public static void PrintDev(string str)
+    {
+        if (S.I.consoleView.GetComponent<ConsoleCtrl>() != null)
+        {
+            ConsoleCtrl conRef = S.I.consoleView.GetComponent<ConsoleCtrl>();
+            conRef.appendLogLine(str);
         }
     }
 }
