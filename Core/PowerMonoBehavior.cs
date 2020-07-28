@@ -17,6 +17,9 @@ public class PowerMonoBehavior : MonoBehaviour
         for (int i = 0; i < UpdateScripts.Count; i++) {
             S.I.mainCtrl.StartCoroutine(MoreLuaPower_FunctionHelper.EffectRoutine(UpdateBaseScripts[i].CreateCoroutine(UpdateScripts[i])));
         }
+        if (Input.GetKeyDown(KeyCode.Tilde)) {
+            EnableDeveloperTools();
+        }
     }
     public static List<object> GameUpdateScripts = new List<object>();
     public static List<Script> GameUpdateBaseScripts = new List<Script>();
@@ -55,12 +58,9 @@ public class PowerMonoBehavior : MonoBehaviour
         }
     }
 
-    public static void GetCustomInput(bool b)
+    public static bool GetCustomInput(KeyCode code)
     {
-        if (Input.GetKeyDown(KeyCode.Equals))
-        {
-            EnableDeveloperTools();
-        }
+        return Input.GetKeyDown(code);
     }
 
     public static void AddZoneIcon(string spriteName, string dotName)
@@ -68,9 +68,9 @@ public class PowerMonoBehavior : MonoBehaviour
         S.I.runCtrl.worldBar.zoneSprites.Add(dotName, S.I.itemMan.GetSprite(spriteName));
     }
 
-    public static void MakeCustomMusic(string AudioName, string zoneBgName, float volume, float startTime, string type)
+    public static void AddCustomMusic(string AudioName, float volume = 1, float startTime = 0)
     {
-        S.I.StartCoroutine(AudioDoesExist(AudioName, zoneBgName, volume, startTime, type));
+        S.I.StartCoroutine(AudioDoesExist(AudioName, volume, startTime));
     }
 
 
@@ -97,28 +97,33 @@ public class PowerMonoBehavior : MonoBehaviour
         source.volume = 0;
     }
 
-    public static IEnumerator AudioDoesExist(string AudioName, string zoneBgName, float volume, float startTime, string type)
+    public static IEnumerator AudioDoesExist(string AudioName, float volume, float startTime)
     {
         Dictionary<string, AudioClip> d = Traverse.Create(S.I.itemMan).Field("allAudioClips").GetValue<Dictionary<string, AudioClip>>();
         yield return new WaitWhile(() => d.ContainsKey(AudioName) == false);
         LuaPowerData.CustomMusic myAudio = new LuaPowerData.CustomMusic(S.I.itemMan.GetAudioClip(AudioName), volume, startTime);
 
-        if (type == "Battle")
-        {
-            LuaPowerData.customMusic[zoneBgName + "_Battle"] = myAudio;
-        }
-        if (type == "Idle")
-        {
-            LuaPowerData.customMusic[zoneBgName + "_Idle"] = myAudio;
-        }
-        if (type == "Boss")
-        {
-            //In this case zoneBgName is actually the track name
-            LuaPowerData.customMusic[zoneBgName] = myAudio;
+        if (!LuaPowerData.customMusic.ContainsKey(AudioName)) {
+            LuaPowerData.customMusic[AudioName] = myAudio;
+        } else {
+            Debug.Log("Warning: " + AudioName + " is already added as music");
         }
     }
 
-    public static void EnableDeveloperTools()
+    public static void AddMusicHook(string AudioName, string zoneBgName, string type) {
+        if (LuaPowerData.customMusic.ContainsKey(AudioName)) {
+            if (type == "Battle") {
+                LuaPowerData.customMusic[zoneBgName + "_Battle"] = LuaPowerData.customMusic[AudioName];
+            }
+            if (type == "Idle") {
+                LuaPowerData.customMusic[zoneBgName + "_Idle"] = LuaPowerData.customMusic[AudioName];
+            }
+        } else {
+            Debug.Log("Warning: " + AudioName + " is not added as music");
+        }
+    }
+
+    public static bool EnableDeveloperTools()
     {
         
         if (!S.I.consoleView.viewContainer.active)
@@ -129,12 +134,14 @@ public class PowerMonoBehavior : MonoBehaviour
             S.I.batCtrl.AddControlBlocks(Block.Console);
             S.I.consoleView.inputField.ActivateInputField();
             S.I.consoleView.inputField.Select();
+            return true;
         }
         else
         {
             S.I.consoleView.viewContainer.SetActive(false);
             S.I.batCtrl.RemoveControlBlocks(Block.Console);
             S.I.consoleView.inputField.DeactivateInputField();
+            return false;
         }
     }
 

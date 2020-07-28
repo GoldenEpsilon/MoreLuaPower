@@ -37,7 +37,7 @@ class MoreLuaPower
 		if (Harmony.HasAnyPatches("com.MoreLuaPower.patch")) {
 			return;
 		}
-		Debug.Log("MoreLuaPower Version 1.5.2");
+		Debug.Log("MoreLuaPower Version 1.6");
 		LuaPowerData.Setup();
 		LuaPowerCustomEnumsSetup.Setup();
 		//MoreLuaPowerTesting.Test();

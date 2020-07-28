@@ -1,6 +1,6 @@
 ﻿/*
  *  More Lua Power, made by Golden Epsilon
- *  Audio loading, ProgramAdvance, Kickers, and Multicast added by Sunreal
+ *  Tons of stuff added by Sunreal
  *  PetBuff for MoreLuaPower by stephanreiken
  *  Subfolder loading by Shenanigans
  *  Workshop URL: https://steamcommunity.com/sharedfiles/filedetails/?id=2066319533
@@ -19,6 +19,8 @@ Welcome to the API! I'm going to try and organize this as much as possible, but 
 I'm also going to have vanilla features in here as well, 
     so that if you know how modding works already you can relate what I modified, 
     and so if you don't know you can learn all the features at once.
+
+Quick note: The features in here are in order of when they were added, so for new features scroll to the bottom of each category.
 	
 Table of Contents:
 	[MISC FEATURES]
@@ -144,7 +146,7 @@ MoreLuaPower:
 		// while(GetSprite("ExampleSprite") == nil) do
 		// 	WaitForFrames(1);
 		// end
-		// SetBrandImage("ExampleSprite", "SpaceCore");
+		// SetBrandImage("ExampleBrand", "ExampleSprite");
 
 	void ParticleEffect		(Being {being}, |ParticleSystem| {system})
 		//Creates and runs a particle effect attached to the Being you pass.
@@ -153,9 +155,9 @@ MoreLuaPower:
 	void PlaySound			(Being {being}, |Sound| {sound})
 		//Plays the sound specified.
 		// If the sound does not exist, it logs that the effect does not exist in the chat.
-	
-	void PlayBattleMusic		(|Sound| {music})
-		//plays the specified sound as music
+
+	bool GetCustomInput		(KeyCode {code})
+		//Checks whether the key {code} is pressed
 
 	void SetVariable		(Being {being}, string {variableName}, string {variable})
 		//Sets the Custom Variable {variableName} to {variable} for {being}, adding it if it doesn't exist.
@@ -174,6 +176,33 @@ MoreLuaPower:
 	Player GetPlayer		()
 		//Simply returns the current player.
 		// Meant to be used in Update, GameUpdate, and other similar functions.
+	
+	void AddCustomMusic		(string {AudioName}, float {volume} = 1, float {startTime} = 0)
+		//Adds the file specified by {AudioName} as |Music| that you can call with other functions.
+
+	void AddMusicHook		(|Music| {music}, string {zoneBgName}, string {type})
+		//Sets the zone's music to {music}
+		// The valid inputs for {type} are "Idle" and "Battle", both self-explanatory.
+		// {music} is the same string as you put in for {AudioName} for MakeCustomMusic.
+
+	void PlayCustomMusic	(|Music| {music})
+		//plays the specified sound as music. 
+		// What you put here is the same string as you put in for {AudioName} for MakeCustomMusic.
+		// Recommended for stuff like bosses
+
+	bool EnableDeveloperTools()
+		//Turns on the dev console, returning whether it just opened or closed
+		// As of right now this function is redundant because you can press ` to open the console when MoreLuaPower is loaded
+
+	void RunDev				(string {str})
+		//Runs a command from the dev console
+
+	void PrintDev			(string {str})
+		//Prints a message to the dev console
+
+	void AddZoneIcon		(|Sprite| {spriteName}, string {dotName})
+		//Sets the zone {dotName}'s icon to {spriteName}, I believe..?
+		// ...ask @Sunreal#3392 for clarification
 
 Lua-based:
 
@@ -206,7 +235,6 @@ MoreLuaPower:
     Shape:				Shape
     Location:			Location
     ArcType:			ArcType
-    GunPointSetting:	GunPointSetting
     Time:				Time			//I HAVEN'T CHECKED IF THIS WORKS YET
     TimeScale:			Time.timeScale
     DeltaTime:			Time.deltaTime
@@ -298,7 +326,7 @@ MoreLuaPower:
 	Shape
 	Location
 	ArcType
-	GunPointSetting
+	KeyCode
 	AnimationOverrider
 
 Vanilla:
@@ -361,6 +389,7 @@ Vanilla:
 
 [ORGANIZATION]
 	//note: this section is for looking through the c# source code.
+	//NOTE: this hasn't been updated in a while. Everything should still be accurate, there is just more than is mentioned here.
 
 	CustomData.cs
 		LuaPowerData

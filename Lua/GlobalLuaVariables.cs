@@ -21,7 +21,6 @@ class MoreLuaPower_GlobalLuaVariables
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["Shape"] = UserData.CreateStatic<Shape>();
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["Location"] = UserData.CreateStatic<Location>();
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["ArcType"] = UserData.CreateStatic<ArcType>();
-        Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["GunPointSetting"] = UserData.CreateStatic<GunPointSetting>();
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["Time"] = UserData.CreateStatic<Time>(); //I NEED TO CHECK TO SEE IF THIS WORKS
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["S"] = UserData.CreateStatic<S>();//I NEED TO TEST THIS
     }
