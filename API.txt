@@ -95,8 +95,8 @@ MoreLuaPower:
 		// it returns nil when the sprite asked for either doesn't exist
 		// or hasn't loaded in yet.
 	
-	void NewEffect			(string {name}, |Sprite| {sprite})
-		//Creates a new |StatusEffect| named {name}, using {sprite} as the icon.
+	void NewEffect			(string {name}, |Sprite| {sprite} = "")
+		//Creates a new |StatusEffect| named {name}, using {sprite} as the icon if given.
 
 	void AddEffect			(Being {being}, |StatusEffect| {effect}, float {duration} = 0, float {amount} = 0)
 		//Adds {effect} to {being}.
@@ -201,8 +201,19 @@ MoreLuaPower:
 		//Prints a message to the dev console
 
 	void AddZoneIcon		(|Sprite| {spriteName}, string {dotName})
-		//Sets the zone {dotName}'s icon to {spriteName}, I believe..?
-		// ...ask @Sunreal#3392 for clarification
+		//Sets the zone {dotName}'s icon to {spriteName}, I believe (you use the name in zones.xml)
+		// ...ask @Sunreal#3392 for clarification if you need it.
+
+	void AddUpgrade			(string {name}, string {abbreviation}, string {description}, |Function| {check}, |Function| {effect})
+		//Adds the upgrade to the game, using the inputs to help - |Function| is a string with the name of the function. Use something unique.
+		// {name} needs to be unique - I don't believe it shows up anywhere, so you could prepend your mod name or something
+		// {abbreviation} is typically a single letter; OSFE takes up a lot of the options, though, so if you need to feel free to change it up a bit with two letters or something.
+		// {description} gets automatically surrounded by parentheses, so you don't need to do that manually. Length should be as short as you can.
+		// {check} is a function that takes a SpellObject as an input and returns a boolean, and it's used to see if the upgrade can be applied to the spell. 
+		//		If it fails this check, your upgrade will not show up.
+		// {effect} is also a function that takes a SpellObject as an input and returns the same SpellObject as an output.
+		//		This is where you actually add your modifications.
+		//		You should be able to use it to run custom code when it's cast, if you can't figure it out ping me and I can work it out with you.
 
 Lua-based:
 

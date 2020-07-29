@@ -1,14 +1,15 @@
 ﻿using HarmonyLib;
 using System;
 using UnityEngine;
+using System.Xml;
 using System.Collections.Generic;
 
 
 class LuaPowerStatus
 {
-    static public void NewEffect(string effect, string sprite) {
+    static public void NewEffect(string effect, string sprite = "") {
+        if (!LuaPowerData.customEnums[typeof(Status)].Contains(effect)) { LuaPowerData.customEnums[typeof(Status)].Add(effect); }
         if (LuaPowerData.sprites.ContainsKey(sprite)) {
-            if (!LuaPowerData.customEnums[typeof(Status)].Contains(effect)) { LuaPowerData.customEnums[typeof(Status)].Add(effect); }
             if (!S.I.batCtrl.effectSpritesDict.ContainsKey(effect)) { S.I.batCtrl.effectSpritesDict.Add(effect, LuaPowerData.sprites[sprite]); }
         }
     }

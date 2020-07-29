@@ -40,6 +40,7 @@ class MoreLuaPower
 		Debug.Log("MoreLuaPower Version 1.6");
 		LuaPowerData.Setup();
 		LuaPowerCustomEnumsSetup.Setup();
+		if (!LuaPowerData.customEnums[typeof(Effect)].Contains("Lua")) { LuaPowerData.customEnums[typeof(Effect)].Add("Lua"); }
 		//MoreLuaPowerTesting.Test();
 	}
 	static public Player GetPlayer() {

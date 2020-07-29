@@ -22,6 +22,8 @@ public static class LuaPowerData
     static public Dictionary<string, Material> materials = new Dictionary<string, Material>();
     static public List<Script> scripts = new List<Script>();
     static public List<LuaPowerTrigger> luaHooks = new List<LuaPowerTrigger>();
+    static public Dictionary<string, Tuple<string, string, string>> customUpgrades = new Dictionary<string, Tuple<string, string, string>>();
+    static public Dictionary<Type, int> baseGameEnumAmount = new Dictionary<Type, int>();
     static public Dictionary<string, string> DPS = new Dictionary<string, string>() //Default Particle System
     {
         { "sprite", "Normal" },             //sprite name from MakeSprite
@@ -53,6 +55,12 @@ public static class LuaPowerData
         }
         if (!customEnums.ContainsKey(typeof(Brand))) {
             customEnums.Add(typeof(Brand), new List<string>());
+        }
+        if (!customEnums.ContainsKey(typeof(Enhancement))) {
+            customEnums.Add(typeof(Enhancement), new List<string>());
+        }
+        if (!customEnums.ContainsKey(typeof(Effect))) {
+            customEnums.Add(typeof(Effect), new List<string>());
         }
     }
 

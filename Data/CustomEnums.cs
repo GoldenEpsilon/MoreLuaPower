@@ -2,7 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
+using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 
 public class LuaPowerCustomEnumsSetup
@@ -13,6 +15,7 @@ public class LuaPowerCustomEnumsSetup
             foreach (string i2 in Enum.GetNames(i)) {
                 LuaPowerData.customEnums[i].Add(i2);
             }
+            LuaPowerData.baseGameEnumAmount.Add(i, LuaPowerData.customEnums[i].Count);
         }
     }
 }

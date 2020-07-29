@@ -17,7 +17,7 @@ public class PowerMonoBehavior : MonoBehaviour
         for (int i = 0; i < UpdateScripts.Count; i++) {
             S.I.mainCtrl.StartCoroutine(MoreLuaPower_FunctionHelper.EffectRoutine(UpdateBaseScripts[i].CreateCoroutine(UpdateScripts[i])));
         }
-        if (Input.GetKeyDown(KeyCode.Tilde)) {
+        if (Input.GetKeyDown(KeyCode.BackQuote)) {
             EnableDeveloperTools();
         }
     }

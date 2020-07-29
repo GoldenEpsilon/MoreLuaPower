@@ -36,6 +36,7 @@ class MoreLuaPower_GlobalLuaFunctions
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["AddCustomMusic"] = (Action<string, float, float>)PowerMonoBehavior.AddCustomMusic;
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["AddMusicHook"] = (Action<string, string, string>)PowerMonoBehavior.AddMusicHook;
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["AddZoneIcon"] = (Action<string, string>)PowerMonoBehavior.AddZoneIcon;
+        Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["AddUpgrade"] = (Action<string, string, string, string, string>)LuaPowerUpgrades.AddUpgrade;
     }
 }
 
