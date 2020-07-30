@@ -215,6 +215,11 @@ MoreLuaPower:
 		//		This is where you actually add your modifications.
 		//		You should be able to use it to run custom code when it's cast, if you can't figure it out ping me and I can work it out with you.
 
+	void AddXMLToSpell(SpellObject <spellObj>, string <XML>)
+		//Adds a line of XML to the SpellObject
+		// Meant to be used for upgrading spells
+		// Does not need tags like <Spells> or <Spell>, just put the tags that you would want in the spell directly like <OnHit>Flame</OnHit>
+
 Lua-based:
 
 	PetBuffArtifactFunction(item, target, status, amount, duration, extra)		

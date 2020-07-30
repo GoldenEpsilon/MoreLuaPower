@@ -134,6 +134,7 @@ public class PowerMonoBehavior : MonoBehaviour
             S.I.batCtrl.AddControlBlocks(Block.Console);
             S.I.consoleView.inputField.ActivateInputField();
             S.I.consoleView.inputField.Select();
+            S.I.consoleView.inputField.text = "";
             return true;
         }
         else
