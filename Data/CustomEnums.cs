@@ -12,6 +12,7 @@ public class LuaPowerCustomEnumsSetup
     static public void Setup() {
         foreach (Type i in LuaPowerData.customEnums.Keys) {
             LuaPowerData.customEnums[i].Clear();
+            LuaPowerData.baseGameEnumAmount.Remove(i);
             foreach (string i2 in Enum.GetNames(i)) {
                 LuaPowerData.customEnums[i].Add(i2);
             }

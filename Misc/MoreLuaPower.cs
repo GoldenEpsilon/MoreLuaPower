@@ -37,9 +37,12 @@ class MoreLuaPower
 		if (Harmony.HasAnyPatches("com.MoreLuaPower.patch")) {
 			return;
 		}
-		Debug.Log("MoreLuaPower Version 1.6");
+		Debug.Log("MoreLuaPower Version 1.7");
 		LuaPowerData.Setup();
 		LuaPowerCustomEnumsSetup.Setup();
+		if (S.I.GetComponent<PowerMonoBehavior>() == null) {
+			S.I.gameObject.AddComponent<PowerMonoBehavior>();
+		}
 		if (!LuaPowerData.customEnums[typeof(Effect)].Contains("Lua")) { LuaPowerData.customEnums[typeof(Effect)].Add("Lua"); }
 		//MoreLuaPowerTesting.Test();
 	}

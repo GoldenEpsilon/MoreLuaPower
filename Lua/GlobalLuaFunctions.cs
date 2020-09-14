@@ -43,14 +43,20 @@ class MoreLuaPower_GlobalLuaFunctions
 
 [HarmonyPatch(typeof(EffectActions))]
 [HarmonyPatch("AddScript")]
-class MoreLuaPower_InitFunction
+class MoreLuaPower_LuaFunctions
 {
-    static void Postfix(Script ___myLuaScript) {
+    static void Postfix(Script ___myLuaScript, string scriptPath) {
         object obj;
         obj = ___myLuaScript.Globals["Init"];
-        if (obj != null) {
+        if (obj != null && scriptPath != null && !LuaPowerData.luaFunctionLoaded.Contains(scriptPath)) {
             S.I.mainCtrl.StartCoroutine(MoreLuaPower_FunctionHelper.EffectRoutine(___myLuaScript.CreateCoroutine(obj)));
             ___myLuaScript.Globals.Remove("Init");
+            LuaPowerData.luaFunctionLoaded.Add(scriptPath);
+        }
+        obj = ___myLuaScript.Globals["Awake"];
+        if (obj != null) {
+            S.I.mainCtrl.StartCoroutine(MoreLuaPower_FunctionHelper.EffectRoutine(___myLuaScript.CreateCoroutine(obj)));
+            ___myLuaScript.Globals.Remove("Awake");
         }
         obj = ___myLuaScript.Globals["Update"];
         if (obj != null) {

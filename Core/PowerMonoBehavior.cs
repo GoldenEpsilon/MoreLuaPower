@@ -17,7 +17,7 @@ public class PowerMonoBehavior : MonoBehaviour
         for (int i = 0; i < UpdateScripts.Count; i++) {
             S.I.mainCtrl.StartCoroutine(MoreLuaPower_FunctionHelper.EffectRoutine(UpdateBaseScripts[i].CreateCoroutine(UpdateScripts[i])));
         }
-        if (Input.GetKeyDown(KeyCode.BackQuote)) {
+        if (Input.GetKeyDown(KeyCode.Tilde)) {
             EnableDeveloperTools();
         }
     }
@@ -58,38 +58,31 @@ public class PowerMonoBehavior : MonoBehaviour
         }
     }
 
-    public static bool GetCustomInput(KeyCode code)
-    {
+    public static bool GetCustomInput(KeyCode code) {
         return Input.GetKeyDown(code);
     }
 
-    public static void AddZoneIcon(string spriteName, string dotName)
-    {
+    public static void AddZoneIcon(string spriteName, string dotName) {
         S.I.runCtrl.worldBar.zoneSprites.Add(dotName, S.I.itemMan.GetSprite(spriteName));
     }
 
-    public static void AddCustomMusic(string AudioName, float volume = 1, float startTime = 0)
-    {
+    public static void AddCustomMusic(string AudioName, float volume = 1, float startTime = 0) {
         S.I.StartCoroutine(AudioDoesExist(AudioName, volume, startTime));
     }
 
 
-    public static IEnumerator FadeAudioIn(AudioSource source, float duration, float maxVolume)
-    {
+    public static IEnumerator FadeAudioIn(AudioSource source, float duration, float maxVolume) {
         float t = 0;
-        while (t < duration)
-        {
+        while (t < duration) {
             yield return new WaitForSeconds(.02f);
             t += .02f;
             source.volume = Math.Max(.05f, Mathf.Lerp(0, maxVolume, t / duration));
         }
     }
 
-    public static IEnumerator FadeAudioOut(AudioSource source, float duration, float maxVolume)
-    {
+    public static IEnumerator FadeAudioOut(AudioSource source, float duration, float maxVolume) {
         float t = 0;
-        while (t < duration)
-        {
+        while (t < duration) {
             yield return new WaitForSeconds(.02f);
             t += .02f;
             source.volume = Math.Max(.05f, Mathf.Lerp(maxVolume, 0, t / duration));
@@ -97,8 +90,7 @@ public class PowerMonoBehavior : MonoBehaviour
         source.volume = 0;
     }
 
-    public static IEnumerator AudioDoesExist(string AudioName, float volume, float startTime)
-    {
+    public static IEnumerator AudioDoesExist(string AudioName, float volume, float startTime) {
         Dictionary<string, AudioClip> d = Traverse.Create(S.I.itemMan).Field("allAudioClips").GetValue<Dictionary<string, AudioClip>>();
         yield return new WaitWhile(() => d.ContainsKey(AudioName) == false);
         LuaPowerData.CustomMusic myAudio = new LuaPowerData.CustomMusic(S.I.itemMan.GetAudioClip(AudioName), volume, startTime);
@@ -123,11 +115,9 @@ public class PowerMonoBehavior : MonoBehaviour
         }
     }
 
-    public static bool EnableDeveloperTools()
-    {
-        
-        if (!S.I.consoleView.viewContainer.active)
-        {
+    public static bool EnableDeveloperTools() {
+
+        if (!S.I.consoleView.viewContainer.activeSelf) {
             S.I.CONSOLE = true;
             S.I.DEVELOPER_TOOLS = true;
             S.I.consoleView.viewContainer.SetActive(true);
@@ -136,9 +126,7 @@ public class PowerMonoBehavior : MonoBehaviour
             S.I.consoleView.inputField.Select();
             S.I.consoleView.inputField.text = "";
             return true;
-        }
-        else
-        {
+        } else {
             S.I.consoleView.viewContainer.SetActive(false);
             S.I.batCtrl.RemoveControlBlocks(Block.Console);
             S.I.consoleView.inputField.DeactivateInputField();
@@ -146,18 +134,14 @@ public class PowerMonoBehavior : MonoBehaviour
         }
     }
 
-    public static void RunDev(string str)
-    {
-        if (S.I.consoleView.GetComponent<ConsoleCtrl>() != null)
-        {
+    public static void RunDev(string str) {
+        if (S.I.consoleView.GetComponent<ConsoleCtrl>() != null) {
             ConsoleCtrl conRef = S.I.consoleView.GetComponent<ConsoleCtrl>();
             conRef.runCommandString(str);
         }
     }
-    public static void PrintDev(string str)
-    {
-        if (S.I.consoleView.GetComponent<ConsoleCtrl>() != null)
-        {
+    public static void PrintDev(string str) {
+        if (S.I.consoleView.GetComponent<ConsoleCtrl>() != null) {
             ConsoleCtrl conRef = S.I.consoleView.GetComponent<ConsoleCtrl>();
             conRef.appendLogLine(str);
         }

@@ -131,7 +131,7 @@ MoreLuaPower:
 		// while(GetSprite("ExampleSprite") == nil) do
 		// 	WaitForFrames(1);
 		// end
-		// SetBrandImage("ExampleSprite", "SpaceCore");
+		// SetBrandImage("ExampleBrand", "ExampleSprite");
 		
 	Brand GetBrand			(Brand {brand})
 		//Returns the name of {brand} as a string
@@ -234,9 +234,12 @@ Lua-based:
 //note: these do not come with an object as an input, you will want to use S.I.whatever to access objects.
 
 	Init:
+	//When put into a file will be called only once.
+	// This is for loading sprites and such.
+
+	Awake:
 	//When put into a file will be called whenever the game loads/reloads lua mods.
-	// NOTE: This does not guarantee that it will run only once. 
-	//  Use global variables to make sure that it only runs once if you want that.
+	// This is for setting global variables and such.
 
 	Update:
 	//Is called every frame, including on menus and when time's stopped.

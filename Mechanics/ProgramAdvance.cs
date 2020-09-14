@@ -25,49 +25,47 @@ class MoreLuaPower_ProgramAdvance
 {
     static void Prefix(ref Player __instance, int slotNum, ref int manaOverride, ref bool consumeOverride, out Tuple<int, SpellObject, SpellObject> __state) {
         __state = new Tuple<int, SpellObject, SpellObject>(-1, null, null);
-
-        for (int slot = 0; slot < __instance.duelDisk.castSlots.Count; slot++) {
-            if (!__instance.duelDisk.shuffling && __instance.duelDisk.castSlots[slot] != null && __instance.duelDisk.castSlots[slot].spellObj != null) {
-                Dictionary<string, string> pd = __instance.duelDisk.castSlots[slot].spellObj.spell.itemObj.paramDictionary;
-                if (pd != null && __instance.duelDisk.castSlots[slot].cardtridgeFill != null && pd.ContainsKey("ProgramAdvance")) {
-                    if (!pd.ContainsKey("ProgramAdvanceLinkWith")) {
-                        Debug.Log("ERROR: Spell has ProgramAdvance, but not ProgramAdvanceLinkWith");
-                        return;
-                    }
-                    if (!pd.ContainsKey("AdvanceSpell")) {
-                        Debug.Log("ERROR: Spell has ProgramAdvance, but not AdvanceSpell");
-                        return;
-                    }
-                    List<string> str = pd["ProgramAdvanceLinkWith"].Split(',').ToList();
-                    int otherSlotNum = -1;
-                    for (int i = 0; i < __instance.duelDisk.castSlots.Count; i++) {
-                        foreach (string i2 in str) {
-                            if (__instance.duelDisk.castSlots[i].spellObj != null && i2 == __instance.duelDisk.castSlots[i].spellObj.itemID) {
-                                otherSlotNum = i;
-                            }
+        int slot = slotNum;
+        if (!__instance.duelDisk.shuffling && __instance.duelDisk.castSlots[slot].spellObj.spell != null) {
+            Dictionary<string, string> pd = __instance.duelDisk.castSlots[slot].spellObj.spell.itemObj.paramDictionary;
+            if (pd != null && __instance.duelDisk.castSlots[slot].cardtridgeFill != null && pd.ContainsKey("ProgramAdvance")) {
+                if (!pd.ContainsKey("ProgramAdvanceLinkWith")) {
+                    Debug.Log("ERROR: Spell has ProgramAdvance, but not ProgramAdvanceLinkWith");
+                    return;
+                }
+                if (!pd.ContainsKey("AdvanceSpell")) {
+                    Debug.Log("ERROR: Spell has ProgramAdvance, but not AdvanceSpell");
+                    return;
+                }
+                List<string> str = pd["ProgramAdvanceLinkWith"].Split(',').ToList();
+                int otherSlotNum = -1;
+                for (int i = 0; i < __instance.duelDisk.castSlots.Count; i++) {
+                    foreach (string i2 in str) {
+                        if (__instance.duelDisk.castSlots[i].spellObj.spell != null && i2 == __instance.duelDisk.castSlots[i].spellObj.itemID) {
+                            otherSlotNum = i;
                         }
                     }
-                    if (otherSlotNum != -1 && slotNum < __instance.duelDisk.castSlots.Count) {
-                        //ADVANCE LINK ACTIVATED
+                }
+                if (otherSlotNum != -1 && slotNum < __instance.duelDisk.castSlots.Count) {
+                    //ADVANCE LINK ACTIVATED
 
-                        if (!consumeOverride && pd.ContainsKey("ConsumeAfterAdvance")) {
-                            consumeOverride = pd["ConsumeAfterAdvance"] == "true";
-                        }
-                        if (__instance.duelDisk.castSlots[otherSlotNum].spellObj.spell.itemObj.paramDictionary.ContainsKey("ConsumeAfterAdvance")) {
-                            __instance.duelDisk.LaunchSlot(otherSlotNum, __instance.duelDisk.castSlots[otherSlotNum].spellObj.spell.itemObj.paramDictionary["ConsumeAfterAdvance"] == "true", null);
-                        } else {
-                            __instance.duelDisk.LaunchSlot(otherSlotNum, false, null);
-                        }
+                    if (!consumeOverride && pd.ContainsKey("ConsumeAfterAdvance")) {
+                        consumeOverride = pd["ConsumeAfterAdvance"] == "true";
+                    }
+                    if (__instance.duelDisk.castSlots[slot].spellObj.spell.itemObj.paramDictionary.ContainsKey("ConsumeAfterAdvance")) {
+                        __instance.duelDisk.LaunchSlot(slot == 0 ? 1 : 0, __instance.duelDisk.castSlots[slot].spellObj.spell.itemObj.paramDictionary["ConsumeAfterAdvance"] == "true", null);
+                    } else {
+                        __instance.duelDisk.LaunchSlot(slot == 0 ? 1 : 0, false, null);
+                    }
 
-                        SpellObject Advance = S.I.deCtrl.CreateSpellBase(pd["AdvanceSpell"], __instance);
-                        __state = new Tuple<int, SpellObject, SpellObject>(
-                            __instance.duelDisk.currentCardtridges.IndexOf(__instance.duelDisk.castSlots[slotNum].cardtridgeFill),
-                            __instance.duelDisk.castSlots[slotNum].cardtridgeFill.spellObj,
-                            Advance);
-                        __instance.duelDisk.currentCardtridges.ElementAt(__state.Item1).spellObj = Advance;
-                        if (pd.ContainsKey("CostAdvancedMana") && pd["CostAdvancedMana"] == "false" && manaOverride < 0) {
-                            manaOverride = 0;
-                        }
+                    SpellObject Advance = S.I.deCtrl.CreateSpellBase(pd["AdvanceSpell"], __instance);
+                    __state = new Tuple<int, SpellObject, SpellObject>(
+                        __instance.duelDisk.currentCardtridges.IndexOf(__instance.duelDisk.castSlots[slotNum].cardtridgeFill),
+                        __instance.duelDisk.castSlots[slotNum].cardtridgeFill.spellObj,
+                        Advance);
+                    __instance.duelDisk.currentCardtridges.ElementAt(__state.Item1).spellObj = Advance;
+                    if (pd.ContainsKey("CostAdvancedMana") && pd["CostAdvancedMana"] == "false" && manaOverride < 0) {
+                        manaOverride = 0;
                     }
                 }
             }
