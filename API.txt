@@ -41,6 +41,11 @@ Table of Contents:
 		// but if the mod is named disabled the directory itself still loads anyway. (it won't load subdirectories, however)
 		// NOTE: naming the folder disabled works with any capitalization.
 
+	Custom Lua Effects
+		//This is a recreation of https://steamcommunity.com/sharedfiles/filedetails/?id=2063268758, with a bit more flair
+		// In the XML you can use the keyword Lua instead of something else like Frost, and it will call the function you specify
+		// As an example, you could do <OnHit value="ExampleFunction">Lua</OnHit> and it would run the function ExampleFunction()
+
 [NEW MECHANICS]	
 
 	Program Advance
