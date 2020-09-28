@@ -48,7 +48,7 @@ Table of Contents:
 
 [NEW MECHANICS]	
 
-	Program Advance
+	Program Advance    //NEEDS A REWRITE, DO NOT USE YET
 		//Program advance is a mechanic from MMBN where you combine multiple chips into one powerful chip.
 		//Spells with the ProgramAdvance param will be parsed otherwise, do a normal spell cast
 		// ProgramAdvanceLinkWith is the name of the spell in the other slot needed to trigger the Advance Spell - use commas to separate spells

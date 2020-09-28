@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using HarmonyLib;
-using I2.Loc;
 using UnityEngine;
 
 //A kicker cast is a spell that behaves differently depending on how much mana the player has. Generally looks like this. Cast mini thunder for zero mana,
@@ -38,11 +35,15 @@ class MoreLuaPower_Kickercast
             for (int i = SpellNames.Count - 1; i >= 0; i--) {
                 if (__instance.duelDisk.currentMana >= (manaOverride < 0 ? Int32.Parse(ManaCosts[i]) : manaOverride)) {
                     SpellObject Kicker = S.I.deCtrl.CreateSpellBase(SpellNames[i], __instance);
-                    Kicker.PlayerCast();
-                    var manaCost = (manaOverride < 0 ? Int32.Parse(ManaCosts[i]) : manaOverride);
-                    __instance.duelDisk.currentMana -= (float)manaCost;
-                    __instance.duelDisk.LaunchSlot(slotNum, false, null);
-                    return false;
+                    Kicker.castSlotNum = slotNum;
+                    foreach (Enhancement e in __instance.duelDisk.castSlots[slotNum].spellObj.enhancements) {
+                        S.I.poCtrl.EnhanceSpell(Kicker, e);
+                    }
+                    __instance.duelDisk.castSlots[slotNum].Launch(__instance.duelDisk.castSlots[slotNum].spellObj.consume, null);
+                    Cardtridge KickerCardt = SimplePool.Spawn(S.I.deCtrl.cardtridgePrefab, Vector3.one * 1000f, __instance.transform.rotation, null, false).GetComponent<Cardtridge>().Set(Kicker, __instance.duelDisk);
+                    __instance.duelDisk.castSlots[slotNum].Load(KickerCardt);
+                    UnityEngine.Object.Destroy(KickerCardt, 1);
+                    return true;
                 }
             }
         }

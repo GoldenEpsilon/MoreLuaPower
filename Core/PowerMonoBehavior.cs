@@ -5,9 +5,7 @@ using UnityEngine;
 using System.IO;
 using System.Collections;
 using UnityEngine.Networking;
-using UnityEngine.Experimental.PlayerLoop;
 using System.Collections.Generic;
-using E7.Introloop;
 
 public class PowerMonoBehavior : MonoBehaviour
 {
@@ -17,7 +15,7 @@ public class PowerMonoBehavior : MonoBehaviour
         for (int i = 0; i < UpdateScripts.Count; i++) {
             S.I.mainCtrl.StartCoroutine(MoreLuaPower_FunctionHelper.EffectRoutine(UpdateBaseScripts[i].CreateCoroutine(UpdateScripts[i])));
         }
-        if (Input.GetKeyDown(KeyCode.Tilde)) {
+        if (Input.GetKeyDown(KeyCode.BackQuote)) {
             EnableDeveloperTools();
         }
     }

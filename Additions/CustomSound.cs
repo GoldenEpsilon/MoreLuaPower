@@ -3,7 +3,6 @@ using System;
 using UnityEngine;
 using System.IO;
 using System.Collections.Generic;
-using E7.Introloop;
 
 [HarmonyPatch(typeof(MusicCtrl))]
 [HarmonyPatch("PlayBattle")]

@@ -1,14 +1,5 @@
-﻿using HarmonyLib;
-using MoonSharp.Interpreter;
-using System;
-using UnityEngine;
-using UnityEngine.UI;
-using System.IO;
-using System.Linq;
-using System.Collections;
+﻿using UnityEngine;
 using System.Collections.Generic;
-using UnityEngine.Networking;
-using System.Reflection.Emit;
 
 class LuaPowerBeingVariables
 {

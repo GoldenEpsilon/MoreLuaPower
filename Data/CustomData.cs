@@ -2,7 +2,6 @@
 using MoonSharp.Interpreter;
 using System.Collections.Generic;
 using System;
-using E7.Introloop;
 
 public class LuaPowerTrigger
 {

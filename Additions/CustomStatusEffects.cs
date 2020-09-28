@@ -1,8 +1,5 @@
-﻿using HarmonyLib;
-using System;
+﻿using System;
 using UnityEngine;
-using System.Xml;
-using System.Collections.Generic;
 
 
 class LuaPowerStatus
@@ -21,6 +18,7 @@ class LuaPowerStatus
             Debug.Log("NewEffect was not called for effect " + effect);
             return;
         }
+        if (GetEffect(being, effect)) { RemoveEffect(being, effect); }
         if (duration == 0) {
             duration = 9999f;
         }

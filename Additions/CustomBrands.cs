@@ -1,8 +1,5 @@
 ﻿using HarmonyLib;
-using I2.Loc;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class LuaPowerBrands

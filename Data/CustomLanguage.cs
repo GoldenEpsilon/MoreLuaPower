@@ -1,7 +1,4 @@
-﻿using HarmonyLib;
-using System.IO;
-using System.Xml;
-using I2.Loc;
+﻿using I2.Loc;
 
 class LuaPowerLang
 {

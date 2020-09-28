@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using HarmonyLib;
-using I2.Loc;
 using UnityEngine;
 
 //Program advance is a mechanic from MMBN where you combine multiple chips into one powerful chip.
@@ -41,7 +38,7 @@ class MoreLuaPower_ProgramAdvance
                 int otherSlotNum = -1;
                 for (int i = 0; i < __instance.duelDisk.castSlots.Count; i++) {
                     foreach (string i2 in str) {
-                        if (__instance.duelDisk.castSlots[i].spellObj.spell != null && i2 == __instance.duelDisk.castSlots[i].spellObj.itemID) {
+                        if (__instance.duelDisk.castSlots[i] != null && __instance.duelDisk.castSlots[i].spellObj.spell != null && i2 == __instance.duelDisk.castSlots[i].spellObj.itemID) {
                             otherSlotNum = i;
                         }
                     }

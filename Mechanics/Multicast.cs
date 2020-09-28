@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using HarmonyLib;
-using I2.Loc;
-using UnityEngine;
 
 //Multicast is a mechanic that allows you to make spells that dont discard after the first use!
 //Spells with the DontDiscard param will be parsed otherwise, do a normal spell cast

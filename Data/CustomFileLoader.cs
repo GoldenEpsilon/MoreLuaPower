@@ -1,22 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using HarmonyLib;
-using System.Xml;
-using System.Globalization;
 using System.Collections;
 using System.IO;
 using UnityEngine;
-using System.Reflection.Emit;
 using System.Reflection;
-using System.Runtime.CompilerServices;
-using AssetBundles;
-using UnityEngine.UI;
-using Rewired.UI.ControlMapper;
 using System.Xml.Linq;
-using UnityEngine.Internal;
 using UnityEngine.Networking;
 using System.Threading;
 

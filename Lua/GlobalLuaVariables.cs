@@ -2,13 +2,7 @@
 using MoonSharp.Interpreter;
 using System;
 using UnityEngine;
-using UnityEngine.UI;
 using System.IO;
-using System.Linq;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine.Networking;
-using System.Reflection.Emit;
 
 [HarmonyPatch(typeof(EffectActions), MethodType.Constructor)]
 [HarmonyPatch(new Type[] { typeof(string) })]
