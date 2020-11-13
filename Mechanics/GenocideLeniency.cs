@@ -23,7 +23,7 @@ class MoreLuaPower_GenocideLeniency
         {
             if (!LuaPowerData.GenocideLenientStages.Contains(worldName)) {
                 count++;
-            } else
+            }
         }
 
         if (__instance.currentRun.shopkeeperKilled)

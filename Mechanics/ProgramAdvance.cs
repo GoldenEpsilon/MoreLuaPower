@@ -23,7 +23,7 @@ class MoreLuaPower_ProgramAdvance
     static void Prefix(ref Player __instance, int slotNum, ref int manaOverride, ref bool consumeOverride, out Tuple<int, SpellObject, SpellObject> __state) {
         __state = new Tuple<int, SpellObject, SpellObject>(-1, null, null);
         int slot = slotNum;
-        if (!__instance.duelDisk.shuffling && __instance.duelDisk.castSlots[slot].spellObj.spell != null) {
+        if (!__instance.duelDisk.shuffling && __instance.duelDisk.castSlots[slot] != null && __instance.duelDisk.castSlots[slot].spellObj != null && __instance.duelDisk.castSlots[slot].spellObj.spell != null) {
             Dictionary<string, string> pd = __instance.duelDisk.castSlots[slot].spellObj.spell.itemObj.paramDictionary;
             if (pd != null && __instance.duelDisk.castSlots[slot].cardtridgeFill != null && pd.ContainsKey("ProgramAdvance")) {
                 if (!pd.ContainsKey("ProgramAdvanceLinkWith")) {
@@ -38,7 +38,7 @@ class MoreLuaPower_ProgramAdvance
                 int otherSlotNum = -1;
                 for (int i = 0; i < __instance.duelDisk.castSlots.Count; i++) {
                     foreach (string i2 in str) {
-                        if (__instance.duelDisk.castSlots[i] != null && __instance.duelDisk.castSlots[i].spellObj.spell != null && i2 == __instance.duelDisk.castSlots[i].spellObj.itemID) {
+                        if (__instance.duelDisk.castSlots[i] != null && __instance.duelDisk.castSlots[i].spellObj != null && i2 == __instance.duelDisk.castSlots[i].spellObj.itemID) {
                             otherSlotNum = i;
                         }
                     }
