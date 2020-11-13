@@ -1,6 +1,7 @@
 ﻿using System;
 
 using HarmonyLib;
+using UnityEngine;
 
 //Multicast is a mechanic that allows you to make spells that dont discard after the first use!
 //Spells with the DontDiscard param will be parsed otherwise, do a normal spell cast
@@ -19,27 +20,36 @@ class MoreLuaPower_Multicast
 {
     [HarmonyPriority(Priority.LowerThanNormal)]
     static void Prefix(ref Player __instance, int slotNum, ref int manaOverride, bool consumeOverride) {
-        if (__instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary.ContainsKey("DontDiscard") &&
-            __instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["DontDiscard"] == "true") {
-            if (__instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary.ContainsKey("ShotsRemaining")) {
-                if (__instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary.ContainsKey("ManaCost")) {
-                    switch (__instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["ManaCost"]) {
-                        case "Start":
-                            if (__instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary.ContainsKey("MaxShots") &&
-                            __instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["ShotsRemaining"] !=
-                            __instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["MaxShots"]) {
-                                manaOverride = 0;
-                            }
-                            break;
-                        case "End":
-                            if (Int32.Parse(__instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["ShotsRemaining"]) > 1) {
-                                manaOverride = 0;
-                            }
-                            break;
-                        case "All":
-                            break;
-                        default:
-                            break;
+        if (__instance.duelDisk.castSlots[slotNum] != null && __instance.duelDisk.castSlots[slotNum].spellObj != null && __instance.duelDisk.castSlots[slotNum].spellObj.spell != null && __instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj != null)
+        {
+            if (__instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary.ContainsKey("DontDiscard") &&
+            __instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["DontDiscard"] == "true")
+            {
+                if (__instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary.ContainsKey("ShotsRemaining"))
+                {
+                    if (__instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary.ContainsKey("ManaCost"))
+                    {
+                        switch (__instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["ManaCost"])
+                        {
+                            case "Start":
+                                if (__instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary.ContainsKey("MaxShots") &&
+                                __instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["ShotsRemaining"] !=
+                                __instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["MaxShots"])
+                                {
+                                    manaOverride = 0;
+                                }
+                                break;
+                            case "End":
+                                if (Int32.Parse(__instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["ShotsRemaining"]) > 1)
+                                {
+                                    manaOverride = 0;
+                                }
+                                break;
+                            case "All":
+                                break;
+                            default:
+                                break;
+                        }
                     }
                 }
             }
