@@ -116,6 +116,7 @@
     <Compile Include="Additions\CustomParticles.cs" />
     <Compile Include="Additions\CustomSound.cs" />
     <Compile Include="Additions\CustomSprites.cs" />
+    <Compile Include="Mechanics\GenocideLeniency.cs" />
     <Compile Include="Mechanics\KickerCast.cs" />
     <Compile Include="Lua\LuaHooks.cs" />
     <Compile Include="Mechanics\Multicast.cs" />
