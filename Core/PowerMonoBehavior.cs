@@ -108,6 +108,9 @@ public class PowerMonoBehavior : MonoBehaviour
             if (type == "Idle") {
                 LuaPowerData.customMusic[zoneBgName + "_Idle"] = LuaPowerData.customMusic[AudioName];
             }
+            if (type == "Boss") {
+                LuaPowerData.customMusic[zoneBgName] = LuaPowerData.customMusic[AudioName];
+            }
         } else {
             Debug.Log("Warning: " + AudioName + " is not added as music");
         }
