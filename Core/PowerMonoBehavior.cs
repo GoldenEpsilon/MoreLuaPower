@@ -116,6 +116,11 @@ public class PowerMonoBehavior : MonoBehaviour
         }
     }
 
+    public static void MakeZoneGenocideLenient(string str)
+    {
+        LuaPowerData.GenocideLenientStages.Add(str);
+    }
+
     public static bool EnableDeveloperTools() {
 
         if (!S.I.consoleView.viewContainer.activeSelf) {

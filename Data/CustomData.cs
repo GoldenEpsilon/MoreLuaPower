@@ -14,6 +14,7 @@ public class LuaPowerTrigger
 }
 public static class LuaPowerData
 {
+    static public List<String> GenocideLenientStages = new List<string>();
     static public Dictionary<Type, List<string>> customEnums = new Dictionary<Type, List<string>>();
     static public Dictionary<Enum, List<string>> enumAdditions = new Dictionary<Enum, List<string>>();
     static public Dictionary<String, CustomMusic> customMusic = new Dictionary<string, CustomMusic>();
