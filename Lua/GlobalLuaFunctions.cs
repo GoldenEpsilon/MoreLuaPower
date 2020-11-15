@@ -49,10 +49,12 @@ class MoreLuaPower_LuaFunctions
     static void Postfix(Script ___myLuaScript, string scriptPath) {
         object obj;
         obj = ___myLuaScript.Globals["Init"];
-        if (obj != null && scriptPath != null && !LuaPowerData.luaFunctionLoaded.Contains(scriptPath)) {
-            S.I.mainCtrl.StartCoroutine(MoreLuaPower_FunctionHelper.EffectRoutine(___myLuaScript.CreateCoroutine(obj)));
+        if (obj != null && scriptPath != null) {
+            if (!LuaPowerData.luaFunctionLoaded.Contains(scriptPath)) {
+                S.I.mainCtrl.StartCoroutine(MoreLuaPower_FunctionHelper.EffectRoutine(___myLuaScript.CreateCoroutine(obj)));
+                LuaPowerData.luaFunctionLoaded.Add(scriptPath);
+            }
             ___myLuaScript.Globals.Remove("Init");
-            LuaPowerData.luaFunctionLoaded.Add(scriptPath);
         }
         obj = ___myLuaScript.Globals["Awake"];
         if (obj != null) {

@@ -12,7 +12,7 @@ class MoreLuaPower_MusicBattle
     {
         if (!__instance.battleEnvironmentsLate.ContainsKey(__instance.runCtrl.currentWorld.background) && !__instance.battleEnvironments.ContainsKey(__instance.runCtrl.currentWorld.background))
         {
-            if (LuaPowerData.customMusic.ContainsKey(__instance.runCtrl.currentWorld.background + "_Idle"))
+            if (LuaPowerData.customMusic.ContainsKey(__instance.runCtrl.currentWorld.background + "_Battle"))
             {
                 LuaPowerSound.PlayCustomMusic(__instance.runCtrl.currentWorld.background + "_Battle");
                 return false;
