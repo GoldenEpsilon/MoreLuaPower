@@ -89,15 +89,16 @@ public class PowerMonoBehavior : MonoBehaviour
     }
 
     public static IEnumerator AudioDoesExist(string AudioName, float volume, float startTime) {
+        if (LuaPowerData.customMusic.ContainsKey(AudioName)) {
+            Debug.Log("Warning: " + AudioName + " is already added as music");
+            yield break;
+        }
+        LuaPowerData.customMusic[AudioName] = null;
         Dictionary<string, AudioClip> d = Traverse.Create(S.I.itemMan).Field("allAudioClips").GetValue<Dictionary<string, AudioClip>>();
         yield return new WaitWhile(() => d.ContainsKey(AudioName) == false);
         LuaPowerData.CustomMusic myAudio = new LuaPowerData.CustomMusic(S.I.itemMan.GetAudioClip(AudioName), volume, startTime);
 
-        if (!LuaPowerData.customMusic.ContainsKey(AudioName)) {
-            LuaPowerData.customMusic[AudioName] = myAudio;
-        } else {
-            Debug.Log("Warning: " + AudioName + " is already added as music");
-        }
+        LuaPowerData.customMusic[AudioName] = myAudio;
     }
 
     public static void AddMusicHook(string AudioName, string zoneBgName, string type) {

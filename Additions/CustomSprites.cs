@@ -11,8 +11,9 @@ static class LuaPowerSprites
 
         if (LuaPowerData.sprites.ContainsKey(name)) {
             Debug.Log("ERROR: A Sprite exists with this name already.");
+            return;
         }
-
+        LuaPowerData.sprites[name] = null;
         S.I.GetComponent<PowerMonoBehavior>().StartCoroutine(
          PowerMonoBehavior.LoadSprite(str, (Texture2D content) => {
              if (content != null) {
@@ -25,7 +26,7 @@ static class LuaPowerSprites
     }
 
     static public Sprite GetSprite(string image) {
-        if (LuaPowerData.sprites.ContainsKey(image)) {
+        if (LuaPowerData.sprites.ContainsKey(image) && LuaPowerData.sprites[image] != null) {
             return LuaPowerData.sprites[image];
         }
         return null;
