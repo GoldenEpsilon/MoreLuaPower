@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Xml.Linq;
 using UnityEngine.Networking;
 using System.Threading;
+using System;
 
 //Prefix patches LoadItemData because it is called right before modloading ends.
 [HarmonyPatch]
@@ -198,12 +199,18 @@ internal static class CustomFileLoader
             }
             Debug.Log("Running default installing for folder " + dir.Name);
 
+            //Works with the new sprite importer
+            modCtrl._InstallTheseMods(files, dir.FullName);
+
+            //Works with the old importer
+
             //IMPORTANT: this section creates what would normally be a coroutine, but runs through its entirety while ignoring what would normally cause a delay.
             //The reason this is done is because, do to loading every file in subfolders, images which are normally loaded through AnimInfo.xml files do not need to be loaded twice.
             //By forcing through this routine, we dont make it take time to load the animations, since we will load them later anyway. The actual data in AnimInfo loads before image loading, and still works.
             //Images are removed beforehand because they cannot be loaded this way.
-            var coroutine = modCtrl._InstallTheseMods(files, dir.FullName);
-            while (coroutine.MoveNext()) ;
+
+            //var coroutine = modCtrl._InstallTheseMods(files, dir.FullName);
+            //while (coroutine.MoveNext()) ;
         }
 
         //Go through files looking for the custom file types found earlier.
