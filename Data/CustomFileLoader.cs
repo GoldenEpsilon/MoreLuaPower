@@ -29,16 +29,9 @@ static class CustomFileLoader_Patches
 //Basically, this thing is written to stop the install button from switching back to its default when mods are being loaded again.
 internal static class CustomFileLoader
 {
-    //Keeps track of images being loaded.
-    private static List<AsyncOperation> images_remaining = new List<AsyncOperation>();
-
-    //Mutex lock for images_remaining.
-    private static Mutex image_lock = new Mutex();
 
     //Function that is called when mod loading is almost done. Goes through all mods and looks for CustomFileTypes.xml, then passes it off to the loader for everything.
     public static void AfterInstall() {
-        var modCtrl = S.I.modCtrl;
-        images_remaining = new List<AsyncOperation>();
         string[] directories = Directory.GetDirectories(ModCtrl.MODS_PATH);
         string[] strArray = directories;
         var list = new List<CustomFileType>();
@@ -187,23 +180,8 @@ internal static class CustomFileLoader
         var modCtrl = S.I.modCtrl;
         if (!first) {
             var baseFiles = new List<FileInfo>(files);
-            //Find image files and remove them from the default loading list.
-            for (int i = 0; i < baseFiles.Count(); i++) {
-                if (baseFiles[i].Name.EndsWith(".png")) {
-                    //Images are the only default type that requires a coroutine.
-                    modCtrl.StartCoroutine(LoadImageFile(baseFiles[i]));
-                    baseFiles.Remove(baseFiles[i]);
-                    i--;
-                }
-            }
-            Debug.Log("Running default installing for folder " + dir.Name);
-
-            //IMPORTANT: this section creates what would normally be a coroutine, but runs through its entirety while ignoring what would normally cause a delay.
-            //The reason this is done is because, do to loading every file in subfolders, images which are normally loaded through AnimInfo.xml files do not need to be loaded twice.
-            //By forcing through this routine, we dont make it take time to load the animations, since we will load them later anyway. The actual data in AnimInfo loads before image loading, and still works.
-            //Images are removed beforehand because they cannot be loaded this way.
-            var coroutine = modCtrl._InstallTheseMods(files, dir.FullName);
-            while (coroutine.MoveNext()) ;
+            //This section is massively simplified because of the rework to loading sprites
+            modCtrl._InstallTheseMods(files, dir.FullName);
         }
 
         //Go through files looking for the custom file types found earlier.
@@ -226,48 +204,6 @@ internal static class CustomFileLoader
             //Now look through subfolders that arent named 'disabled'.
             if (directory.Name.ToLower() != "disabled") ReadAllFilesInDirectory(types, directory, false);
         }
-    }
-
-
-
-    //Thread safe image loader.
-    private static IEnumerator LoadImageFile(FileInfo theFile) {
-        if (!theFile.Name.Contains(".meta")) {
-            using (UnityWebRequest uwr = UnityWebRequestTexture.GetTexture("file://" + theFile.FullName.ToString())) {
-                var task = uwr.SendWebRequest();
-                image_lock.WaitOne();
-                images_remaining.Add(task);
-                image_lock.ReleaseMutex();
-                task.completed += delegate (AsyncOperation op) {
-                    image_lock.WaitOne();
-                    images_remaining.Remove(task);
-                    if (images_remaining.Count() == 0) {
-                        if (!S.I.modCtrl.processing) {
-                            S.I.itemMan.LoadItemData();
-                        } else {
-                            S.I.modCtrl.StartCoroutine(LoadItemDataAfterInstall());
-                        }
-                    }
-                    image_lock.ReleaseMutex();
-                };
-                yield return (object)task;
-                if (uwr.isNetworkError || uwr.isHttpError) {
-                    Debug.Log((object)uwr.error);
-                } else {
-                    Texture2D content = DownloadHandlerTexture.GetContent(uwr);
-                    S.I.itemMan.sprites[Path.GetFileNameWithoutExtension(theFile.FullName.ToString())] = Sprite.Create(content, new Rect(0.0f, 0.0f, (float)content.width, (float)content.height), new Vector2(0.5f, 0.5f));
-                }
-            }
-        }
-    }
-
-    //Self Explanatory
-    private static IEnumerator LoadItemDataAfterInstall() {
-        var modCtrl = S.I.modCtrl;
-        while (modCtrl.processing) {
-            yield return new WaitForSeconds(0.1f);
-        }
-        S.I.itemMan.LoadItemData();
     }
 
     //Stores information for custom file types.
