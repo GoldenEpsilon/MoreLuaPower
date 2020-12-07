@@ -13,6 +13,7 @@ class MoreLuaPower_GlobalLuaTypes
         UserData.RegisterType<Rewired.Player>(InteropAccessMode.Default, null);
         UserData.RegisterType<S>(InteropAccessMode.Default, null);
         UserData.RegisterType<Run>(InteropAccessMode.Default, null);
+        UserData.RegisterType<ItemObject>(InteropAccessMode.Default, null);
         UserData.RegisterType<SpellListCard>(InteropAccessMode.Default, null);
         UserData.RegisterType<ListCard>(InteropAccessMode.Default, null);
         UserData.RegisterType<StatusEffect>(InteropAccessMode.Default, null);
