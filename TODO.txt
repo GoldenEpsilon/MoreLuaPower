@@ -24,6 +24,9 @@ PRIORITY:
     setting custom effect replaces parameters
 
 TODO:
+    Custom Hooks aren't passing the item correctly
+    Add custom settings
+    Reverse engineer the menus
     Let the "num" variable for worlds accept strings so that conflicts are easier to avoid
     Add grid modification stuff
     add more math to XML rather than just addition

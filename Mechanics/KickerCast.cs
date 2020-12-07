@@ -39,11 +39,13 @@ class MoreLuaPower_Kickercast
                     foreach (Enhancement e in __instance.duelDisk.castSlots[slotNum].spellObj.enhancements) {
                         S.I.poCtrl.EnhanceSpell(Kicker, e);
                     }
-                    __instance.duelDisk.castSlots[slotNum].Launch(__instance.duelDisk.castSlots[slotNum].spellObj.consume, null);
-                    Cardtridge KickerCardt = SimplePool.Spawn(S.I.deCtrl.cardtridgePrefab, Vector3.one * 1000f, __instance.transform.rotation, null, false).GetComponent<Cardtridge>().Set(Kicker, __instance.duelDisk);
-                    __instance.duelDisk.castSlots[slotNum].Load(KickerCardt);
-                    UnityEngine.Object.Destroy(KickerCardt, 1);
-                    return true;
+                    if (__instance.duelDisk.currentMana >= (manaOverride < 0 ? Kicker.mana : manaOverride)) {
+                        __instance.duelDisk.castSlots[slotNum].Launch(__instance.duelDisk.castSlots[slotNum].spellObj.consume, null);
+                        Cardtridge KickerCardt = SimplePool.Spawn(S.I.deCtrl.cardtridgePrefab, Vector3.one * 1000f, __instance.transform.rotation, null, false).GetComponent<Cardtridge>().Set(Kicker, __instance.duelDisk);
+                        __instance.duelDisk.castSlots[slotNum].Load(KickerCardt);
+                        UnityEngine.Object.Destroy(KickerCardt, 1);
+                        return true;
+                    }
                 }
             }
         }

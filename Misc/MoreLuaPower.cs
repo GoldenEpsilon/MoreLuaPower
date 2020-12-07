@@ -23,7 +23,7 @@ class MoreLuaPower
 		if (Harmony.HasAnyPatches("com.MoreLuaPower.patch")) {
 			return;
 		}
-		Debug.Log("MoreLuaPower Version 2.0");
+		Debug.Log("MoreLuaPower Version 2.1");
 		LuaPowerData.Setup();
 		LuaPowerCustomEnumsSetup.Setup();
 		if (S.I.GetComponent<PowerMonoBehavior>() == null) {

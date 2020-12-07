@@ -22,10 +22,32 @@ class MoreLuaPower_GlobalLuaTypes
         UserData.RegisterType<Texture2D>(InteropAccessMode.Default, null);
         UserData.RegisterType<AnimationOverrider>(InteropAccessMode.Default, null);
         UserData.RegisterType<GameObject>(InteropAccessMode.Default, null);
-        UserData.RegisterType<Check>(InteropAccessMode.Default, null);
-        UserData.RegisterType<Shape>(InteropAccessMode.Default, null);
-        UserData.RegisterType<Location>(InteropAccessMode.Default, null);
         UserData.RegisterType<ArcType>(InteropAccessMode.Default, null);
+        UserData.RegisterType<BeingType>(InteropAccessMode.Default, null);
+        UserData.RegisterType<Brand>(InteropAccessMode.Default, null);
+        UserData.RegisterType<Check>(InteropAccessMode.Default, null);
+        UserData.RegisterType<DeviceType>(InteropAccessMode.Default, null);
+        UserData.RegisterType<DialogueType>(InteropAccessMode.Default, null);
+        UserData.RegisterType<Edition>(InteropAccessMode.Default, null);
+        UserData.RegisterType<Effect>(InteropAccessMode.Default, null);
+        UserData.RegisterType<Ending>(InteropAccessMode.Default, null);
+        UserData.RegisterType<Enhancement>(InteropAccessMode.Default, null);
+        UserData.RegisterType<GameMode>(InteropAccessMode.Default, null);
+        UserData.RegisterType<GScene>(InteropAccessMode.Default, null);
+        UserData.RegisterType<GState>(InteropAccessMode.Default, null);
+        UserData.RegisterType<GunPointSetting>(InteropAccessMode.Default, null);
+        UserData.RegisterType<InputAction>(InteropAccessMode.Default, null);
         UserData.RegisterType<KeyCode>(InteropAccessMode.Default, null);
+        UserData.RegisterType<Location>(InteropAccessMode.Default, null);
+        UserData.RegisterType<MovPattern>(InteropAccessMode.Default, null);
+        UserData.RegisterType<Pattern>(InteropAccessMode.Default, null);
+        UserData.RegisterType<RewardType>(InteropAccessMode.Default, null);
+        UserData.RegisterType<Shape>(InteropAccessMode.Default, null);
+        UserData.RegisterType<Sort>(InteropAccessMode.Default, null);
+        UserData.RegisterType<Tag>(InteropAccessMode.Default, null);
+        UserData.RegisterType<TextType>(InteropAccessMode.Default, null);
+        UserData.RegisterType<TileType>(InteropAccessMode.Default, null);
+        UserData.RegisterType<UIColor>(InteropAccessMode.Default, null);
+        UserData.RegisterType<ZoneType>(InteropAccessMode.Default, null);
     }
 }
