@@ -220,6 +220,11 @@ MoreLuaPower:
 		//		This is where you actually add your modifications.
 		//		You should be able to use it to run custom code when it's cast, if you can't figure it out ping me and I can work it out with you.
 
+	void AddDropCheck		(string {name}, |Function| {check})
+		//Adds a drop check for the given item - for example, you could make the CustomFoo artifact only drop when you have the CustomBar spell on you.
+		// {name} is the name of the item to add the check to
+		// {check} is the function that you want to use (it needs to return true or false, false to have the item not show up)
+
 	void AddXMLToSpell(SpellObject <spellObj>, string <XML>)
 		//Adds a line of XML to the SpellObject
 		// Meant to be used for upgrading spells
@@ -351,6 +356,7 @@ MoreLuaPower:
 	Location
 	ArcType
 	KeyCode
+	ItemObject
 	AnimationOverrider
 
 Vanilla:
