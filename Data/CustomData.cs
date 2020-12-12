@@ -37,7 +37,7 @@ public static class LuaPowerData
         { "startDelay", "0" },
         { "startLifetime", "0.5" },
         { "startSpeed", "500" },
-        { "startSize", "2" },
+        { "startSize", "10" },
         { "startSizeMin", "-1" },           //These overwrite startSize when both are a positive number
         { "startSizeMax", "-1" },           //This is the same as changing size over time.
         { "startRotation", "0" },
