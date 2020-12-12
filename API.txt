@@ -157,7 +157,7 @@ MoreLuaPower:
 		//Creates and runs a particle effect attached to the Being you pass.
 		// More info on |ParticleSystem| is in [custom data types].
 
-	void PlaySound			(Being {being}, |Sound| {sound})
+	void PlayCustomSound			(Being {being}, |Sound| {sound})
 		//Plays the sound specified.
 		// If the sound does not exist, it logs that the effect does not exist in the chat.
 
@@ -439,7 +439,7 @@ Vanilla:
 					//loads all sounds from the directory. Calls PowerMonoBehavior.LoadSound()
 					//Adds PowerMonoBehavior to S.I's GameObject if it is not there already
 		LuaPowerSound
-			void PlaySound(Being being, string sound)
+			void PlayCustomSound(Being being, string sound)
 
 	CustomSprites.cs
 		LuaPowerSprites

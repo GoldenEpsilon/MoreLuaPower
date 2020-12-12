@@ -18,6 +18,7 @@ KEEPING TRACK:
 
 
 PRIORITY:
+    CreateAudio(string name, string soundName, bool loop), PlayAudio(string name), PauseAudio(string name), and StopAudio(string name), ToggleLoopAudio
     Have a <DropCheck> tag for artifacts and spells that makes sure the spell/artifact can appear
     make custom statuses work with XML checks (make it work like brands)
         add the status to Check
@@ -26,6 +27,7 @@ PRIORITY:
 TODO:
     Custom Hooks aren't passing the item correctly
     Add custom settings
+    Hooks for world gen
     Reverse engineer the menus
     Let the "num" variable for worlds accept strings so that conflicts are easier to avoid
     Add grid modification stuff

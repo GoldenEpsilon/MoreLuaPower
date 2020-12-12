@@ -107,6 +107,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Additions\CustomBrands.cs" />
+    <Compile Include="Additions\CustomDropChecks.cs" />
     <Compile Include="Additions\CustomUpgrades.cs" />
     <Compile Include="Data\CustomFileLoader.cs" />
     <Compile Include="Data\CustomLanguage.cs" />

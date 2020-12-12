@@ -32,7 +32,7 @@ class LuaPowerParticles
         if (float.TryParse(pso["startSize"], out float ss)) {
             psmain.startSize = ss;
         }
-        if (float.TryParse(pso["startSizeMin"], out float ssmn) && float.TryParse(pso["startSizeMin"], out float ssmx) && ssmn > 0 && ssmx > 0) {
+        if (float.TryParse(pso["startSizeMin"], out float ssmn) && float.TryParse(pso["startSizeMax"], out float ssmx) && ssmn > 0 && ssmx > 0) {
             psmain.startSize = new ParticleSystem.MinMaxCurve(ssmn, ssmx);
         }
         if (float.TryParse(pso["startRotation"], out float sr)) {
@@ -44,7 +44,7 @@ class LuaPowerParticles
         }
         Color tempColor2;
         Color tempColor3;
-        if (ColorUtility.TryParseHtmlString(pso["startColorMin"], out tempColor2) && ColorUtility.TryParseHtmlString(pso["endColorMax"], out tempColor3)) {
+        if (ColorUtility.TryParseHtmlString(pso["startColorMin"], out tempColor2) && ColorUtility.TryParseHtmlString(pso["startColorMax"], out tempColor3)) {
             psmain.startColor = new ParticleSystem.MinMaxGradient(tempColor2, tempColor3);
         }
         psmain.startSpeed = float.Parse(pso["startSpeed"]);
