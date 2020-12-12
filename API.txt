@@ -293,6 +293,7 @@ Vanilla:
 
 	|Sound|
 		//These are loaded automatically just by being in your mod folder, you pass them in by using a string that is the same as its name.
+		//Also works with mp3 files.
 
 	|StatusEffect|
 		//You create this by running NewEffect, and check to see if it exists with EffectExists. Pass it in with a string of the name.
@@ -334,7 +335,8 @@ Vanilla:
 
 MoreLuaPower lets you add custom file loading to your mod. 
 Adding a CustomFileTypes.xml to your mod will allow it to handle any file under the specification you give. 
-Ask in the modding discord for help on this one. @Shenanigans specifically. (TODO: name examples of mods using this)
+The loading of MP3 files is done using this functionality. Use that as a template.
+Ask in the modding discord for help on this one. @Shenanigans specifically.
 
 //Also loads subfolders of mods after all mods' main folders are loaded.
 
