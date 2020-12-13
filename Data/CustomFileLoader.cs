@@ -6,8 +6,10 @@ using System.IO;
 using UnityEngine;
 using System.Reflection;
 using System.Xml.Linq;
+using System;
 using UnityEngine.Networking;
 using System.Threading;
+using System.Security;
 
 //Prefix patches LoadItemData because it is called right before modloading ends.
 [HarmonyPatch]
@@ -85,16 +87,36 @@ internal static class CustomFileLoader
         //If this is the base folder, find the correct handler for each file type.
         if (first) {
             foreach (CustomFileType customdatatype in re) {
+                bool found = false;
                 //Mods have multiple assemblies sometimes, so you gotta check all of them...
                 foreach (var info in assembly_files) {
-                    try {
+                    try 
+                    {
                         var assem = Assembly.LoadFrom(info.FullName);
                         var type = assem.GetType(customdatatype.typename);
+                        if (type != null) Debug.Log("Type for handler of CustomFileType '" + customdatatype.filename + "' found.");
                         customdatatype.handler = type.GetMethod(customdatatype.methodname);
+                        found = true;
                         break;
-                    } catch {
+                    } 
+                    catch (FileLoadException ex) 
+                    {
+                        Debug.LogError("Could not load assembly for custom file loading. Found but cannot be loaded.");
+                        Debug.LogException(ex);
+                    } 
+                    catch (SecurityException ex)
+                    {
+                        Debug.LogError("Could not load assembly for custom file loading. Security Exception.");
+                        Debug.LogException(ex);
+                    }
+                    catch
+                    {
                         //Errors are expected, just gotta deal with it.
                     }
+                }
+                if (!found)
+                {
+                    Debug.LogError("Could not find handler " + customdatatype.typename + ":" + customdatatype.methodname + " for files: " + customdatatype.filename);
                 }
             }
             //Remove file types with null handler.
@@ -139,6 +161,8 @@ internal static class CustomFileLoader
 
                 if (type.filename != "") {
                     if (type.methodname != "" && type.typename != "") {
+                        Debug.Log("Listed Type for Handler for files '" + type.filename + "' is " + type.typename);
+                        Debug.Log("Listed Method for Handler for files '" + type.filename + "' is " + type.methodname);
                         list.Add(type);
 
                     } else {
@@ -173,7 +197,7 @@ internal static class CustomFileLoader
 
     //Recursive. 'first' indicates if it is the main directory(which was already loaded) and loads everything it can without calling a subroutine. 
     private static void ReadAllFilesInDirectory(List<CustomFileType> types, DirectoryInfo dir, bool first) {
-        if (dir.Name.ToLower() == "disabled") {
+        if (dir.Name.ToLower() == "disabled" || dir.Name.ToLower() == "dependencies") {
             return;
         }
         var files = dir.GetFiles();
@@ -195,14 +219,21 @@ internal static class CustomFileLoader
                     if ((!type.contains && name == type.filename) || (type.contains && name.Contains(type.filename))) {
                         //We don't break in this section so that files can be handled by multiple mods if necessary.
                         Debug.Log("Loading file: " + file.FullName);
-                        type.handler.Invoke(null, new object[] { file });
+                        try
+                        {
+                            type.handler.Invoke(null, new object[] { file });
+                        } 
+                        catch  {
+                            Debug.LogError("Could not invoke handler on file " + file.FullName);
+                        }
+                        
                     }
                 }
             }
         }
         foreach (var directory in dir.GetDirectories()) {
             //Now look through subfolders that arent named 'disabled'.
-            if (directory.Name.ToLower() != "disabled") ReadAllFilesInDirectory(types, directory, false);
+            if (directory.Name.ToLower() != "disabled" && dir.Name.ToLower() != "dependencies") ReadAllFilesInDirectory(types, directory, false);
         }
     }
 

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFileTypes>
+	<CustomFileType>
+		<Filename contains="true">.mp3</Filename>
+		<HandlerType>MP3Loader.FileOperations</HandlerType>
+		<HandlerMethod>Handle</HandlerMethod>
+	</CustomFileType>
+</CustomFileTypes>

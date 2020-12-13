@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <ReferencePath>F:\steam\steamapps\common\One Step From Eden\OSFE_Data\Managed\;H:\SteamLibrary\steamapps\common\One Step From Eden\OSFE_Data\Managed\;E:\Steam\steamapps\common\One Step From Eden\OSFE_Data\Managed\</ReferencePath>
+    <ReferencePath>F:\steam\steamapps\common\One Step From Eden\OSFE_Data\Managed\;H:\SteamLibrary\steamapps\common\One Step From Eden\OSFE_Data\Managed\;E:\Steam\steamapps\common\One Step From Eden\OSFE_Data\Managed\;D:\Steam\steamapps\common\One Step From Eden\OSFE_Data\Managed\</ReferencePath>
   </PropertyGroup>
 </Project>
