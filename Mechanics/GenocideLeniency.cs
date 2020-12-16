@@ -13,7 +13,7 @@ using UnityEngine;
 [HarmonyPatch("GoToNextWorld")]
 class MoreLuaPower_GenocideLeniency
 {
-    static bool Prefix(ref RunCtrl __instance, ref ZoneDot zoneDot) {
+    /*static bool Prefix(ref RunCtrl __instance, ref ZoneDot zoneDot) {
         Debug.Log((object)("GOING TO NEXT WORLD... " + zoneDot.worldName + " cur zone num : " + (object)__instance.currentRun.zoneNum + "  and the zone= " + (object)__instance.currentWorld.numZones + " BossExecs= " + (object)__instance.currentRun.bossExecutions + " unvis world nums:" + (object)__instance.currentRun.unvisitedWorldNames.Count));
         ++__instance.currentRun.worldTierNum;
 
@@ -57,5 +57,5 @@ class MoreLuaPower_GenocideLeniency
         zoneDot = __instance.worldBar.currentZoneDots[0];
 
         return false;
-    }
+    }*/
 }

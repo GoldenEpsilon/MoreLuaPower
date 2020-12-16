@@ -2,6 +2,7 @@
 using MoonSharp.Interpreter;
 using System;
 using UnityEngine;
+using System.Collections.Generic;
 
 
 
@@ -23,6 +24,10 @@ class MoreLuaPower_GlobalLuaTypes
         UserData.RegisterType<Texture2D>(InteropAccessMode.Default, null);
         UserData.RegisterType<AnimationOverrider>(InteropAccessMode.Default, null);
         UserData.RegisterType<GameObject>(InteropAccessMode.Default, null);
+        UserData.RegisterType<World>(InteropAccessMode.Default, null);
+        UserData.RegisterType<CustomWorldGenerator>(InteropAccessMode.Default, null);
+        UserData.RegisterType<CustomColumnGenerator>(InteropAccessMode.Default, null);
+        UserData.RegisterType<CustomZoneGenerator>(InteropAccessMode.Default, null);
         UserData.RegisterType<ArcType>(InteropAccessMode.Default, null);
         UserData.RegisterType<BeingType>(InteropAccessMode.Default, null);
         UserData.RegisterType<Brand>(InteropAccessMode.Default, null);
@@ -50,5 +55,6 @@ class MoreLuaPower_GlobalLuaTypes
         UserData.RegisterType<TileType>(InteropAccessMode.Default, null);
         UserData.RegisterType<UIColor>(InteropAccessMode.Default, null);
         UserData.RegisterType<ZoneType>(InteropAccessMode.Default, null);
+        UserData.RegisterType<ZoneGeneratorFlags>(InteropAccessMode.Default, null);
     }
 }

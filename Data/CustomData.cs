@@ -64,6 +64,14 @@ public static class LuaPowerData
         if (!customEnums.ContainsKey(typeof(Effect))) {
             customEnums.Add(typeof(Effect), new List<string>());
         }
+        if (!customEnums.ContainsKey(typeof(ZoneType)))
+        {
+            customEnums.Add(typeof(ZoneType), new List<string>());
+        }
+        if (!customEnums.ContainsKey(typeof(BeingType)))
+        {
+            customEnums.Add(typeof(BeingType), new List<string>());
+        }
     }
 
     public class CustomMusic

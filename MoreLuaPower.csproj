@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{1F5F4B11-9157-40F3-94E4-593271C114C0}</ProjectGuid>
+    <ProjectGuid>{61998EAC-D185-403D-87CA-4DADB583BD3E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>MoreLuaPower</RootNamespace>
@@ -110,9 +110,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Additions\CustomBosses.cs" />
     <Compile Include="Additions\CustomBrands.cs" />
     <Compile Include="Additions\CustomDropChecks.cs" />
     <Compile Include="Additions\CustomUpgrades.cs" />
+    <Compile Include="Additions\CustomWorldGenerator.cs" />
+    <Compile Include="Additions\CustomZones.cs" />
     <Compile Include="Data\CustomFileLoader.cs" />
     <Compile Include="Data\CustomLanguage.cs" />
     <Compile Include="Data\MP3Loader.cs" />

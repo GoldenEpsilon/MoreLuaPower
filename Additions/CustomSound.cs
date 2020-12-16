@@ -82,7 +82,7 @@ class MoreLuaPower_SoundLoader
     }
 }
 
-class LuaPowerSound
+public class LuaPowerSound
 {
     static public void PlaySound(Being being, string sound)
     {
