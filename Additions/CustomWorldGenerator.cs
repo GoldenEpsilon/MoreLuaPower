@@ -331,14 +331,25 @@ public class CustomWorldGenerator
         var step = bar.currentZoneSteps[index1];
         step.Add(zoneDot);
         bar.currentZoneDots.Add(zoneDot);
-        if (step.Count == 1)
+        if (gen.relative_transforms)
         {
-            zoneDot.transform.position = rectTransform.position;
+            if (step.Count == 1)
+            {
+                zoneDot.transform.position = rectTransform.position;
+            }
+            else
+            {
+                zoneDot.transform.position = step[step.Count - 2].transform.position - new Vector3(0.0f, zoneDot.verticalSpacing * bar.rect.localScale.y, 0.0f);
+            }
         }
         else
         {
-            zoneDot.transform.position = step[step.Count-2].transform.position - new Vector3(0.0f, zoneDot.verticalSpacing * bar.rect.localScale.y, 0.0f);
+            if (step.Count == 1)
+            {
+                zoneDot.transform.position = rectTransform.position;
+            }
         }
+        
         
         if (gen.zoneType == ZoneType.World && gen is ManualZoneGenerator)
         {
@@ -660,6 +671,10 @@ public class CustomWorldGenerator
 
         public bool dark = false;
 
+        public bool relative_transforms = false;
+
+        public bool add_first = false;
+
         public virtual void SetWorldData(string nameString, bool reAdd)
         {
             zoneType = ZoneType.World;
@@ -812,6 +827,11 @@ public class CustomWorldGenerator
             Debug.LogError(dot.transform.name + " has been effected by a generator with no effect.");
             return null;
         };
+
+        public PostProcessZoneGenerator()
+        {
+            relative_transforms = true;
+        }
 
         public override bool CanActivate(ZoneDot dot)
         {

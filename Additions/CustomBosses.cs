@@ -17,24 +17,9 @@ namespace CustomBosses
     public class CustomBoss : Boss
     {
 
-        public string previous_state = "";
-
-        public int index_in_pattern = 1;
-
-        public System.Random randomGen;
-
-        public float state_enter_time;
-        public float state_start_time;
-
-        public string state;
-
         public bool serif_mode;
 
-        public static int test_tier = 6;
-
         public bool lock_facing_direction = false;
-
-        public List<string> state_artifacts = new List<string>();
 
         public override void Start()
         {
@@ -51,7 +36,6 @@ namespace CustomBosses
                 S.I.muCtrl.Play(AllAudioClips[music], true);
             }
 
-            randomGen = new System.Random();
             healthStages = new List<int>();
             Debug.Log("Custom Boss Start");
             if (CustomBossIndex.final_bosses.Contains(beingObj.beingID)) endGameOnExecute = true;
@@ -219,32 +203,48 @@ namespace CustomBosses
                             __result = ((CustomBoss)__instance)._DialogueC(CustomBossIndex.intro_lines[__instance.beingObj.beingID][UnityEngine.Random.Range(0, CustomBossIndex.intro_lines[__instance.beingObj.beingID].Count())]);
                             return false;
                         }
-                        break;
+                        else
+                        {
+                            return false;
+                        }
                     case "Execution":
                         if (CustomBossIndex.execution_lines.ContainsKey(__instance.beingObj.beingID))
                         {
                             __result = ((CustomBoss)__instance)._DialogueC(CustomBossIndex.execution_lines[__instance.beingObj.beingID][UnityEngine.Random.Range(0, CustomBossIndex.execution_lines[__instance.beingObj.beingID].Count())]);
                             return false;
                         }
-                        break;
+                        else
+                        {
+                            return false;
+                        }
                     case "Spare":
                         if (CustomBossIndex.spare_lines.ContainsKey(__instance.beingObj.beingID))
                         {
                             __result = ((CustomBoss)__instance)._DialogueC(CustomBossIndex.spare_lines[__instance.beingObj.beingID][UnityEngine.Random.Range(0, CustomBossIndex.spare_lines[__instance.beingObj.beingID].Count())]);
                             return false;
                         }
-                        break;
+                        else
+                        {
+                            return false;
+                        }
                     case "Downed":
                         if (CustomBossIndex.defeated_lines.ContainsKey(__instance.beingObj.beingID))
                         {
                             __result = ((CustomBoss)__instance)._DialogueC(CustomBossIndex.defeated_lines[__instance.beingObj.beingID][UnityEngine.Random.Range(0, CustomBossIndex.defeated_lines[__instance.beingObj.beingID].Count())]);
                             return false;
                         }
-                        break;
+                        else
+                        {
+                            return false;
+                        }
                     case "Flawless":
                         if (CustomBossIndex.perfect_lines.ContainsKey(__instance.beingObj.beingID))
                         {
                             __result = ((CustomBoss)__instance)._DialogueC(CustomBossIndex.perfect_lines[__instance.beingObj.beingID][UnityEngine.Random.Range(0, CustomBossIndex.perfect_lines[__instance.beingObj.beingID].Count())]);
+                            return false;
+                        }
+                        else
+                        {
                             return false;
                         }
                         break;
@@ -254,7 +254,10 @@ namespace CustomBosses
                             __result = ((CustomBoss)__instance)._DialogueC(CustomBossIndex.mercy_lines[__instance.beingObj.beingID][UnityEngine.Random.Range(0, CustomBossIndex.mercy_lines[__instance.beingObj.beingID].Count())]);
                             return false;
                         }
-                        break;
+                        else
+                        {
+                            return false;
+                        }
                 }
                 __result = ((CustomBoss)__instance)._DialogueC("I AM ERROR");
                 return false;

@@ -199,9 +199,11 @@ internal static class CustomFileLoader
         }
     }
 
+    public static List<string> disabledFolders = new List<string>(new string[] {"disabled", "bin", "obj", "packages", "obj" });
+
     //Recursive. 'first' indicates if it is the main directory(which was already loaded) and loads everything it can without calling a subroutine. 
     private static void ReadAllFilesInDirectory(List<CustomFileType> types, DirectoryInfo dir, bool first) {
-        if (dir.Name.ToLower() == "disabled" || dir.Name.ToLower() == "dependencies") {
+        if (disabledFolders.Contains(dir.Name.ToLower())) {
             return;
         }
         var files = dir.GetFiles();
@@ -237,7 +239,7 @@ internal static class CustomFileLoader
         }
         foreach (var directory in dir.GetDirectories()) {
             //Now look through subfolders that arent named 'disabled'.
-            if (directory.Name.ToLower() != "disabled" && dir.Name.ToLower() != "dependencies") ReadAllFilesInDirectory(types, directory, false);
+            if (!disabledFolders.Contains(dir.Name.ToLower())) ReadAllFilesInDirectory(types, directory, false);
         }
     }
 
