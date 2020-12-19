@@ -199,7 +199,7 @@ internal static class CustomFileLoader
         }
     }
 
-    public static List<string> disabledFolders = new List<string>(new string[] {"disabled", "bin", "obj", "packages", "obj" });
+    public static List<string> disabledFolders = new List<string>(new string[] {"disabled", "bin", "obj", "packages", "obj", "dependencies" });
 
     //Recursive. 'first' indicates if it is the main directory(which was already loaded) and loads everything it can without calling a subroutine. 
     private static void ReadAllFilesInDirectory(List<CustomFileType> types, DirectoryInfo dir, bool first) {

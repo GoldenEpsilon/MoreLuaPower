@@ -329,9 +329,10 @@ public class CustomWorldGenerator
         zoneDot.transform.name = "ZoneDot - Step: " + (object)index1;
         zoneDot.verticalSpacing = bar.defaultVerticalSpacing + gen.verticalSpacing;
         var step = bar.currentZoneSteps[index1];
-        step.Add(zoneDot);
+        if (!gen.addFirst) step.Add(zoneDot);
+        else step.Insert(0, zoneDot);
         bar.currentZoneDots.Add(zoneDot);
-        if (gen.relative_transforms)
+        if (gen.relativeTransforms)
         {
             if (step.Count == 1)
             {
@@ -339,14 +340,22 @@ public class CustomWorldGenerator
             }
             else
             {
-                zoneDot.transform.position = step[step.Count - 2].transform.position - new Vector3(0.0f, zoneDot.verticalSpacing * bar.rect.localScale.y, 0.0f);
+                if (gen.addFirst)
+                {
+                    zoneDot.transform.position = step[1].transform.position + new Vector3(0.0f, zoneDot.verticalSpacing * bar.rect.localScale.y, 0.0f);
+                }
+                else
+                {
+                    zoneDot.transform.position = step[step.Count - 2].transform.position - new Vector3(0.0f, zoneDot.verticalSpacing * bar.rect.localScale.y, 0.0f);
+                }
             }
         }
         else
         {
-            if (step.Count == 1)
+            for (int i = 0; i < step.Count; i++)
             {
-                zoneDot.transform.position = rectTransform.position;
+                var dot = step[i];
+                dot.transform.localPosition = new Vector3(0.0f, ((float)(step.Count - 1) / 2f - (float)(i)) * zoneDot.verticalSpacing * rectTransform.localScale.y, 0.0f);
             }
         }
         
@@ -671,9 +680,9 @@ public class CustomWorldGenerator
 
         public bool dark = false;
 
-        public bool relative_transforms = false;
+        public bool relativeTransforms = false;
 
-        public bool add_first = false;
+        public bool addFirst = false;
 
         public virtual void SetWorldData(string nameString, bool reAdd)
         {
@@ -830,7 +839,7 @@ public class CustomWorldGenerator
 
         public PostProcessZoneGenerator()
         {
-            relative_transforms = true;
+            relativeTransforms = true;
         }
 
         public override bool CanActivate(ZoneDot dot)
