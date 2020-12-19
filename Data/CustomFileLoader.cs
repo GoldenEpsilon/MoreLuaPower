@@ -58,6 +58,10 @@ internal static class CustomFileLoader
             }
         }
         ReadAllFiles(list, strArray);
+        S.I.modCtrl.luaMods = S.I.modCtrl.luaMods.Distinct().ToList();
+        S.I.modCtrl.pactMods = S.I.modCtrl.pactMods.Distinct().ToList();
+        S.I.modCtrl.spellMods = S.I.modCtrl.spellMods.Distinct().ToList();
+        S.I.modCtrl.artMods = S.I.modCtrl.artMods.Distinct().ToList();
     }
 
     //Looks for CustomFileTypes.xml throughout a mod. Looks for assemblies as well in order to load those file types with the correct handler.

@@ -8,920 +8,996 @@ using UnityEngine;
 
 using MoonSharp.Interpreter;
 using System;
+using UnityEngine.UI;
 
 public class CustomWorldGenerator
 {
+    public static CustomWorldGenerator CURRENT = null;
 
-    public static List<object> AddScripts = new List<object>();
-    public static List<Script> AddBaseScripts = new List<Script>();
+    public static List<object> WorldInitScripts = new List<object>();
+    public static List<Script> WorldInitBaseScripts = new List<Script>();
 
-    public static Dictionary<World, List<string>> next_worlds = new Dictionary<World, List<string>>();
-    public static Dictionary<World, List<string>> branch_worlds = new Dictionary<World, List<string>>();
-    public static Dictionary<World, int> num_steps = new Dictionary<World, int>();
-    public static Dictionary<World, bool> manualGeneration = new Dictionary<World, bool>();
+    public static List<object> WorldPostScripts = new List<object>();
+    public static List<Script> WorldPostBaseScripts = new List<Script>();
+    public static Dictionary<string, bool> manualGeneration = new Dictionary<string, bool>();
 
     public static List<ZoneDot> refreshWorldDots = new List<ZoneDot>();
 
-    public static bool IsCustomWorld(World world)
+    public static Dictionary<string, List<ZoneDot>> hiddenSections = new Dictionary<string, List<ZoneDot>>();
+    public static Dictionary<ZoneDot, string> invisDots = new Dictionary<ZoneDot, string>();
+    public static Dictionary<ZoneDot, Dictionary<ZoneDot, RectTransform>> invisLines = new Dictionary<ZoneDot, Dictionary<ZoneDot, RectTransform>>();
+
+    //=======================================================================================================================================================================================
+
+
+    public static void MakeZoneSectionVisible(string sectionKey)
     {
-        return next_worlds.ContainsKey(world) || branch_worlds.ContainsKey(world) || num_steps.ContainsKey(world) || manualGeneration.ContainsKey(world);
+        Debug.Log("Attempt to make visible section:"+sectionKey);
+        if (hiddenSections.ContainsKey(sectionKey))
+        {
+            var dots = hiddenSections[sectionKey];
+            foreach (ZoneDot dot in dots)
+            {
+                if (dot.image != null) dot.image.enabled = true;
+                if (dot.fgImage != null) dot.fgImage.enabled = true;
+                if (dot.bgImage != null) dot.bgImage.enabled = true;
+                foreach (ZoneDot otherDot in dot.previousDots)
+                {
+                    otherDot.nextDots.Add(dot);
+                    if (invisLines.ContainsKey(dot))
+                    {
+                        if (invisLines[dot].ContainsKey(otherDot))
+                        {
+                            var line = invisLines[dot][otherDot];
+                            otherDot.nextLines.Add(line);
+                            line.GetComponent<Image>().enabled = true;
+                        }
+                        else
+                        {
+                            Debug.LogError("Invisible Dot had no entry for a previous connection.");
+                        }
+                    }
+                    else
+                    {
+                        Debug.LogError("Invisible Dot had nonexistant dictionary of connecting lines.");
+                    }
+                }
+                invisDots.Remove(dot);
+                invisLines.Remove(dot);
+            }
+            hiddenSections.Remove(sectionKey);
+            Debug.Log("Making invisible zone section visible: " + sectionKey);
+        }
     }
 
-    //================================================================================================================================================
 
-    public List<CustomColumnGenerator> columns = new List<CustomColumnGenerator>();
+    //================================================================================================================================================================================================================================================================================================
+
     public List<RectTransform> columnTransforms = new List<RectTransform>();
 
     public WorldBar bar = null;
-    public CustomWorldGenerator generator = null;
-    public Dictionary<CustomZoneGenerator, float> probabilities = new Dictionary<CustomZoneGenerator, float>();
+    public Dictionary<PostProcessZoneGenerator, float> probabilities = new Dictionary<PostProcessZoneGenerator, float>();
     public Dictionary<int, Dictionary<string, int>> column_uses = new Dictionary<int, Dictionary<string, int>>();
     public Dictionary<string, int> total_uses = new Dictionary<string, int>();
     public int numSteps = 7;
 
-    public Dictionary<ZoneDot, CustomZoneGenerator> source = new Dictionary<ZoneDot, CustomZoneGenerator>();
+    private bool post = false;
+
+    List<string> stringList = null;
+
+    public List<ManualZoneGenerator> manualZoneGenerators = new List<ManualZoneGenerator>();
+
+    public List<PostProcessZoneGenerator> postProcess = new List<PostProcessZoneGenerator>();
+
+    public Dictionary<ZoneDot, ZoneGenerator> source = new Dictionary<ZoneDot, ZoneGenerator>();
+
+    //================================================================================================================================================================================================================================================================================================
 
     public CustomWorldGenerator(WorldBar theBar)
     {
+        invisLines.Clear();
+        hiddenSections.Clear();
+        invisDots.Clear();
+        stringList = new List<string>((IEnumerable<string>)theBar.runCtrl.currentRun.unvisitedWorldNames);
         bar = theBar;
         refreshWorldDots.Clear();
         World world = bar.runCtrl.currentWorld;
-        if (num_steps.ContainsKey(world))
-        {
-            numSteps = num_steps[world];
-        }
-        GetColumnGenerators(world);
-        //WorldGen2(__instance, numSteps);
     }
 
-    protected bool AttemptGen(int stepNum, CustomZoneGenerator zoneGen)
+    //================================================================================================================================================================================================================================================================================================
+
+    protected void GetManualGenerators(World world)
     {
-        if(!(column_uses[stepNum].ContainsKey(zoneGen.activationKey) && zoneGen.maxCollumnActivations <= column_uses[stepNum][zoneGen.activationKey]) && !(total_uses.ContainsKey(zoneGen.activationKey) && zoneGen.maxWorldActivations <= total_uses[zoneGen.activationKey]))
+        DynValue worldVal = UserData.Create(world);
+        DynValue generatorVal = UserData.Create(this);
+        for (int i = 0; i < WorldInitScripts.Count; i++)
         {
-            float prob = probabilities.ContainsKey(zoneGen) ? probabilities[zoneGen] : zoneGen.probability;
-            if (prob >= bar.runCtrl.NextWorldRand(0, 100))
+            WorldInitBaseScripts[i].Globals["world"] = worldVal;
+            WorldInitBaseScripts[i].Globals["generator"] = generatorVal;
+            S.I.mainCtrl.StartCoroutine(MoreLuaPower_FunctionHelper.EffectRoutine(WorldInitBaseScripts[i].CreateCoroutine(WorldInitScripts[i])));
+            WorldInitBaseScripts[i].Globals.Remove("world");
+            WorldInitBaseScripts[i].Globals.Remove("generator");
+        }
+        Debug.Log("Got manual generators!");
+    }
+
+    protected void GetPostProcessGenerators(World world)
+    {
+        DynValue worldVal = UserData.Create(world);
+        DynValue generatorVal = UserData.Create(this);
+        for (int i = 0; i < WorldPostScripts.Count; i++)
+        {
+            WorldPostBaseScripts[i].Globals["world"] = worldVal;
+            WorldPostBaseScripts[i].Globals["generator"] = generatorVal;
+            S.I.mainCtrl.StartCoroutine(MoreLuaPower_FunctionHelper.EffectRoutine(WorldPostBaseScripts[i].CreateCoroutine(WorldPostScripts[i])));
+            WorldPostBaseScripts[i].Globals.Remove("world");
+            WorldPostBaseScripts[i].Globals.Remove("generator");
+        }
+        Debug.Log("Got postprocess world generators!");
+    }
+
+    //================================================================================================================================================================================================================================================================================================
+
+    protected bool AttemptGen(ZoneDot dot, ZoneGenerator zoneGen)
+    {
+        if (!(column_uses[dot.stepNum].ContainsKey(zoneGen.activationKey) && zoneGen.maxColumnActivations <= column_uses[dot.stepNum][zoneGen.activationKey]) && !(total_uses.ContainsKey(zoneGen.activationKey) && zoneGen.maxWorldActivations <= total_uses[zoneGen.activationKey]))
+        {
+            if (zoneGen.CanActivate(dot))
             {
-                if (!probabilities.ContainsKey(zoneGen))
+                if (zoneGen is PostProcessZoneGenerator)
                 {
-                    probabilities.Add(zoneGen, zoneGen.probability);
+                    var gen = zoneGen as PostProcessZoneGenerator;
+                    float prob = probabilities.ContainsKey(gen) ? probabilities[gen] : gen.probability;
+                    if (prob >= bar.runCtrl.NextWorldRand(0, 100))
+                    {
+                        if (!probabilities.ContainsKey(gen))
+                        {
+                            probabilities.Add(gen, gen.probability);
+                        }
+                        probabilities[gen] /= gen.probabilityReductionFactor;
+                        return true;
+                    }
+                    else if (gen.probabilityReductionOnFail)
+                    {
+                        if (!probabilities.ContainsKey(gen))
+                        {
+                            probabilities.Add(gen, gen.probability);
+                        }
+                        probabilities[gen] /= gen.probabilityReductionFactor;
+                    }
                 }
-                probabilities[zoneGen] /= zoneGen.probabilityReductionFactor;
-                return true;
-            }
-            else if (zoneGen.probabilityReductionOnFail)
-            {
-                if (!probabilities.ContainsKey(zoneGen))
+                else
                 {
-                    probabilities.Add(zoneGen, zoneGen.probability);
+                    return true;
                 }
-                probabilities[zoneGen] /= zoneGen.probabilityReductionFactor;
+
             }
         }
         return false;
     }
 
-    protected void EditDotsWithGen(List<ZoneDot> dots, CustomZoneGenerator zoneGen, Predicate<ZoneDot> cond)
+    protected bool AttemptGen(int stepNum, ZoneGenerator zoneGen)
     {
-        for (int index = 0; index < dots.Count; index++)
+        if (!(column_uses[stepNum].ContainsKey(zoneGen.activationKey) && zoneGen.maxColumnActivations <= column_uses[stepNum][zoneGen.activationKey]) && !(total_uses.ContainsKey(zoneGen.activationKey) && zoneGen.maxWorldActivations <= total_uses[zoneGen.activationKey]))
         {
-            ZoneDot dot = dots[index];
-
-            if (!cond(dot)) continue;
-
-            if (AttemptGen(dot.stepNum, zoneGen)) EditDotWithGen(dot, zoneGen);
+            if (zoneGen is PostProcessZoneGenerator)
+            {
+                var gen = zoneGen as PostProcessZoneGenerator;
+                float prob = probabilities.ContainsKey(gen) ? probabilities[gen] : gen.probability;
+                if (prob >= bar.runCtrl.NextWorldRand(0, 100))
+                {
+                    if (!probabilities.ContainsKey(gen))
+                    {
+                        probabilities.Add(gen, gen.probability);
+                    }
+                    probabilities[gen] /= gen.probabilityReductionFactor;
+                    return true;
+                }
+                else if (gen.probabilityReductionOnFail)
+                {
+                    if (!probabilities.ContainsKey(gen))
+                    {
+                        probabilities.Add(gen, gen.probability);
+                    }
+                    probabilities[gen] /= gen.probabilityReductionFactor;
+                }
+            }
+            else
+            {
+                return true;
+            }
         }
+        return false;
     }
 
-    protected void EditDotWithGen(ZoneDot dot, CustomZoneGenerator zoneGen)
+    protected void EditDotWithGen(ZoneDot dot, ZoneGenerator zoneGen)
     {
-        
-        if ((zoneGen.genType & (int)ZoneGeneratorFlags.REPLACE) != 0)
+
+        if (zoneGen.zoneType == ZoneType.World && !(zoneGen is ManualZoneGenerator && ((ManualZoneGenerator)zoneGen).automaticWorldSelection))
         {
-            if (zoneGen.zoneType == ZoneType.World)
-            {
+            try
+            {   
+                dot.world = bar.runCtrl.worlds[zoneGen.worldName];
                 dot.worldName = zoneGen.worldName;
-                dot.world = bar.runCtrl.worlds[dot.worldName];
                 dot.imageName = dot.world.iconName;
                 if (zoneGen.refreshCurrentworld) refreshWorldDots.Add(dot);
                 else refreshWorldDots.Remove(dot);
-            }
-            else if (dot.type == ZoneType.World)
+            } 
+            catch
             {
-                refreshWorldDots.Remove(dot);
+                Debug.LogError("No world exists with name: " + zoneGen.worldName);
             }
+            
+        }
+        else if (dot.type == ZoneType.World)
+        {
+            refreshWorldDots.Remove(dot);
         }
         if (zoneGen.dark) dot.SetDark();
         dot.SetType(zoneGen.zoneType);
-        
+        if (source.ContainsKey(dot)) source[dot] = zoneGen;
+        else source.Add(dot, zoneGen);
+
+        if (!column_uses.ContainsKey(dot.stepNum)) column_uses.Add(dot.stepNum, new Dictionary<string, int>());
+
         if (!column_uses[dot.stepNum].ContainsKey(zoneGen.activationKey))
         {
-            column_uses[dot.stepNum].Add(zoneGen.activationKey, 0);
+            column_uses[dot.stepNum].Add(zoneGen.activationKey, 1);
         }
         column_uses[dot.stepNum][zoneGen.activationKey]++;
         if (!total_uses.ContainsKey(zoneGen.activationKey))
         {
-            total_uses.Add(zoneGen.activationKey, 0);
+            total_uses.Add(zoneGen.activationKey, 1);
         }
         total_uses[zoneGen.activationKey]++;
-    }
 
-    protected void GetColumnGenerators(World world)
-    {
-        if (!manualGeneration.ContainsKey(world) || !manualGeneration[world]) columns.AddRange(CreateDefaultColumnGenerators());
-        DynValue worldVal = UserData.Create(world);
-        DynValue generatorVal = UserData.Create(this);
-        for (int i = 0; i < AddScripts.Count; i++)
+        if (invisDots.ContainsKey(dot))
         {
-            AddBaseScripts[i].Globals["world"] = worldVal;
-            AddBaseScripts[i].Globals["generator"] = generatorVal;
-            S.I.mainCtrl.StartCoroutine(MoreLuaPower_FunctionHelper.EffectRoutine(AddBaseScripts[i].CreateCoroutine(AddScripts[i])));
-            AddBaseScripts[i].Globals.Remove("world");
-            AddBaseScripts[i].Globals.Remove("generator");
-        }
-        Debug.Log("Got generators!");
-    }
-
-    protected static List<CustomColumnGenerator> CreateDefaultColumnGenerators()
-    {
-        List<CustomColumnGenerator> DefaultGenerators = new List<CustomColumnGenerator>();
-
-        CustomZoneGenerator miniBoss = new CustomZoneGenerator();
-        miniBoss.maxWorldActivations = 1;
-        miniBoss.genType = (int)ZoneGeneratorFlags.REPLACE;
-        miniBoss.replaceType = ZoneType.Battle;
-        miniBoss.zoneType = ZoneType.Miniboss;
-        miniBoss.probability = 50.0f;
-        miniBoss.probabilityReductionFactor = 0.5f;
-        miniBoss.probabilityReductionOnFail = true;
-        miniBoss.limitLow = 0;
-        miniBoss.limitHigh = 0;
-        miniBoss.activationKey = "Miniboss";
-
-
-        CustomZoneGenerator beforeBattleGen1 = new CustomZoneGenerator();
-        beforeBattleGen1.activationKey = "Before Battle 1";
-        beforeBattleGen1.beforeType = ZoneType.Battle;
-        beforeBattleGen1.replaceType = ZoneType.Battle;
-        beforeBattleGen1.zoneType = ZoneType.Danger;
-        beforeBattleGen1.genType = (int)ZoneGeneratorFlags.REPLACE | (int)ZoneGeneratorFlags.BEFORE;
-        beforeBattleGen1.probability = 50.0f / 1.0f;
-        beforeBattleGen1.probabilityReductionFactor = 2.0f;
-
-        CustomZoneGenerator beforeBattleGen2 = new CustomZoneGenerator();
-        beforeBattleGen2.activationKey = "Before Battle 2";
-        beforeBattleGen2.beforeType = ZoneType.Battle;
-        beforeBattleGen2.replaceType = ZoneType.Battle;
-        beforeBattleGen2.zoneType = ZoneType.Distress;
-        beforeBattleGen2.genType = (int)ZoneGeneratorFlags.REPLACE | (int)ZoneGeneratorFlags.BEFORE;
-        beforeBattleGen2.probability = 50.0f / 1.0f;
-        beforeBattleGen2.probabilityReductionFactor = 2.0f;
-
-        CustomZoneGenerator beforeBattleGen3 = new CustomZoneGenerator();
-        beforeBattleGen3.activationKey = "Before Battle 3";
-        beforeBattleGen3.beforeType = ZoneType.Battle;
-        beforeBattleGen3.replaceType = ZoneType.Battle;
-        beforeBattleGen3.zoneType = ZoneType.Treasure;
-        beforeBattleGen3.genType = (int)ZoneGeneratorFlags.REPLACE | (int)ZoneGeneratorFlags.BEFORE;
-        beforeBattleGen3.probability = 100.0f / 1.0f;
-        beforeBattleGen3.probabilityReductionFactor = 2.0f;
-
-        for (int i = 0; i < 8; i++)
-        {
-            CustomColumnGenerator collumGen = new CustomColumnGenerator();
-            DefaultGenerators.Add(collumGen);
-            switch (i)
+            var key = invisDots[dot];
+            if (hiddenSections.ContainsKey(key))
             {
-                case 0:
-                    {
-                        collumGen.numZonesDefault = 1;
-                    }
-                    break;
-                case 1:
-                    {
-                        CustomZoneGenerator afterBattleGen1 = new CustomZoneGenerator();
-                        afterBattleGen1.activationKey = "After Battle 1";
-                        afterBattleGen1.afterType = ZoneType.Battle;
-                        afterBattleGen1.replaceType = ZoneType.Battle;
-                        afterBattleGen1.zoneType = ZoneType.Danger;
-                        afterBattleGen1.genType = (int)ZoneGeneratorFlags.REPLACE | (int)ZoneGeneratorFlags.AFTER;
-                        afterBattleGen1.probability = 100.0f / 2.0f;
-                        afterBattleGen1.probabilityReductionFactor = 1.0f / 2.0f;
-                        afterBattleGen1.probabilityReductionOnFail = true;
-                        afterBattleGen1.maxWorldActivations = 1;
-
-                        CustomZoneGenerator afterBattleGen2 = new CustomZoneGenerator();
-                        afterBattleGen2.activationKey = "After Battle 2";
-                        afterBattleGen2.afterType = ZoneType.Battle;
-                        afterBattleGen2.replaceType = ZoneType.Battle;
-                        afterBattleGen2.zoneType = ZoneType.Distress;
-                        afterBattleGen2.genType = (int)ZoneGeneratorFlags.REPLACE | (int)ZoneGeneratorFlags.AFTER;
-                        afterBattleGen2.probability = 100.0f / 2.0f;
-                        afterBattleGen2.probabilityReductionFactor = 1.0f / 2.0f;
-                        afterBattleGen2.probabilityReductionOnFail = true;
-                        afterBattleGen2.maxWorldActivations = 1;
-                        //afterBattleGen2.dark = true;
-
-                        collumGen.numZonesDefault = 3;
-                        //collumGen.connectionType = ZoneGeneratorConncetions.SPLIT;
-                        collumGen.zoneGenerators.Add(afterBattleGen1);
-                        collumGen.zoneGenerators.Add(afterBattleGen2);
-                    }
-                    break;
-                case 2:
-                    {
-                        collumGen.numZonesDefault = 3;
-                        collumGen.numZonesRemovePotential = 1;
-                        //collumGen.connectionType = ZoneGeneratorConncetions.MAINTAIN_SPLIT;
-                        collumGen.zoneGenerators.Add(miniBoss);
-                        collumGen.zoneGenerators.Add(beforeBattleGen1);
-                        collumGen.zoneGenerators.Add(beforeBattleGen2);
-                        collumGen.zoneGenerators.Add(beforeBattleGen3);
-                    }
-                    break;
-                case 3:
-                    {
-                        collumGen.numZonesDefault = 3;
-                        collumGen.numZonesRemovePotential = 1;
-                        //collumGen.connectionType = ZoneGeneratorConncetions.SPLIT;
-                        collumGen.zoneGenerators.Add(miniBoss);
-                        collumGen.zoneGenerators.Add(beforeBattleGen1);
-                        collumGen.zoneGenerators.Add(beforeBattleGen2);
-                        collumGen.zoneGenerators.Add(beforeBattleGen3);
-                        break;
-                    }
-                case 4:
-                    {
-                        CustomZoneGenerator shopGen = new CustomZoneGenerator();
-                        shopGen.genType = (int)ZoneGeneratorFlags.REPLACE;
-                        shopGen.zoneType = ZoneType.Shop;
-                        shopGen.replaceType = ZoneType.Battle;
-                        shopGen.probability = 100.0f / 3.0f;
-                        shopGen.probabilityReductionFactor = 2.0f / 3.0f;
-                        shopGen.probabilityReductionOnFail = true;
-                        shopGen.maxWorldActivations = 1;
-                        shopGen.activationKey = "Shop";
-
-                        CustomZoneGenerator treasureGen = new CustomZoneGenerator();
-                        treasureGen.zoneType = ZoneType.Treasure;
-                        treasureGen.replaceType = ZoneType.Battle;
-                        treasureGen.limitLow = 0;
-                        treasureGen.limitHigh = 2;
-                        treasureGen.genType = (int)ZoneGeneratorFlags.REPLACE;
-                        treasureGen.probability = 200.0f / 3.0f;
-                        treasureGen.activationKey = "Treasure";
-
-                        CustomZoneGenerator campGen = new CustomZoneGenerator();
-                        campGen.zoneType = ZoneType.Campsite;
-                        campGen.replaceType = ZoneType.Treasure;
-                        campGen.genType = (int)ZoneGeneratorFlags.REPLACE;
-                        campGen.activationKey = "Camp";
-                        campGen.maxWorldActivations = 1;
-                        collumGen.numZonesDefault = 3;
-                        //collumGen.connectionType = ZoneGeneratorConncetions.SPLIT;
-                        collumGen.zoneGenerators.Add(shopGen);
-                        collumGen.zoneGenerators.Add(treasureGen);
-                        collumGen.zoneGenerators.Add(campGen);
-                        collumGen.zoneGenerators.Add(beforeBattleGen3);
-                        collumGen.zoneGenerators.Add(beforeBattleGen1);
-                        collumGen.zoneGenerators.Add(beforeBattleGen2);
-                        break;
-                    }
-
-                case 5:
-                    {
-
-                        CustomZoneGenerator shopGen = new CustomZoneGenerator();
-                        shopGen.genType = (int)ZoneGeneratorFlags.REPLACE;
-                        shopGen.zoneType = ZoneType.Shop;
-                        shopGen.replaceType = ZoneType.Battle;
-                        shopGen.probability = 50.0f;
-                        shopGen.probabilityReductionFactor = 1.0f / 2.0f;
-                        shopGen.probabilityReductionOnFail = true;
-                        shopGen.maxWorldActivations = 1;
-                        shopGen.activationKey = "Shop";
-
-                        collumGen.numZonesDefault = 3;
-                        collumGen.numZonesRemovePotential = 1;
-                        collumGen.zoneGenerators.Add(shopGen);
-
-                        break;
-                    }
-                case 6:
-                    {
-                        collumGen.numZonesDefault = 1;
-                        collumGen.defaultZoneType = ZoneType.Boss;
-                        break;
-                    }
-                case 7:
-                    {
-                        collumGen.numZonesDefault = 3;
-                        collumGen.defaultZoneType = ZoneType.World;
-                        collumGen.additionalVerticalSpacing = 7.0f;
-                    }
-                    break;
+                hiddenSections[key].Remove(dot);
+                if (dot.image != null) dot.image.enabled = true;
+                if (dot.fgImage != null) dot.fgImage.enabled = true;
+                if (dot.bgImage != null) dot.bgImage.enabled = true;
             }
         }
-        return DefaultGenerators;
     }
 
-    public bool CanConnect(ZoneDot d1, ZoneDot d2)
+    //================================================================================================================================================================================================================================================================================================
+
+    public bool ApplyPostProcess(ZoneDot dot)
     {
-        if (d1 == d2 || d1.stepNum >= d2.stepNum) return false;
-
-        return false;
-
-        var gen = columns[d1.stepNum];
-        if (!gen.possibleConnectionColumns.Contains(d2.stepNum - d1.stepNum)) return false; 
-        var list1 = bar.currentZoneSteps[d1.stepNum];
-        var list2 = bar.currentZoneSteps[d2.stepNum];
-        var gen1 = columns[d1.stepNum];
-        var gen2 = columns[d2.stepNum];
-        var i1 = list1.IndexOf(d1);
-        var i2 = list2.IndexOf(d2);
-        float pos1 = 2.0f * ((((float)i1 + 0.5f) / list1.Count()) - 0.5f);
-        float pos2 = 2.0f * ((((float)i2 + 0.5f) / list2.Count()) - 0.5f);
-        return pos1 == 0 || pos1 * pos2 >= 0;
-    }
-
-    public bool TraverseAndAdd(ZoneDot dot, List<ZoneDot> covered)
-    {
-        if (dot == null) return false;
-        covered.Add(dot);
-        if (dot.type != ZoneType.World && dot.stepNum != bar.currentZoneSteps.Count - 1)
+        bool edited = false;
+        foreach (var gen in postProcess)
         {
-            foreach (var otherDot in dot.nextDots)
+            if (AttemptGen(dot, gen))
             {
-                if (!covered.Contains(otherDot)) TraverseAndAdd(otherDot, covered);
-            }
-            while (TraverseAndAdd(FindAddNext(dot), covered)) ;
-            ZoneDot result = CreateNextDot(dot);
-            while (result)
-            {
-                TraverseAndAdd(result, covered);
-                result = CreateNextDot(dot);
-            }
-
-        }
-        if (dot.stepNum != 0 && dot.previousDots.Count == 0)
-        {
-            foreach (var otherDot in dot.previousDots)
-            {
-                if (!covered.Contains(otherDot)) TraverseAndAdd(otherDot, covered);
-            }
-            while (TraverseAndAdd(FindAddPrev(dot), covered)) ;
-            ZoneDot result = CreatePrevDot(dot);
-            while (result)
-            {
-                TraverseAndAdd(result, covered);
-                result = CreatePrevDot(dot);
+                gen.effect(dot);
+                edited = true;
             }
         }
-        return true;
-    }
-
-    public ZoneDot CreateNextDot(ZoneDot dot)
-    {
-        var columnGen = columns[dot.stepNum + 1];
-        foreach (var gen in columnGen.zoneGenerators)
+        foreach (ZoneDot otherDot in bar.currentZoneDots)
         {
-            if ((gen.genType & (int)ZoneGeneratorFlags.AFTER) != 0 && (gen.genType & (int)ZoneGeneratorFlags.ADD) != 0)
-            {
-                if (gen.afterType != dot.type) continue;
-                if (AttemptGen(dot.stepNum+1, gen))
-                {
-                    var newDot = CreateDot(dot.stepNum + 1);
-                    newDot.type = columnGen.defaultZoneType;
-                    EditDotWithGen(newDot, gen);
-                    AddAfter(newDot, dot);
-                    return newDot;
-                }
-            }
+            if (Connect(dot, otherDot)) edited = true;
         }
-        return null;
+        return edited;
     }
 
-    public ZoneDot CreatePrevDot(ZoneDot dot)
+    public ZoneDot CreateNextDot(ZoneDot dot, ZoneGenerator gen, bool add = true)
     {
-        var columnGen = columns[dot.stepNum - 1];
-        foreach (var gen in columnGen.zoneGenerators)
-        {
-            if ((gen.genType & (int)ZoneGeneratorFlags.BEFORE) != 0 && (gen.genType & (int)ZoneGeneratorFlags.ADD) != 0)
-            {
-                if (gen.beforeType != dot.type) continue;
-                if (AttemptGen(dot.stepNum - 1, gen))
-                {
-                    var newDot = CreateDot(dot.stepNum - 1);
-                    newDot.type = columnGen.defaultZoneType;
-                    EditDotWithGen(newDot, gen);
-                    AddBefore(newDot, dot);
-                    return newDot;
-                }
-            }
-        }
-        return null;
+        var newDot = CreateDot(dot.stepNum + 1, gen);
+        if (add) AddAfter(newDot, dot);
+        return newDot;
     }
 
-
-    public ZoneDot FindAddNext(ZoneDot dot)
+    public ZoneDot CreatePrevDot(ZoneDot dot, ZoneGenerator gen, bool add = true)
     {
-        foreach (var otherDot in bar.currentZoneDots)
-        {
-            if (!dot.nextDots.Contains(otherDot) && CanConnect(dot, otherDot))
-            {
-                AddAfter(otherDot, dot);
-                return otherDot;
-            }
-        }
-        return null;
+        var newDot = CreateDot(dot.stepNum + 1, gen);
+        if (add) AddBefore(newDot, dot);
+        return newDot;
     }
 
-    public ZoneDot FindAddPrev(ZoneDot dot)
+    public bool AddAfter(ZoneDot dot, ZoneDot root)
     {
-        foreach (var otherDot in bar.currentZoneDots)
-        {
-            if (!dot.nextDots.Contains(otherDot) && CanConnect(otherDot, dot) )
-            {
-                AddBefore(otherDot, dot);
-                return otherDot;
-            }
-        }
-        return null;
+        int b = 2;
+        if (!dot.previousDots.Contains(root)) dot.previousDots.Add(root);
+        else b--;
+        if (!root.nextDots.Contains(dot)) root.nextDots.Add(dot);
+        else b--;
+        return b > 0;
     }
 
-    public void AddAfter(ZoneDot dot, ZoneDot root)
+    public bool AddBefore(ZoneDot dot, ZoneDot root)
     {
-        dot.previousDots.Add(root);
-        root.AddNextDot(dot);
+        int b = 2;
+        if (!root.previousDots.Contains(dot)) root.previousDots.Add(dot);
+        else b--;
+        if (!dot.nextDots.Contains(root)) dot.nextDots.Add(root);
+        else b--;
+        return b > 0;
     }
 
-    public void AddBefore(ZoneDot dot, ZoneDot root)
+    public ZoneDot CreateDot(int index1, ZoneGenerator gen)
     {
-        root.previousDots.Add(dot);
-        dot.AddNextDot(root);
-    }
-
-    public ZoneDot CreateDot(int index1)
-    {
-        ZoneDot zoneDot = UnityEngine.Object.Instantiate<ZoneDot>(bar.zoneDotPrefab, bar.transform.position, bar.transform.rotation, columnTransforms[index1].transform);
+        RectTransform rectTransform = columnTransforms[index1];
+        ZoneDot zoneDot = UnityEngine.Object.Instantiate<ZoneDot>(bar.zoneDotPrefab, bar.transform.position, bar.transform.rotation, rectTransform.transform);
         zoneDot.stepNum = index1;
         zoneDot.worldBar = bar;
         zoneDot.idCtrl = bar.idCtrl;
         zoneDot.btnCtrl = bar.btnCtrl;
         zoneDot.transform.name = "ZoneDot - Step: " + (object)index1;
-        zoneDot.verticalSpacing = bar.defaultVerticalSpacing;
+        zoneDot.verticalSpacing = bar.defaultVerticalSpacing + gen.verticalSpacing;
+        var step = bar.currentZoneSteps[index1];
+        step.Add(zoneDot);
         bar.currentZoneDots.Add(zoneDot);
+        if (step.Count == 1)
+        {
+            zoneDot.transform.position = rectTransform.position;
+        }
+        else
+        {
+            zoneDot.transform.position = step[step.Count-2].transform.position - new Vector3(0.0f, zoneDot.verticalSpacing * bar.rect.localScale.y, 0.0f);
+        }
+        
+        if (gen.zoneType == ZoneType.World && gen is ManualZoneGenerator)
+        {
+            ManualZoneGenerator manual = (ManualZoneGenerator)gen;
+            //Default world stuff
+            if (manual.automaticWorldSelection)
+            {
+                if (stringList.Count > 0)
+                {
+                    int index3 = bar.runCtrl.NextWorldRand(0, stringList.Count);
+                    zoneDot.worldName = stringList[index3];
+                    stringList.Remove(stringList[index3]);
+                }
+                else
+                {
+                    if (bar.runCtrl.currentRun.bossExecutions >= 7)
+                    {
+                        zoneDot.worldName = "Genocide";
+                        zoneDot.imageName = "WorldWasteland";
+                    }
+                    else if (bar.runCtrl.currentRun.bossExecutions >= 1)
+                    {
+                        zoneDot.worldName = "Normal";
+                        zoneDot.imageName = "WorldWasteland";
+                    }
+                    else
+                    {
+                        zoneDot.worldName = "Pacifist";
+                        zoneDot.imageName = "WorldWasteland";
+                    }
+
+                }
+                zoneDot.world = bar.runCtrl.worlds[zoneDot.worldName];
+                zoneDot.imageName = zoneDot.world.iconName;
+            }
+            
+        }
+        EditDotWithGen(zoneDot, gen);
+
         return zoneDot;
     }
 
+    //================================================================================================================================================================================================================================================================================================
+
     public void Generate()
     {
-        foreach (Component component in bar.zoneDotContainer)
+        CURRENT = this;
+        try
         {
-            UnityEngine.Object.Destroy((UnityEngine.Object)component.gameObject);
+            foreach (Component component in bar.zoneDotContainer)
+            {
+                UnityEngine.Object.Destroy((UnityEngine.Object)component.gameObject);
+            }
+            bar.currentZoneDots.Clear();
+            bar.currentZoneSteps.Clear();
+            if (bar.btnCtrl.hideUICounter < 1)
+                bar.detailPanel.gameObject.SetActive(true);
+            bar.runCtrl.currentRun.lastWorldGenOrigin = bar.runCtrl.currentRun.currentWorldGen;
+
+            World world = bar.runCtrl.currentWorld;
+
+            var manual = manualGeneration.ContainsKey(world.nameString) && manualGeneration[world.nameString];
+
+            if (!manual)
+            {
+                bar.GenerateWorldBar(-666);
+                foreach (var step in bar.currentZoneSteps)
+                {
+                    if (step.Count > 0)
+                    {
+                        columnTransforms.Add((RectTransform)step[0].transform.parent);
+                    }
+                    else
+                    {
+                        Debug.LogError("Failed to get transforms of dot columns in non manual world generation!");
+                        return;
+                    }
+                }
+            }
+            else
+            {
+                GetManualGenerators(world);
+                RunManualGeneration();
+            }
+
+            world.numZones = bar.currentZoneSteps.Count-1;
+
+            RunPostProcessGenerators(manual);
+        } 
+        catch (Exception e)
+        {
+            Debug.LogError("Exception created when running world generation: " + e.Message + "\n" + e.StackTrace);
         }
-        bar.currentZoneDots.Clear();
-        bar.currentZoneSteps.Clear();
-        if (bar.btnCtrl.hideUICounter < 1)
-            bar.detailPanel.gameObject.SetActive(true);
+    }
+
+    public void RunManualGeneration()
+    {
         List<ZoneDot> previousDots = new List<ZoneDot>();
-        List<string> stringList = new List<string>((IEnumerable<string>)bar.runCtrl.currentRun.unvisitedWorldNames);
-        int num1 = 100;
-        if (bar.runCtrl.currentRun != null && bar.runCtrl.currentRun.hellPasses.Contains(2))
-            bar.dangerChance = 200f;
-        else
-            bar.dangerChance = 100f;
-        bar.runCtrl.currentRun.lastWorldGenOrigin = bar.runCtrl.currentRun.currentWorldGen;
+
+        column_uses.Clear();
+        for (int i = 0; i < bar.currentZoneSteps.Count; i++) column_uses.Add(i, new Dictionary<string, int>());
+
         World world = bar.runCtrl.currentWorld;
 
-        Dictionary<CustomZoneGenerator, float> probabilities = new Dictionary<CustomZoneGenerator, float>();
-
-        Dictionary<string, int> total_uses = new Dictionary<string, int>();
-
-        int previousSplitState = 0;
-        int index1 = 0;
-
-        foreach (CustomColumnGenerator gen in columns)
+        foreach (var gen in manualZoneGenerators)
         {
-            RectTransform rectTransform = new GameObject("ZoneStep").AddComponent<RectTransform>();
-            List<ZoneDot> stepDots = new List<ZoneDot>();
-            bar.currentZoneSteps.Add(stepDots);
-            Vector3 vector3 = bar.zoneDotContainer.transform.position - new Vector3((float)((double)bar.width / 2.0 - (double)bar.width / 6 * (double)index1) * bar.zoneDotContainer.lossyScale.x, 0.0f, 0.0f);
-            rectTransform.localScale = bar.zoneDotContainer.lossyScale;
-            rectTransform.SetParent(bar.zoneDotContainer, true);
-            rectTransform.transform.position = vector3;
-            rectTransform.sizeDelta = new Vector2(10f, (float)num1);
-            columnTransforms.Add(rectTransform);
-            column_uses.Add(index1, new Dictionary<string, int>());
-            index1++;
-        }
-
-        for (index1 = 0; index1 < columns.Count; index1++)
-        {
-            CustomColumnGenerator gen = columns[index1];
-            List<ZoneDot> stepDots = bar.currentZoneSteps[index1];
-            
-            World current = bar.runCtrl.currentWorld;
-            List<string> next_world_list = next_worlds.ContainsKey(current) ? next_worlds[current] : new List<string>();
-            List<ZoneDot> nextPreviousDots = new List<ZoneDot>();
-            int index2 = 1;
-
-            Dictionary<string, int> column_uses = new Dictionary<string, int>();
-
-            int genNumZones = gen.numZonesDefault + bar.runCtrl.NextWorldRand(0, gen.numZonesAdditionPotential + 1) - bar.runCtrl.NextWorldRand(0, gen.numZonesRemovePotential + 1);
-            int numZones = (gen.defaultZoneType != ZoneType.World ? genNumZones : Math.Min(genNumZones, Math.Max(1, stringList.Count)));
-            for (index2 = 1; index2 <= numZones; index2++)
+            Debug.Log("Running manual generator with key: " + gen.activationKey);
+            if (total_uses.ContainsKey(gen.activationKey) && total_uses[gen.activationKey] >= gen.maxWorldActivations) continue;
+            List<int> validColumns = gen.columns.Where((column) => (column_uses.ContainsKey(column) && !(column_uses[column].ContainsKey(gen.activationKey) && column_uses[column][gen.activationKey] < gen.maxColumnActivations))).ToList();
+            while (validColumns.Count > 0)
             {
-                ZoneDot dot = CreateDot(index1);
-                dot.type = gen.defaultZoneType;
-                dot.verticalSpacing += gen.additionalVerticalSpacing;
-                stepDots.Add(dot);
-                nextPreviousDots.Add(dot);
-                if (dot.type == ZoneType.World)
+                var column = validColumns[0];
+                var step = bar.currentZoneSteps[column];
+                validColumns.RemoveAt(0);
+                var basicWorldsUsed = false;
+                while (AttemptGen(column, gen))
                 {
-                    //Default world stuff
-                    bool genocideRun = bar.runCtrl.savedBossKills >= 7;
-
-                    if (stringList.Count > 0)
+                    ZoneDot dot = CreateDot(column, gen);
+                    if (dot.type == ZoneType.World)
                     {
-                        if (next_world_list.Count == 0)
+                        if (gen.automaticWorldSelection)
                         {
-                            int index3 = bar.runCtrl.NextWorldRand(0, stringList.Count);
-                            dot.worldName = stringList[index3];
-                            dot.world = bar.runCtrl.worlds[dot.worldName];
-                            dot.imageName = dot.world.iconName;
-                            stringList.Remove(stringList[index3]);
-                        }
-                        else
-                        {
-                            try
+                            if (stringList.Count > 0)
                             {
-                                int index3 = bar.runCtrl.NextWorldRand(0, next_world_list.Count);
-                                dot.worldName = next_world_list[index3];
-                                dot.world = bar.runCtrl.worlds[dot.worldName];
-                                dot.imageName = dot.world.iconName;
-                                next_world_list.RemoveAt(index3);
+                                basicWorldsUsed = true;
                             }
-                            catch (Exception e)
+                            else if (basicWorldsUsed)
                             {
-
-                                Debug.LogError("Next world error: " + e.Message);
-                            }
-
-                        }
-                    }
-                    else
-                    {
-                        if (bar.runCtrl.savedBossKills >= 7)
-                        {
-                            dot.worldName = "Genocide";
-                            dot.imageName = "WorldWasteland";
-                        }
-                        else if (bar.runCtrl.savedBossKills >= 1)
-                        {
-                            dot.worldName = "Normal";
-                            dot.imageName = "WorldWasteland";
-                        }
-                        else
-                        {
-                            dot.worldName = "Pacifist";
-                            dot.imageName = "WorldWasteland";
-                        }
-                        dot.world = bar.runCtrl.worlds[dot.worldName];
-                    }
-                    
-
-                }
-
-                dot.SetType(gen.defaultZoneType);
-            }
-
-            //int splitState = gen.connectionType == ZoneGeneratorConncetions.MAINTAIN_SPLIT ? previousSplitState : 0;
-
-            /*for (int dotIndex = 0; dotIndex < stepDots.Count; dotIndex++)
-            {
-                ZoneDot dot = stepDots[dotIndex];
-                dot.transform.position = vector3 + new Vector3(0.0f, ((float)(gen.numZonesDefault - 1) / 2f - (float)(dotIndex - 1)) * dot.verticalSpacing * bar.rect.localScale.y, 0.0f);
-                bar.currentZoneDots.Add(dot);
-                if (index1 != 0)
-                {
-                    List<ZoneDot> step = bar.currentZoneSteps[index1 - 1];
-                    CustomColumnGenerator previousGen = generators[index1 - 1];
-
-                    for (int otherDotIndex = 0; otherDotIndex < step.Count; otherDotIndex++)
-                    {
-                        ZoneDot previousDot = step[otherDotIndex];
-
-                        if (previousDot.type != ZoneType.World)
-                        {
-                            bool add = true;
-
-                            int relative1 = dotIndex - stepDots.Count / 2;
-                            if (relative1 == 0)
-                            {
-                                if (stepDots.Count % 2 == 1)
-                                {
-                                    if (splitState == 0)
-                                    {
-                                        if (bar.runCtrl.NextWorldRand(0, 2) == 0) splitState = -1;
-                                        else splitState = 1;
-                                    }
-                                }
-                                else
-                                {
-                                    relative1++;
-                                }
-                            }
-
-                            int relative2 = otherDotIndex - step.Count / 2;
-                            if (relative2 == 0)
-                            {
-                                if (step.Count % 2 == 1)
-                                {
-                                    if (previousSplitState == 0)
-                                    {
-                                        if (bar.runCtrl.NextWorldRand(0, 2) == 0) previousSplitState = -1;
-                                        else previousSplitState = 1;
-                                    }
-
-                                }
-                                else
-                                {
-                                    relative2++;
-                                }
-                            }
-
-                            if (previousGen.connectionType == ZoneGeneratorConncetions.MAINTAIN_SPLIT || previousGen.connectionType == ZoneGeneratorConncetions.SPLIT)
-                            {
-                                if ((relative1 == 0 ? Math.Sign(splitState == 0 ? 1 : splitState) : Math.Sign(relative1)) != (relative2 == 0 ? Math.Sign(previousSplitState == 0 ? 1 : previousSplitState) : Math.Sign(relative2)))
-                                {
-                                    add = false;
-                                }
-                            }
-
-                            if (add)
-                            {
-                                previousDot.AddNextDot(dot);
-                                dot.previousDots.Add(previousDot);
+                                break;
                             }
                         }
                     }
                 }
-            }*/
-
-            //previousSplitState = splitState;
-
-            /*if (index1 != 0)
-            {
-                for (int prevIndex = 0; prevIndex < previousDots.Count - 1; prevIndex++)
-                {
-                    ZoneDot prevDot = previousDots[prevIndex];
-                    ZoneDot nextDot = previousDots[prevIndex + 1];
-                    if (bar.runCtrl.NextWorldRand(0, 2) == 0)
-                    {
-                        var res = (from dot in prevDot.nextDots where (from other_dot in nextDot.nextDots where stepDots.IndexOf(other_dot) - stepDots.IndexOf(dot) == -1 select other_dot).Count() > 0 select dot).ToList();
-                        if (res.Count() > 0)
-                        {
-                            var forwardDot = res[bar.runCtrl.NextWorldRand(0, res.Count())];
-                            forwardDot.previousDots.Remove(prevDot);
-                            prevDot.nextDots.Remove(forwardDot);
-                        }
-
-                    }
-                    else
-                    {
-                        var res = (from dot in nextDot.nextDots where (from other_dot in prevDot.nextDots where stepDots.IndexOf(other_dot) - stepDots.IndexOf(dot) == 1 select other_dot).Count() > 0 select dot).ToList();
-                        if (res.Count() > 0)
-                        {
-                            var forwardDot = res[bar.runCtrl.NextWorldRand(0, res.Count())];
-                            forwardDot.previousDots.Remove(nextDot);
-                            nextDot.nextDots.Remove(forwardDot);
-                        }
-                    }
-
-                }
-            }*/
-            
-            if (index1 != 0)
-            {
-                /*List<ZoneDot> step = bar.currentZoneSteps[index1 - 1];
-                CustomColumnGenerator previousGen = columns[index1 - 1];
-                foreach (CustomZoneGenerator zoneGen in previousGen.zoneGenerators)
-                {
-                    if ((zoneGen.genType & (int)ZoneGeneratorFlags.REPLACE) != 0 && (zoneGen.genType & (int)ZoneGeneratorFlags.BEFORE) != 0)
-                    {
-                        EditDotsWithGen(step, zoneGen, dot => (dot.type == zoneGen.replaceType && dot.nextDots.Find(otherDot => otherDot.type == zoneGen.beforeType)));
-                    }
-
-                }*/
-            }
-
-            previousDots.Clear();
-            previousDots = new List<ZoneDot>((IEnumerable<ZoneDot>)nextPreviousDots);
-        }
-
-        Debug.Log("World generation almost complete.");
-
-        TraverseAndAdd(bar.currentZoneSteps[0][0], new List<ZoneDot>());
-
-        for (int i = 0; i < bar.currentZoneSteps.Count; i++)
-        {
-            List<ZoneDot> step = bar.currentZoneSteps[i];
-            CustomColumnGenerator gen = columns[i];
-            foreach (CustomZoneGenerator zoneGen in gen.zoneGenerators)
-            {
-                Debug.Log(zoneGen.replaceType);
-                if ((zoneGen.genType & (int)ZoneGeneratorFlags.REPLACE) != 0 && (zoneGen.genType & (int)ZoneGeneratorFlags.AFTER) != 0)
-                {
-                    EditDotsWithGen(step, zoneGen, dot => (dot.type == zoneGen.replaceType && dot.previousDots.Find(otherDot => otherDot.type == zoneGen.afterType)));
-                }
-                else if (zoneGen.genType == (int)ZoneGeneratorFlags.REPLACE)
-                {
-                    EditDotsWithGen(step, zoneGen, dot => (dot.type == zoneGen.replaceType));
-                }
-            }
-            foreach (CustomZoneGenerator zoneGen in gen.zoneGenerators)
-            {
-                if ((zoneGen.genType & (int)ZoneGeneratorFlags.REPLACE) != 0 && (zoneGen.genType & (int)ZoneGeneratorFlags.BEFORE) != 0)
-                {
-                    EditDotsWithGen(step, zoneGen, dot => (dot.type == zoneGen.replaceType && dot.nextDots.Find(otherDot => otherDot.type == zoneGen.beforeType)));
-                }
-
-            }
-
-        }
-
-
-        for (int i = 0; i < columnTransforms.Count; i++)
-        {
-            RectTransform rectTransform = columnTransforms[i];
-            for (int j = 0; j < bar.currentZoneSteps[i].Count; j++)
-            {
-                var dot = bar.currentZoneSteps[i][j];
-                dot.transform.position = rectTransform.position + new Vector3(0.0f, ((float)(bar.currentZoneSteps[i].Count - 1) / 2f - (float)(j - 1)) * bar.currentZoneSteps[i][j].verticalSpacing * bar.rect.localScale.y, 0.0f);
             }
         }
 
         foreach (ZoneDot dot in bar.currentZoneDots)
         {
+            foreach (ZoneDot otherDot in bar.currentZoneDots)
+            {
+                Connect(dot, otherDot);
+            }
+        }
+
+        Debug.Log("Manual generation complete.");
+    }
+
+    public bool Connect(ZoneDot dot, ZoneDot otherDot)
+    {
+        if (dot != otherDot)
+        {
+            var source1 = source.ContainsKey(dot)       ? source[dot]       : null;
+            var source2 = source.ContainsKey(otherDot)  ? source[otherDot]  : null;
+            bool b1 = false;
+            if (source1 != null)
+            {
+                b1 = true;
+                if (source1.connectConds.Count == 0) source1.AddDefaultConnectRules();
+                foreach (var cond in source1.connectConds)
+                {
+                    if (!cond(dot, otherDot, source2 == null))
+                    {
+                        b1 = false;
+                        break;
+                    }
+                }
+            }
+            bool b2 = false;
+            if (source2 != null)
+            {
+                b2 = true;
+                if (source2.connectConds.Count == 0) source2.AddDefaultConnectRules();
+                foreach (var cond in source2.connectConds)
+                {
+                    if (!cond(otherDot, dot, source1 == null))
+                    {
+                        b2 = false;
+                        break;
+                    }
+                }
+            }
+            if (b1 || b2)
+            {
+                if (dot.stepNum > otherDot.stepNum)
+                {
+                    return AddAfter(dot, otherDot);
+                }
+                else if (dot.stepNum < otherDot.stepNum)
+                {
+                    return AddBefore(dot, otherDot);
+                }
+            }
+        }
+        return false;
+    }
+
+    public void RunPostProcessGenerators(bool manual = false)
+    {
+        post = true;
+
+        World world = bar.runCtrl.currentWorld;
+
+        GetPostProcessGenerators(world);
+
+        column_uses.Clear();
+        for (int i = 0; i < bar.currentZoneSteps.Count; i++) column_uses.Add(i, new Dictionary<string, int>());
+
+        var original = new List<ZoneDot>(bar.currentZoneDots);
+        var dotsToCheck = bar.currentZoneDots;
+
+        var max = dotsToCheck.Count * 3;
+
+        world.numZones = bar.currentZoneSteps.Count - 1;
+
+        for (int i = 0, j = 0; j < max && i < dotsToCheck.Count; i++, j++)
+        {
+            ZoneDot dot = dotsToCheck[i];
+            if (ApplyPostProcess(dot))
+            {
+                dotsToCheck.RemoveAt(i);
+                dotsToCheck.Add(dot);
+                i--;
+            }
+        }
+
+        dotsToCheck.Sort((dot, other_dot) =>
+        {
+            var i1 = original.IndexOf(dot);
+            var i2 = original.IndexOf(other_dot);
+            i1 = i1 == -1 ? int.MaxValue : i1;
+            i2 = i2 == -1 ? int.MaxValue : i2;
+            return i1.CompareTo(i2);
+        });
+
+        foreach (var dot in bar.currentZoneDots)
+        {
             dot.nextDots = dot.nextDots.OrderBy<ZoneDot, int>((Func<ZoneDot, int>)(t => t.transform.GetSiblingIndex())).ToList<ZoneDot>();
+            dot.ClearLines();
             dot.CreateLines();
         }
 
-        bar.selectionMarker.transform.position = bar.currentZoneDots[0].transform.position;
+        foreach (var dot in bar.currentZoneDots)
+        {
+            foreach (var otherDot in dot.nextDots)
+            {
+                if (!otherDot.previousDots.Contains(dot)) otherDot.previousDots.Add(dot);
+            }
+        }
 
-        Debug.Log("World generation complete.");
+        foreach (var dot in invisDots.Keys)
+        {
+            if (dot.image != null) dot.image.enabled = false;
+            if (dot.fgImage != null) dot.fgImage.enabled = false;
+            if (dot.bgImage != null) dot.bgImage.enabled = false;
+            foreach (var oDot in dot.previousDots)
+            {
+                var index = oDot.nextDots.IndexOf(dot);
+                if (index != -1)
+                {
+                    if (oDot.nextLines.Count > index)
+                    {
+                        var line = oDot.nextLines[oDot.nextDots.IndexOf(dot)];
+                        line.GetComponent<Image>().enabled = false;
+                        if (!invisLines.ContainsKey(dot)) invisLines.Add(dot, new Dictionary<ZoneDot, RectTransform>());
+                        invisLines[dot].Add(oDot, line);
+                        Debug.LogError("Added dot and line to invisLines");
+                        oDot.nextDots.Remove(dot);
+                        oDot.nextLines.Remove(line);
+                    }
+                    else
+                    {
+                        Debug.LogError("Dot Connection Line Error");
+                    }
+                }
+                else
+                {
+                    Debug.LogError("PreviousDot - NextDot Mismatch");
+                }
+                
+            }
+        }
+
+        if (bar.currentZoneSteps.Count > 0)
+        {
+            if (bar.currentZoneSteps[0].Count > 0)
+            {
+                bar.selectionMarker.transform.position = bar.currentZoneSteps[0][0].transform.position;
+            }
+            else
+            {
+                Debug.LogError("World Generation did not result in a starting ZoneDot");
+            }
+        }
+        else
+        {
+            Debug.LogError("World Generation did not result in any zone steps (columns)");
+        }
+       
     }
 
-    //==============================LUA=============================================
+    //================================================================================================================================================================================================================================================================================================
 
-    public CustomColumnGenerator GetColumn(int index)
+    public class ZoneGenerator
     {
-        return columns[index];
+        public List<Func<ZoneDot, ZoneDot, bool, bool>> connectConds = new List<Func<ZoneDot, ZoneDot, bool, bool>>();
+
+        public ZoneType zoneType = ZoneType.Battle;
+        public string activationKey = "";
+        public int maxColumnActivations = 1;
+        public int maxWorldActivations = int.MaxValue;
+
+        public List<int> columns = new List<int>();
+
+        public float verticalSpacing;
+
+        //World
+        public string worldName = "Genocide";
+        public bool refreshCurrentworld = false;
+
+        public bool dark = false;
+
+        public virtual void SetWorldData(string nameString, bool reAdd)
+        {
+            zoneType = ZoneType.World;
+            worldName = nameString;
+            refreshCurrentworld = reAdd;
+        }
+
+        public virtual void SetWorldDataMirror(bool reAdd)
+        {
+            zoneType = ZoneType.World;
+            worldName = S.I.batCtrl.currentPlayer.beingObj.nameString;
+            refreshCurrentworld = reAdd;
+        }
+
+        public void AddColumnToRange(int i)
+        {
+            columns.Add(i);
+        }
+
+        public void AddAllColumns()
+        {
+            for (int i = 0; i < 100; i++)
+            {
+                columns.Add(i);
+            }
+            
+        }
+
+        public virtual bool CanActivate(ZoneDot dot)
+        {
+            return columns.Contains(dot.stepNum);
+        }
+
+        public void Add1ColumnConnectRule()
+        {
+            connectConds.Add((dot, otherDot, otherDefault) =>
+            {
+                return Math.Abs(dot.stepNum - otherDot.stepNum) == 1;
+            });
+        }
+
+        public void AddKeysConnectRule(IEnumerable<string> keys)
+        {
+            connectConds.Add((dot, otherDot, otherDefault) =>
+            {
+                if (!otherDefault)
+                {
+                    var source2 = CustomWorldGenerator.CURRENT.source[otherDot];
+                    return keys.Contains(source2.activationKey);
+                }
+                else
+                {
+                    return true;
+                }
+            });
+        }
+
+        public void AddKeysBlacklistConnectRule(IEnumerable<string> keys)
+        {
+            connectConds.Add((dot, otherDot, otherDefault) =>
+            {
+                if (!otherDefault)
+                {
+                    var source2 = CustomWorldGenerator.CURRENT.source[otherDot];
+                    return !keys.Contains(source2.activationKey);
+                }
+                else
+                {
+                    return true;
+                }
+            });
+        }
+
+        public void AddNoDefaultConnectRule()
+        {
+            connectConds.Add((dot, otherDot, otherDefault) =>
+            {
+                return !otherDefault;
+            });
+        }
+
+        public void NoIntendedConnectRule()
+        {
+            connectConds.Add((dot, otherDot, otherDefault) =>
+            {
+                return false;
+            });
+        }
+
+        public virtual void AddDefaultConnectRules()
+        {
+            Add1ColumnConnectRule();
+            AddNoDefaultConnectRule();
+        }
+
+        public void AddMultiColumnConnectRule(IEnumerable<int> columns)
+        {
+            connectConds.Add((dot, otherDot, otherDefault) =>
+            {
+                return columns.Contains(otherDot.stepNum);
+            });
+        }
+
+        //EXPERIMENTAL
+        public void SetLuaConnectRule(Closure function)
+        {
+            connectConds.Add((dot, otherDot, otherDefault) =>
+            {
+                try
+                {
+                    var result = function.Call(this, dot, otherDot, otherDefault);
+                    return result.Boolean;
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError("ZoneGenerator Lua Connect Condition call exception: " + e.Message);
+                    return false;
+                }
+            });
+        }
     }
+
+    public class ManualZoneGenerator : ZoneGenerator
+    {
+        public bool automaticWorldSelection = true;
+
+        public override void SetWorldData(string nameString, bool reAdd)
+        {
+            base.SetWorldData(nameString, reAdd);
+            automaticWorldSelection = false;
+        }
+
+        public override void SetWorldDataMirror(bool reAdd)
+        {
+            base.SetWorldDataMirror(reAdd);
+            automaticWorldSelection = false;
+        }
+    }
+
+    public class PostProcessZoneGenerator : ZoneGenerator
+    {
+        public float probability = 100f;
+        public float probabilityReductionFactor = 1.0f;
+        public bool probabilityReductionOnFail = false;
+        public bool updateTransform = true;
+
+        public Predicate<ZoneDot> cond = (dot) => (true);
+        public Func<ZoneDot, ZoneDot> effect = (dot) =>
+        {
+            Debug.LogError(dot.transform.name + " has been effected by a generator with no effect.");
+            return null;
+        };
+
+        public override bool CanActivate(ZoneDot dot)
+        {
+            return base.CanActivate(dot) && cond(dot);
+        }
+
+        public void SetReplace(ZoneType type)
+        {
+            cond = (dot) => (dot.type == type);
+            effect = (dot) =>
+            {
+                CustomWorldGenerator.CURRENT.EditDotWithGen(dot, this);
+                return dot;
+            };
+        }
+
+        public void SetReplaceAfter(ZoneType replaceType, ZoneType afterType)
+        {
+            cond = (dot) => (dot.type == replaceType && dot.previousDots.Where(otherDot => (otherDot.type == afterType)).Count() > 0);
+            effect = (dot) =>
+            {
+                CustomWorldGenerator.CURRENT.EditDotWithGen(dot, this);
+                return dot;
+            };
+        }
+
+        public void SetReplaceBefore(ZoneType replaceType, ZoneType beforeType)
+        {
+            cond = (dot) => (dot.type == replaceType && dot.nextDots.Where(otherDot => (otherDot.type == beforeType)).Count() > 0);
+            effect = (dot) =>
+            {
+                CustomWorldGenerator.CURRENT.EditDotWithGen(dot, this);
+                return dot;
+            };
+        }
+
+        public void SetAddAfter(ZoneType afterType, bool addToNext = true)
+        {
+            cond = (dot) => (dot.type == afterType);
+            effect = (dot) =>
+            {
+                return CustomWorldGenerator.CURRENT.CreateNextDot(dot, this, addToNext);
+            };
+        }
+
+        public void SetAddBefore(ZoneType beforeType, bool addToPrev = true)
+        {
+            cond = (dot) => (dot.type == beforeType);
+            effect = (dot) =>
+            {
+                return CustomWorldGenerator.CURRENT.CreatePrevDot(dot, this, addToPrev);
+            };
+        }
+
+        public void SetInvisible(string activationKey, string sectionKey)
+        {
+            cond = (dot) => {
+                var source = CustomWorldGenerator.CURRENT.source.ContainsKey(dot) ? CustomWorldGenerator.CURRENT.source[dot] : null;
+                return source != null && source.activationKey == activationKey && !(invisDots.ContainsKey(dot) && invisDots[dot] == activationKey);
+            };
+            effect = (dot) =>
+            {
+                if (!hiddenSections.ContainsKey(sectionKey)) hiddenSections.Add(sectionKey, new List<ZoneDot>());
+                hiddenSections[sectionKey].Add(dot);
+                if (!invisDots.ContainsKey(dot)) invisDots.Add(dot, sectionKey);
+                else invisDots[dot] = sectionKey;
+                return dot;
+            };
+        }
+
+        //EXPERIMENTAL
+        public void SetLuaCondition(Closure function)
+        {
+            cond = (dot) =>
+            {
+                try
+                {
+                    var result = function.Call(this, dot);
+                    return result.Boolean;
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError("PostProcessZoneGenerator Lua Condition call exception: " + e.Message);
+                    return false;
+                }
+            };
+        }
+
+        //EXPERIMENTAL
+        public void SetLuaEffect(Closure function)
+        {
+            effect = (dot) =>
+            {
+                try
+                {
+                    function.Call(this, dot);
+                    return dot;
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError("PostProcessZoneGenerator Lua Condition call exception: " + e.Message);
+                    return dot;
+                }
+            };
+        }
+    }
+
+    //=========================================LUA================================================================================================================================================================================================================
 
     public int NumOfColumns()
     {
-        return columns.Count;
+        return bar.currentZoneSteps.Count;
     }
 
-    public CustomColumnGenerator CreateColumn()
+
+    //==============================LUA(MANUAL)=============================================================================================================================================================================================
+
+    public ManualZoneGenerator CreateManualGenerator()
     {
-        CustomColumnGenerator gen = new CustomColumnGenerator();
-        columns.Add(gen);
+        var gen = new ManualZoneGenerator();
+        manualZoneGenerators.Add(gen);
         return gen;
     }
 
-    public CustomColumnGenerator InsertNewColumn(int index)
+    public void CreateColumns(int num)
     {
-        CustomColumnGenerator gen = new CustomColumnGenerator();
-        columns.Insert(index, gen);
-        return gen;
-    }
-}
-
-public class CustomColumnGenerator
-{
-    public List<CustomZoneGenerator> zoneGenerators = new List<CustomZoneGenerator>();
-    public ZoneType defaultZoneType = ZoneType.Battle;
-    public int numZonesDefault = 1;
-    public int numZonesRemovePotential = 0;
-    public int numZonesAdditionPotential = 0;
-    public int groups = 1;
-    public List<int> possibleConnectionColumns = new List<int>(new int[] { 1 });
-    //public ZoneGeneratorConncetions connectionType = ZoneGeneratorConncetions.ALL;
-    public float additionalVerticalSpacing = 0.0f;
-
-    public CustomZoneGenerator CreateNewZoneGen()
-    {
-        var gen = new CustomZoneGenerator();
-        zoneGenerators.Add(gen);
-        return gen;
-    }
-
-    public CustomZoneGenerator CreateNewTopZoneGen()
-    {
-        var gen = new CustomZoneGenerator();
-        zoneGenerators.Insert(0, gen);
-        return gen;
-    }
-
-    public void AddZoneGen(CustomZoneGenerator gen)
-    {
-        zoneGenerators.Add(gen);
-    }
-
-    public void AddExtraColumnConnections(int relative)
-    {
-        if (!possibleConnectionColumns.Contains(relative))
+        if (!post || true)
         {
-            possibleConnectionColumns.Add(relative);
+            for (int i = 0; i < num; i++)
+            {
+                CreateColumn();
+            }
         }
     }
 
-    public void RemoveColumnConnections(int relative)
+    public void CreateColumn()
     {
-        if (possibleConnectionColumns.Contains(relative))
+        if (!post || true)
         {
-            possibleConnectionColumns.Remove(relative);
+            Debug.Log("Creating Column");
+            RectTransform rectTransform = new GameObject("ZoneStep").AddComponent<RectTransform>();
+            Vector3 vector3 = bar.zoneDotContainer.transform.position - new Vector3((float)((double)bar.width / 2.0 - (double)bar.width / 6 * (double)bar.currentZoneSteps.Count) * bar.zoneDotContainer.lossyScale.x, 0.0f, 0.0f);
+            rectTransform.localScale = bar.zoneDotContainer.lossyScale;
+            rectTransform.SetParent(bar.zoneDotContainer, true);
+            rectTransform.position = vector3;
+            rectTransform.sizeDelta = new Vector2(10f, 100f);
+            columnTransforms.Add(rectTransform);
+            bar.currentZoneSteps.Add(new List<ZoneDot>());
         }
     }
-}
 
-public enum ZoneGeneratorFlags
-{
-    NONE = 0,
-    REPLACE = (1 << 0),
-    ADD = (1 << 1),
-    AFTER = (1 << 2),
-    BEFORE = (1 << 3)
-}
-
-/*public enum ZoneGeneratorConncetions
-{
-    ALL,
-    SPLIT,
-    MAINTAIN_SPLIT,
-}*/
-
-public class CustomZoneGenerator
-{
-    public int genType = (int)ZoneGeneratorFlags.NONE;
-    public ZoneType zoneType = ZoneType.Battle;
-    public string activationKey = "";
-    public int maxCollumnActivations = 666;
-    public int maxWorldActivations = 666;
-    public float probability = 100f;
-    public float probabilityReductionFactor = 1.0f;
-    public bool probabilityReductionOnFail = false;
-    public bool dark = false;
-
-    //Replace
-    public ZoneType replaceType = ZoneType.Battle;
-
-    //Add
-
-    //AfterEvery
-    public ZoneType afterType = ZoneType.Battle;
-
-    //BeforeEvery
-    public ZoneType beforeType = ZoneType.Battle;
-
-    //Limit (TODO)
-    public int limitLow = 0;
-    public int limitHigh = 666;
-
-    //World
-    public string worldName = "Genocide";
-    public bool refreshCurrentworld = false;
-
-    public void SetAdd()
+    public void InsertNewColumn(int index)
     {
-        genType |= (int)ZoneGeneratorFlags.ADD;
+        if (!post || true)
+        {
+            RectTransform rectTransform = new GameObject("ZoneStep").AddComponent<RectTransform>();
+            Vector3 vector3 = bar.zoneDotContainer.transform.position - new Vector3((float)((double)bar.width / 2.0 - (double)bar.width / 6 * (double)index) * bar.zoneDotContainer.lossyScale.x, 0.0f, 0.0f);
+            rectTransform.localScale = bar.zoneDotContainer.lossyScale;
+            rectTransform.SetParent(bar.zoneDotContainer, true);
+            rectTransform.transform.position = vector3;
+            rectTransform.sizeDelta = new Vector2(10f, 100f);
+            for (int i = index; i < bar.currentZoneSteps.Count; i++)
+            {
+                var step = bar.currentZoneSteps[i];
+                var transform = columnTransforms[i];
+                transform.localScale = bar.zoneDotContainer.lossyScale;
+                transform.position = transform.position + new Vector3(((float)bar.width / 6f * (float)1) * bar.zoneDotContainer.lossyScale.x, 0.0f, 0.0f);
+                transform.sizeDelta = new Vector2(10f, 100f);
+                foreach (ZoneDot zoneDot in step)
+                {
+                    zoneDot.stepNum = zoneDot.stepNum + 1;
+                    zoneDot.transform.position = transform.position + new Vector3(0.0f, ((float)(step.Count - 1) / 2f - (float)(step.IndexOf(zoneDot) - 1)) * zoneDot.verticalSpacing * bar.rect.localScale.y, 0.0f);
+                }
+            }
+            columnTransforms.Insert(index, rectTransform);
+            bar.currentZoneSteps.Insert(index, new List<ZoneDot>());
+        }
     }
 
-    public void SetReplace(ZoneType type)
-    {
-        genType |= (int)ZoneGeneratorFlags.REPLACE;
-        replaceType = type;
-    }
+    //===========================LUA(POST)========================================================
 
-    public void SetGoAfter(ZoneType type)
+    public PostProcessZoneGenerator CreatePostProcessGenerator()
     {
-        genType |= (int)ZoneGeneratorFlags.AFTER;
-        afterType = type;
-    }
-
-    public void SetGoBefore(ZoneType type)
-    {
-        genType |= (int)ZoneGeneratorFlags.BEFORE;
-        beforeType = type;
-    }
-
-    public void SetWorldData(string nameString, bool reAdd)
-    {
-        zoneType = ZoneType.World;
-        worldName = nameString;
-        refreshCurrentworld = reAdd;
+        var gen = new PostProcessZoneGenerator();
+        postProcess.Add(gen);
+        return gen;
     }
 }
 

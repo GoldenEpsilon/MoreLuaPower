@@ -12,6 +12,7 @@ public class PowerMonoBehavior : MonoBehaviour
     public static List<object> UpdateScripts = new List<object>();
     public static List<Script> UpdateBaseScripts = new List<Script>();
     public void Update() {
+        CustomZoneMiscPatches.updated = false;
         for (int i = 0; i < UpdateScripts.Count; i++) {
             S.I.mainCtrl.StartCoroutine(MoreLuaPower_FunctionHelper.EffectRoutine(UpdateBaseScripts[i].CreateCoroutine(UpdateScripts[i])));
         }

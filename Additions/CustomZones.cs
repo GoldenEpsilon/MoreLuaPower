@@ -9,8 +9,10 @@ using UnityEngine;
 
 using MoonSharp.Interpreter;
 using System;
+using UnityEngine.UI;
+using I2.Loc;
 
-public struct CustomZone
+public struct CustomZoneTypeData
 {
     public bool spawn_enemies;
     public bool spawn_boss;
@@ -18,9 +20,6 @@ public struct CustomZone
     public string music;
     public bool can_continue;
 }
-
-
-
 
 [HarmonyPatch(typeof(XMLReader), nameof(XMLReader.XMLtoZoneData))]
 public static class ZoneXMLPatch
@@ -33,23 +32,19 @@ public static class ZoneXMLPatch
         S.I.spCtrl.enemySpawnX.Clear();
         S.I.spCtrl.enemySpawnY.Clear();
         S.I.spCtrl.enemyChance.Clear();
-        return true;
+        return CustomZoneUtil.defaults.Contains(zoneType);
     }
 
-    public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+    /*public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
     {
         Debug.Log("Zone Transpiler running!");
         Queue<CodeInstruction> state = new Queue<CodeInstruction>();
-        //bool once = true;
-        CodeInstruction warp = null;
         foreach (var instruction in instructions)
         {
 
             if (state.Count == 0 && instruction.opcode == OpCodes.Ldarg_3)
             {
                 state.Enqueue(instruction);
-                //if (once) add = true;
-                //once = false;
             }
             if (state.Count == 1 && instruction.opcode == OpCodes.Ldc_I4_1)
             {
@@ -57,24 +52,9 @@ public static class ZoneXMLPatch
                 yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(CustomZoneUtil), nameof(CustomZoneUtil.IrregularSpawn)));
                 continue;
             }
-            /*if (state.Count == 1 && instruction.opcode == OpCodes.Ldc_I4_2)
-            {
-                state.Enqueue(instruction);
-                instruction.opcode = OpCodes.Ldc_I4_4;
-                add = false;
-            }*/
-            /*if (state.Count == 2 && instruction.opcode == OpCodes.Beq_S)
-            {
-                state.Clear();
-                
-                add = false;
-                instruction.opcode = OpCodes.Br;
-                warp = instruction;
-            }*/
             if (state.Count == 2 && instruction.opcode == OpCodes.Beq_S)
             {
                 state.Enqueue(instruction);
-                //og.operand = instruction.operand;
                 instruction.opcode = OpCodes.Brtrue;
             }
 
@@ -84,10 +64,10 @@ public static class ZoneXMLPatch
 
 
         }
-    }
+    }*/
 }
 
-[HarmonyPatch(typeof(XMLReader), nameof(XMLReader.XMLtoGetWorlds))]
+/*[HarmonyPatch(typeof(XMLReader), nameof(XMLReader.XMLtoGetWorlds))]
 public static class WorldXMLPatch
 {
 
@@ -95,24 +75,11 @@ public static class WorldXMLPatch
     {
         switch (attribute.Name)
         {
-            case "nextWorlds":
-                {
-                    CustomZoneUtil.AddWorldToCustomGeneration(world.nameString);
-                    string str = attribute.Value is string ? attribute.Value : "";
-                    if (str != "")
-                    {
-                        str = str.Replace(" ", "");
-                        string[] split = str.Split(',');
-                        CustomWorldGenerator.next_worlds.Add(world, new List<string>(split));
-                    }
-                    break;
-                }
             case "manualGeneration":
                 {
-                    CustomZoneUtil.AddWorldToCustomGeneration(world.nameString);
                     bool b = false;
                     bool.TryParse(attribute.Value, out b);
-                    CustomWorldGenerator.manualGeneration.Add(world, b);
+                    CustomWorldGenerator.manualGeneration.Add(world.nameString, b);
                     break;
                 }
         }
@@ -243,26 +210,22 @@ public static class WorldXMLPatch
     {
         var worlds = S.I.runCtrl.worlds;
     }
-}
+}*/
 
 [HarmonyPatch]
-public static class MiscPatches
+public static class CustomZoneMiscPatches
 {
-
-    public static ZoneType[] defaults = { ZoneType.Battle, ZoneType.Boss, ZoneType.Campsite, ZoneType.Danger, ZoneType.DarkShop, ZoneType.Distress, ZoneType.Genocide, ZoneType.Idle, ZoneType.Miniboss, ZoneType.Normal, ZoneType.Pacifist, ZoneType.PvP, ZoneType.Random, ZoneType.Shop, ZoneType.Treasure, ZoneType.World };
-
-    public static Dictionary<ZoneType, CustomZone> custom_zones = new Dictionary<ZoneType, CustomZone>();
 
     [HarmonyPrefix]
     [HarmonyPatch(typeof(SpawnCtrl), nameof(SpawnCtrl.SpawnZoneC))]
     public static bool SpawnCustomZone(SpawnCtrl __instance, ZoneType zoneType)
     {
-        if (!defaults.Contains(zoneType))
+        if (!CustomZoneUtil.defaults.Contains(zoneType))
         {
             Debug.Log("Spawning Custom Zone!");
             if (custom_zones.ContainsKey(zoneType))
             {
-                CustomZone zone = custom_zones[zoneType];
+                CustomZoneTypeData zone = custom_zones[zoneType];
                 __instance.ti.mainBattleGrid.currentEnemies.Clear();
                 if (zone.can_continue)
                 {
@@ -290,70 +253,335 @@ public static class MiscPatches
                     else Debug.Log("Did not spawn boss. None to spawn.");
                 }
             }
-            return true;
         }
-        else
-        {
-            return true;
-        }
+        CustomZoneUtil.TriggerTypeZoneEvent(zoneType, "Init");
+        return true;
     }
 
-    [HarmonyPatch]
-    [HarmonyPatch(typeof(RunCtrl), nameof(RunCtrl.GoToNextZone))]
-    static class BossRush_RunCtrlPatches
+    public static Dictionary<ZoneType, CustomZoneTypeData> custom_zones = new Dictionary<ZoneType, CustomZoneTypeData>();
+
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(Boss), nameof(Boss.DownC))]
+    public static bool DownBossZoneEvent(Boss __instance)
     {
-        static bool Prefix(RunCtrl __instance, ZoneDot zoneDot)
+        if (S.I.batCtrl.perfectBattle)
         {
-            if (zoneDot.type == ZoneType.World)
-            {
-                if (CustomWorldGenerator.refreshWorldDots.Contains(zoneDot))
-                {
-                    __instance.currentRun.unvisitedWorldNames.Add(__instance.currentWorld.nameString);
-                }
-                __instance.currentRun.zoneNum = 10000;
-            }
-            return true;
+            CustomZoneUtil.TriggerTypeZoneEvent(__instance.runCtrl.currentZoneDot.type, "PerfectBoss");
         }
+        CustomZoneUtil.TriggerTypeZoneEvent(__instance.runCtrl.currentZoneDot.type, "Downed");
+        return true;
     }
+
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(Boss), nameof(Boss.Spare))]
+    public static bool SpareBossZoneEvent(Boss __instance)
+    {
+        CustomZoneUtil.TriggerTypeZoneEvent(__instance.runCtrl.currentZoneDot.type, "Spare");
+        return true;
+    }
+
+    public static bool updated = false;
+
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(ZoneDot), "Update")]
+    public static bool ZoneDotUpdate(ZoneDot __instance)
+    {
+        if (updated || __instance == null || __instance.worldBar == null || __instance.worldBar.zoneDotContainer == null) return false;
+        var bar = __instance.worldBar;
+        var edit = new Vector3(0.0f, bar.runCtrl.currentZoneDot.transform.position.y / 2, 0.0f);
+        bar.zoneDotContainer.localPosition = bar.zoneDotContainer.localPosition - edit;
+        updated = true;
+        return false;
+        
+    }
+
+
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(BC), nameof(BC.EndBattle))]
+    public static bool EndBattlePrefix(BC __instance)
+    {
+        if (__instance.perfectBattle)
+        {
+            CustomZoneUtil.TriggerTypeZoneEvent(__instance.runCtrl.currentZoneDot.type, "PerfectBattle");
+        }
+        CustomZoneUtil.TriggerTypeZoneEvent(__instance.runCtrl.currentZoneDot.type, "EndBattle");
+        return true;
+    }
+
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(RunCtrl), nameof(RunCtrl.GoToNextZone))]
+    static bool Prefix(RunCtrl __instance, ZoneDot zoneDot)
+    {
+        if (zoneDot.type == ZoneType.World)
+        {
+            if (CustomWorldGenerator.refreshWorldDots.Contains(zoneDot))
+            {
+                __instance.currentRun.unvisitedWorldNames.Add(__instance.currentWorld.nameString);
+            }
+            __instance.currentRun.zoneNum = 10000;
+        }
+        return true;
+    }
+
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(Follower), "Update")]
+    static bool FollowerUpdatePrefix(Follower __instance)
+    {
+        if (S.I == null) return true;
+        if (S.I.runCtrl == null) return true;
+        var bar = S.I.runCtrl.worldBar;
+        if (bar != null && bar.runCtrl.currentZoneDot != null && (__instance == bar.locationMarker || __instance == bar.selectionMarker))
+        {
+            var edit = new Vector3(0.0f, bar.runCtrl.currentZoneDot.transform.localPosition.y, 0.0f);
+            __instance.transform.localPosition = __instance.transform.localPosition + edit;
+        }
+        return true;
+    }
+
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(Follower), "Update")]
+    static void FollowerUpdatePostfix(Follower __instance)
+    {
+        if (S.I == null) return;
+        if (S.I.runCtrl == null) return;
+        var bar = S.I.runCtrl.worldBar;
+        if (bar != null && bar.runCtrl.currentZoneDot != null && (__instance == bar.locationMarker || __instance == bar.selectionMarker))
+        {
+            var edit = new Vector3(0.0f, bar.runCtrl.currentZoneDot.transform.localPosition.y, 0.0f);
+            __instance.transform.localPosition = __instance.transform.localPosition - edit;
+        }
+       
+    }
+
 }
 
 
-[HarmonyPatch(typeof(WorldBar), nameof(WorldBar.GenerateWorldBar))]
+[HarmonyPatch]
 public static class WorldBarPatches
 {
 
-    public static bool Prefix(WorldBar __instance, int numSteps)
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(WorldBar), nameof(WorldBar.GenerateWorldBar))]
+    public static bool WorldGenerationPrefix(WorldBar __instance, ref int numSteps)
     {
-        World world = __instance.runCtrl.currentWorld;
-        if (!CustomZoneUtil.worldRegistry.Contains(world.nameString))
+        if (numSteps == -666)
         {
+            numSteps = __instance.runCtrl.currentWorld.numZones;
             return true;
         }
-
+        World world = __instance.runCtrl.currentWorld;
+        if ((world.nameString == "Genocide" || world.nameString == "Pacfifist" || world.nameString == "Normal") && __instance.runCtrl != null && __instance.runCtrl.currentRun != null)
+        {
+            __instance.runCtrl.currentRun.unvisitedWorldNames.Clear();
+            __instance.runCtrl.progressBar.Set();
+        }
         var gen = new CustomWorldGenerator(__instance);
         gen.Generate();
         return false;
     }
-    
 
-    
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(WorldBar), nameof(WorldBar.Open))]
+    public static bool OpenPrefix(WorldBar __instance)
+    {
+        return __instance.runCtrl.currentZoneDot != null;
+    }
+
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(RunCtrl), nameof(RunCtrl.CreateNewRun))]
+    public static bool CreateRunPrefix(RunCtrl __instance, int zoneNum, int worldTierNum, bool campaign, string seed = "")
+    {
+        var heroID = __instance.ctrl.currentHeroObj.beingID;
+        CustomZoneUtil.currentCampaign = CustomZoneUtil.customCampaignCharacters.ContainsKey(heroID) ? CustomZoneUtil.customCampaignCharacters[heroID] : "";
+        if (CustomZoneUtil.currentCampaign != "")
+        {
+            __instance.currentRun = new Run("Run");
+            __instance.currentRun.beingID = heroID;
+            __instance.currentRun.animName = __instance.ctrl.currentHeroObj.animName;
+            if (!string.IsNullOrEmpty(seed))
+            {
+                __instance.currentRun.seed = seed;
+                __instance.currentRun.seedWasPredefined = true;
+            }
+            else if (__instance.useRandomSeed)
+                __instance.currentRun.seed = Mathf.Abs(Environment.TickCount).ToString();
+            else if (__instance.testSeed != null)
+                __instance.currentRun.seed = __instance.testSeed;
+            __instance.pseudoRandom = new System.Random(__instance.currentRun.seed.GetHashCode());
+            __instance.pseudoRandomWorld = new System.Random(__instance.currentRun.seed.GetHashCode());
+            __instance.worldBar.seedText.text = ScriptLocalization.UI.Worldbar_Seed + " " + __instance.currentRun.seed;
+            CustomZoneUtil.GenerateCampaignWorlds();
+            __instance.currentRun.zoneNum = zoneNum;
+            __instance.currentRun.worldTierNum = worldTierNum;
+            __instance.currentRun.hellPassNum = __instance.currentHellPassNum;
+            __instance.currentRun.hellPasses = new List<int>((IEnumerable<int>)__instance.currentHellPasses);
+            __instance.idCtrl.heroNameText.text = __instance.ctrl.currentHeroObj.localizedName;
+            __instance.idCtrl.heroLevelText.text = string.Format(ScriptLocalization.UI.TopNav_LevelShort + " {0}", (object)1);
+            if (__instance.heCtrl.gameMode == GameMode.CoOp)
+                __instance.currentRun.coOp = true;
+            __instance.ctrl.deCtrl.deckScreen.ResetValues();
+            return false;
+        }
+        return true;
+    }
+
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(RunCtrl), nameof(RunCtrl.LoopRun))]
+    public static bool LoopRunPrefix(RunCtrl __instance)
+    {
+        if (__instance.currentRun != null) __instance.currentRun.unvisitedWorldNames.Clear();
+        if (CustomZoneUtil.currentCampaign != "")
+        {
+            __instance.currentRun.visitedWorldNames.Clear();
+            ++__instance.currentRun.loopNum;
+            CustomZoneUtil.GenerateCampaignWorlds();
+            __instance.currentRun.Loop();
+            if (__instance.ctrl.currentPlayer.beingObj.tags.Contains(Tag.Shopkeeper))
+                __instance.currentRun.yamiObtained = true;
+            __instance.ResetWorld(__instance.currentWorld.nameString);
+            __instance.StartZone(__instance.currentRun.zoneNum, __instance.currentZoneDot, true);
+            if (__instance.currentRun.loopNum > SaveDataCtrl.Get<int>("MostLoops"))
+                SaveDataCtrl.Set<int>("MostLoops", __instance.currentRun.loopNum);
+            if (__instance.currentRun.loopNum > SaveDataCtrl.Get<int>(__instance.ctrl.currentHeroObj.nameString + "MostLoops"))
+                SaveDataCtrl.Set<int>(__instance.ctrl.currentHeroObj.nameString + "MostLoops", __instance.currentRun.loopNum);
+            return false;
+        }
+        return true;
+    }
+
+    /*[HarmonyPrefix]
+    [HarmonyPatch(typeof(RunCtrl), nameof(RunCtrl.ChangeWorld))]
+    public static bool SetProgressPrefix(RunCtrl __instance, string worldName)
+    {
+        var progress = __instance.progressBar;
+        if ((worldName == "Genocide" || worldName == "Pacfifist" || worldName == "Normal") && __instance.currentRun != null)
+        {
+            var worldsCopy = new List<Image>(progress.worldDots);
+            progress.worldDots.Clear();
+            for (int i = __instance.currentRun.visitedWorldNames.Count; i < worldsCopy.Count; i++)
+            {
+                var worldImage = worldsCopy[i];
+                worldsCopy[i] = null;
+                UnityEngine.Object.Destroy(worldImage);
+            }
+            progress.worldDots.AddRange(worldsCopy.Where(image => image != null));
+        }
+        //else if (!S.I.runCtrl.worlds[worldName].tags.Contains(Tag.Pool))
+        //{
+
+        //}
+        return true;
+    }*/
+
 }
 
 public static class CustomZoneUtil
 {
 
-    public static List<string> worldRegistry = new List<string>();
+    public static ZoneType[] defaults = { ZoneType.Battle, ZoneType.Boss, ZoneType.Campsite, ZoneType.Danger, ZoneType.DarkShop, ZoneType.Distress, ZoneType.Genocide, ZoneType.Idle, ZoneType.Miniboss, ZoneType.Normal, ZoneType.Pacifist, ZoneType.PvP, ZoneType.Random, ZoneType.Shop, ZoneType.Treasure, ZoneType.World };
+
+    public static List<object> ZoneEventScripts = new List<object>();
+    public static List<Script> ZoneEventBaseScripts = new List<Script>();
+
+    public static Dictionary<string, List<string>> customCampaignWorlds = new Dictionary<string, List<string>>();
+    public static Dictionary<string, bool> customCampaignStatic = new Dictionary<string, bool>();
+    public static Dictionary<string, string> customCampaignCharacters = new Dictionary<string, string>();
+
+    public static string currentCampaign = "";
+
 
     static public void Setup()
     {
 
     }
 
-    public static void AddWorldToCustomGeneration(string world)
+    public static void GenerateCampaignWorlds()
     {
-        if (!worldRegistry.Contains(world))
+        Debug.LogError(currentCampaign);
+        var runCtrl = S.I.runCtrl;
+        runCtrl.xmlReader.XMLtoGetWorlds(runCtrl.xmlReader.GetDataFile("Zones.xml"));
+        if (customCampaignStatic.ContainsKey(currentCampaign) && customCampaignStatic[currentCampaign])
         {
-            worldRegistry.Add(world);
+            GenerateStaticCampaignWorlds();
+        }
+        else
+        {
+            GenerateRandomCampaignWorlds();
+        }
+        runCtrl.progressBar.Set();
+        runCtrl.currentRun.worldName = runCtrl.currentRun.unvisitedWorldNames[0];
+        runCtrl.currentRun.visitedWorldNames.Add(runCtrl.currentRun.unvisitedWorldNames[0]);
+        runCtrl.currentRun.unvisitedWorldNames.RemoveAt(0);
+        runCtrl.currentWorld = runCtrl.worlds[runCtrl.currentRun.worldName];
+    }
+
+    public static void GenerateRandomCampaignWorlds()
+    {
+        var runCtrl = S.I.runCtrl;
+        List<string> stringList = new List<string>((IEnumerable<string>)customCampaignWorlds[currentCampaign]);
+        foreach (string key in new List<string>((IEnumerable<string>)stringList))
+        {
+            if (Utils.SharesTags(runCtrl.ctrl.currentHeroObj.tags, runCtrl.worlds[key].tags))
+                stringList.Remove(runCtrl.worlds[key].nameString);
+        }
+        for (int count = stringList.Count; count > 0; --count)
+        {
+            int index = runCtrl.NextPsuedoRand(0, stringList.Count);
+            runCtrl.currentRun.unvisitedWorldNames.Add(stringList[index]);
+            stringList.Remove(stringList[index]);
+        }
+
+    }
+
+    public static void GenerateStaticCampaignWorlds()
+    {
+        var runCtrl = S.I.runCtrl;
+        List<string> stringList = new List<string>((IEnumerable<string>)customCampaignWorlds[currentCampaign]);
+        foreach (var world in new List<string>(stringList))
+        {
+            runCtrl.currentRun.unvisitedWorldNames.Add(world);
+            stringList.Remove(world);
+        }
+    }
+
+    public static void AddWorldToCustomCampaign(string campaign, string world, bool staticMode = false)
+    {
+        if (!customCampaignWorlds.ContainsKey(campaign))
+        {
+            customCampaignWorlds.Add(campaign, new List<string>());
+        }
+        customCampaignWorlds[campaign].Add(world);
+        if (customCampaignStatic.ContainsKey(campaign))
+        {
+            customCampaignStatic[campaign] = staticMode;
+        }
+        else
+        {
+            customCampaignStatic.Add(campaign, staticMode);
+        }
+    }
+
+    public static void AddCharacterToCustomCampaign(string campaign, string beingID)
+    {
+        if (customCampaignCharacters.ContainsKey(beingID))
+        {
+            customCampaignCharacters[beingID] = campaign;
+        }
+        else
+        {
+            customCampaignCharacters.Add(beingID, campaign);
+        }
+    }
+
+    public static void AddWorldToManualGeneration(string world)
+    {
+        if (!CustomWorldGenerator.manualGeneration.ContainsKey(world))
+        {
+            CustomWorldGenerator.manualGeneration.Add(world, true);
+        } 
+        else
+        {
+            CustomWorldGenerator.manualGeneration[world] = true;
         }
     }
 
@@ -398,7 +626,7 @@ public static class CustomZoneUtil
             return;
         }
         LuaPowerData.customEnums[typeof(ZoneType)].Add(name);
-        CustomZone zone = new CustomZone();
+        CustomZoneTypeData zone = new CustomZoneTypeData();
         S.I.runCtrl.worldBar.zoneSprites.Add(name, LuaPowerSprites.GetSprite(sprite));
         zone.can_continue = can_continue;
         zone.music = music;
@@ -406,7 +634,7 @@ public static class CustomZoneUtil
         zone.spawn_enemies = spawn_enemies;
         zone.spawn_boss = spawn_boss;
         Debug.Log("ZoneType added with name: " + GetZoneType(name).ToString());
-        MiscPatches.custom_zones.Add(GetZoneType(name), zone);
+        CustomZoneMiscPatches.custom_zones.Add(GetZoneType(name), zone);
     }
 
     public static ZoneType GetZoneType(string name)
@@ -422,6 +650,27 @@ public static class CustomZoneUtil
     public static bool IrregularSpawn(ZoneType type)
     {
         return type != ZoneType.Battle && type != ZoneType.Danger;
+    }
+
+    public static void TriggerTypeZoneEvent(ZoneType type, string eventName)
+    {
+        TriggerZoneEvent(eventName);
+        TriggerZoneEvent(type.ToString() + ":" + eventName);
+    }
+
+    public static void TriggerZoneEvent(string eventName)
+    {
+        for (int i = 0; i < ZoneEventScripts.Count; i++)
+        {
+            ZoneEventBaseScripts[i].Globals["eventName"] = eventName;
+            ZoneEventBaseScripts[i].Globals["ctrl"] = S.I.batCtrl;
+            ZoneEventBaseScripts[i].Globals["spawnCtrl"] = S.I.spCtrl;
+            S.I.mainCtrl.StartCoroutine(MoreLuaPower_FunctionHelper.EffectRoutine(ZoneEventBaseScripts[i].CreateCoroutine(ZoneEventScripts[i])));
+            ZoneEventBaseScripts[i].Globals.Remove("eventName");
+            ZoneEventBaseScripts[i].Globals.Remove("ctrl");
+            ZoneEventBaseScripts[i].Globals.Remove("spawnCtrl");
+        }
+        CustomWorldGenerator.MakeZoneSectionVisible(eventName);
     }
 
 }

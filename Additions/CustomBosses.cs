@@ -388,7 +388,7 @@ namespace CustomBosses
             for (int index1 = 0; index1 < battleGrid.gridLength; ++index1)
             {
                 for (int index2 = 0; index2 < battleGrid.gridHeight; ++index2)
-                    battleGrid.grid[index1, index2].SetAlign(index1 > battleGrid.gridLength / 2 ? -1 : 1);
+                    battleGrid.grid[index1, index2].SetAlign(index1 < battleGrid.gridLength / 2 ? 1 : -1);
             }
             foreach (var player in S.I.batCtrl.currentPlayers)
             {
