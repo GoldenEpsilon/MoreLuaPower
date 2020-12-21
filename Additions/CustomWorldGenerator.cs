@@ -32,7 +32,6 @@ public class CustomWorldGenerator
 
     public static void MakeZoneSectionVisible(string sectionKey)
     {
-        Debug.Log("Attempt to make visible section:"+sectionKey);
         if (hiddenSections.ContainsKey(sectionKey))
         {
             var dots = hiddenSections[sectionKey];
@@ -52,21 +51,12 @@ public class CustomWorldGenerator
                             otherDot.nextLines.Add(line);
                             line.GetComponent<Image>().enabled = true;
                         }
-                        else
-                        {
-                            Debug.LogError("Invisible Dot had no entry for a previous connection.");
-                        }
-                    }
-                    else
-                    {
-                        Debug.LogError("Invisible Dot had nonexistant dictionary of connecting lines.");
                     }
                 }
                 invisDots.Remove(dot);
                 invisLines.Remove(dot);
             }
             hiddenSections.Remove(sectionKey);
-            Debug.Log("Making invisible zone section visible: " + sectionKey);
         }
     }
 
@@ -118,7 +108,7 @@ public class CustomWorldGenerator
             WorldInitBaseScripts[i].Globals.Remove("world");
             WorldInitBaseScripts[i].Globals.Remove("generator");
         }
-        Debug.Log("Got manual generators!");
+        Debug.Log("Got manual world generators!");
     }
 
     protected void GetPostProcessGenerators(World world)
@@ -465,7 +455,6 @@ public class CustomWorldGenerator
 
         foreach (var gen in manualZoneGenerators)
         {
-            Debug.Log("Running manual generator with key: " + gen.activationKey);
             if (total_uses.ContainsKey(gen.activationKey) && total_uses[gen.activationKey] >= gen.maxWorldActivations) continue;
             List<int> validColumns = gen.columns.Where((column) => (column_uses.ContainsKey(column) && !(column_uses[column].ContainsKey(gen.activationKey) && column_uses[column][gen.activationKey] < gen.maxColumnActivations))).ToList();
             while (validColumns.Count > 0)
@@ -566,32 +555,23 @@ public class CustomWorldGenerator
         column_uses.Clear();
         for (int i = 0; i < bar.currentZoneSteps.Count; i++) column_uses.Add(i, new Dictionary<string, int>());
 
-        var original = new List<ZoneDot>(bar.currentZoneDots);
-        var dotsToCheck = bar.currentZoneDots;
-
-        var max = dotsToCheck.Count * 3;
-
         world.numZones = bar.currentZoneSteps.Count - 1;
 
-        for (int i = 0, j = 0; j < max && i < dotsToCheck.Count; i++, j++)
+        for (int j = 0; j < 4; j++)
         {
-            ZoneDot dot = dotsToCheck[i];
-            if (ApplyPostProcess(dot))
+            bool b = false;
+
+            for (int i = 0; i < bar.currentZoneDots.Count; i++)
             {
-                dotsToCheck.RemoveAt(i);
-                dotsToCheck.Add(dot);
-                i--;
+                ZoneDot dot = bar.currentZoneDots[i];
+                b = ApplyPostProcess(dot) ? true : b;
+            }
+
+            if (!b)
+            {
+                break;
             }
         }
-
-        dotsToCheck.Sort((dot, other_dot) =>
-        {
-            var i1 = original.IndexOf(dot);
-            var i2 = original.IndexOf(other_dot);
-            i1 = i1 == -1 ? int.MaxValue : i1;
-            i2 = i2 == -1 ? int.MaxValue : i2;
-            return i1.CompareTo(i2);
-        });
 
         foreach (var dot in bar.currentZoneDots)
         {
@@ -980,7 +960,6 @@ public class CustomWorldGenerator
     {
         if (!post || true)
         {
-            Debug.Log("Creating Column");
             RectTransform rectTransform = new GameObject("ZoneStep").AddComponent<RectTransform>();
             Vector3 vector3 = bar.zoneDotContainer.transform.position - new Vector3((float)((double)bar.width / 2.0 - (double)bar.width / 6 * (double)bar.currentZoneSteps.Count) * bar.zoneDotContainer.lossyScale.x, 0.0f, 0.0f);
             rectTransform.localScale = bar.zoneDotContainer.lossyScale;

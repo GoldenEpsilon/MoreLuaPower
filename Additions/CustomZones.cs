@@ -222,7 +222,6 @@ public static class CustomZoneMiscPatches
     {
         if (!CustomZoneUtil.defaults.Contains(zoneType))
         {
-            Debug.Log("Spawning Custom Zone!");
             if (custom_zones.ContainsKey(zoneType))
             {
                 CustomZoneTypeData zone = custom_zones[zoneType];
@@ -250,7 +249,6 @@ public static class CustomZoneMiscPatches
                 if (zone.spawn_boss)
                 {
                     if (__instance.bossesToSpawn.Count > 0) __instance.SpawnBoss();
-                    else Debug.Log("Did not spawn boss. None to spawn.");
                 }
             }
         }
@@ -373,7 +371,6 @@ public static class WorldBarPatches
         if ((world.nameString == "Genocide" || world.nameString == "Pacfifist" || world.nameString == "Normal") && __instance.runCtrl != null && __instance.runCtrl.currentRun != null)
         {
             __instance.runCtrl.currentRun.unvisitedWorldNames.Clear();
-            __instance.runCtrl.progressBar.Set();
         }
         var gen = new CustomWorldGenerator(__instance);
         gen.Generate();
@@ -392,8 +389,8 @@ public static class WorldBarPatches
     public static bool CreateRunPrefix(RunCtrl __instance, int zoneNum, int worldTierNum, bool campaign, string seed = "")
     {
         var heroID = __instance.ctrl.currentHeroObj.beingID;
-        CustomZoneUtil.currentCampaign = CustomZoneUtil.customCampaignCharacters.ContainsKey(heroID) ? CustomZoneUtil.customCampaignCharacters[heroID] : "";
-        if (CustomZoneUtil.currentCampaign != "")
+        CustomZoneUtil.currentCampaign = CustomZoneUtil.customCampaignCharacters.ContainsKey(heroID) ? CustomZoneUtil.customCampaignCharacters[heroID] : "Default";
+        if (CustomZoneUtil.customCampaignCharacters.ContainsKey(heroID) && CustomZoneUtil.currentCampaign != "Default")
         {
             __instance.currentRun = new Run("Run");
             __instance.currentRun.beingID = heroID;
@@ -418,7 +415,10 @@ public static class WorldBarPatches
             __instance.idCtrl.heroNameText.text = __instance.ctrl.currentHeroObj.localizedName;
             __instance.idCtrl.heroLevelText.text = string.Format(ScriptLocalization.UI.TopNav_LevelShort + " {0}", (object)1);
             if (__instance.heCtrl.gameMode == GameMode.CoOp)
+            {
                 __instance.currentRun.coOp = true;
+            }
+
             __instance.ctrl.deCtrl.deckScreen.ResetValues();
             return false;
         }
@@ -430,7 +430,7 @@ public static class WorldBarPatches
     public static bool LoopRunPrefix(RunCtrl __instance)
     {
         if (__instance.currentRun != null) __instance.currentRun.unvisitedWorldNames.Clear();
-        if (CustomZoneUtil.currentCampaign != "")
+        if (CustomZoneUtil.currentCampaign != "Default")
         {
             __instance.currentRun.visitedWorldNames.Clear();
             ++__instance.currentRun.loopNum;
@@ -487,7 +487,7 @@ public static class CustomZoneUtil
     public static Dictionary<string, bool> customCampaignStatic = new Dictionary<string, bool>();
     public static Dictionary<string, string> customCampaignCharacters = new Dictionary<string, string>();
 
-    public static string currentCampaign = "";
+    public static string currentCampaign = "Default";
 
 
     static public void Setup()
@@ -497,7 +497,6 @@ public static class CustomZoneUtil
 
     public static void GenerateCampaignWorlds()
     {
-        Debug.LogError(currentCampaign);
         var runCtrl = S.I.runCtrl;
         runCtrl.xmlReader.XMLtoGetWorlds(runCtrl.xmlReader.GetDataFile("Zones.xml"));
         if (customCampaignStatic.ContainsKey(currentCampaign) && customCampaignStatic[currentCampaign])
@@ -603,7 +602,6 @@ public static class CustomZoneUtil
                 var t = c1.operand.GetType();
                 var u = c2.operand.GetType();
                 var b = (t.IsAssignableFrom(u) || u.IsAssignableFrom(t));
-                if (b) Debug.Log(((bool)u.GetMethod("Equals", new System.Type[] { t }).Invoke(c2.operand, new object[] { c1.operand }) || (bool)t.GetMethod("Equals", new System.Type[] { u }).Invoke(c1.operand, new object[] { c2.operand })));
                 return b && ((bool)u.GetMethod("Equals", new System.Type[] { t }).Invoke(c2.operand, new object[] { c1.operand }) || (bool)t.GetMethod("Equals", new System.Type[] { u }).Invoke(c1.operand, new object[] { c2.operand }));
             }
             else
@@ -644,7 +642,6 @@ public static class CustomZoneUtil
 
     public static void HandleEnemyAttribute(XmlAttribute attribute, string beingID)
     {
-        Debug.Log(beingID);
     }
 
     public static bool IrregularSpawn(ZoneType type)
