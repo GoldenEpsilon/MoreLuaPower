@@ -64,8 +64,8 @@ public class PowerMonoBehavior : MonoBehaviour
         S.I.runCtrl.worldBar.zoneSprites.Add(dotName, S.I.itemMan.GetSprite(spriteName));
     }
 
-    public static void AddCustomMusic(string AudioName, float volume = 1, float startTime = 0) {
-        S.I.StartCoroutine(AudioDoesExist(AudioName, volume, startTime));
+    public static void AddCustomMusic(string AudioName, float volume = 1, float startTime = 0, float introBoundry = 0, float endBoundry = 99999) {
+        S.I.StartCoroutine(AudioDoesExist(AudioName, volume, startTime, introBoundry, endBoundry));
     }
 
 
@@ -88,7 +88,25 @@ public class PowerMonoBehavior : MonoBehaviour
         source.volume = 0;
     }
 
-    public static IEnumerator AudioDoesExist(string AudioName, float volume, float startTime) {
+    public static IEnumerator CheckAudioLoops(AudioSource source, float IntroBoundry, float EndBoundry)
+    {
+        string original = source.clip.name;
+        while(true)
+        {
+            
+            if (source.time > EndBoundry)
+            {
+                source.time = IntroBoundry;
+            }
+            if (source.clip.name != original)
+            {
+                yield break;
+            }
+            yield return new WaitForEndOfFrame();
+        }
+    }
+
+    public static IEnumerator AudioDoesExist(string AudioName, float volume, float startTime, float IntroBoundry, float EndBoundry) {
         if (LuaPowerData.customMusic.ContainsKey(AudioName)) {
             Debug.Log("Warning: " + AudioName + " is already added as music");
             yield break;
@@ -96,7 +114,7 @@ public class PowerMonoBehavior : MonoBehaviour
         LuaPowerData.customMusic[AudioName] = null;
         Dictionary<string, AudioClip> d = Traverse.Create(S.I.itemMan).Field("allAudioClips").GetValue<Dictionary<string, AudioClip>>();
         yield return new WaitWhile(() => d.ContainsKey(AudioName) == false);
-        LuaPowerData.CustomMusic myAudio = new LuaPowerData.CustomMusic(S.I.itemMan.GetAudioClip(AudioName), volume, startTime);
+        LuaPowerData.CustomMusic myAudio = new LuaPowerData.CustomMusic(S.I.itemMan.GetAudioClip(AudioName), volume, startTime, IntroBoundry, EndBoundry);
 
         LuaPowerData.customMusic[AudioName] = myAudio;
     }
