@@ -100,12 +100,28 @@ public class LuaPowerSound
         if (LuaPowerData.customMusic.ContainsKey(MusicName))
         {
             S.I.StartCoroutine(PowerMonoBehavior.FadeAudioOut(S.I.muCtrl.audioSource, .3f, S.I.muCtrl.audioSource.volume));
-
             S.I.muCtrl.StopIntroLoop();
             S.I.muCtrl.audioSource.volume = 0;
             S.I.muCtrl.audioSource.time = LuaPowerData.customMusic[MusicName].StartTime;
             S.I.StartCoroutine(PowerMonoBehavior.FadeAudioIn(S.I.muCtrl.audioSource, 1f, LuaPowerData.customMusic[MusicName].Volume));
             S.I.muCtrl.Play(LuaPowerData.customMusic[MusicName].AudioClip);
+            S.I.muCtrl.audioSource.clip.name = MusicName;
+            S.I.StartCoroutine(PowerMonoBehavior.CheckAudioLoops(S.I.muCtrl.audioSource, LuaPowerData.customMusic[MusicName].IntroBoundry, LuaPowerData.customMusic[MusicName].EndBoundry));
+        }
+    }
+
+    static public void PlayCustomMusicIntroLoop(string MusicName, float IntroBoundry, float EndBoundry)
+    {
+        if (LuaPowerData.customMusic.ContainsKey(MusicName))
+        {
+            S.I.StartCoroutine(PowerMonoBehavior.FadeAudioOut(S.I.muCtrl.audioSource, .3f, S.I.muCtrl.audioSource.volume));
+            S.I.muCtrl.StopIntroLoop();
+            S.I.muCtrl.audioSource.volume = 0;
+            S.I.muCtrl.audioSource.time = LuaPowerData.customMusic[MusicName].StartTime;
+            S.I.StartCoroutine(PowerMonoBehavior.FadeAudioIn(S.I.muCtrl.audioSource, 1f, LuaPowerData.customMusic[MusicName].Volume));
+            S.I.muCtrl.Play(LuaPowerData.customMusic[MusicName].AudioClip);
+            S.I.muCtrl.audioSource.clip.name = MusicName;
+            S.I.StartCoroutine(PowerMonoBehavior.CheckAudioLoops(S.I.muCtrl.audioSource, IntroBoundry, EndBoundry));
         }
     }
 }

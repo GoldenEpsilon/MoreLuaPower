@@ -56,5 +56,6 @@ class MoreLuaPower_GlobalLuaTypes
         UserData.RegisterType<TileType>(InteropAccessMode.Default, null);
         UserData.RegisterType<UIColor>(InteropAccessMode.Default, null);
         UserData.RegisterType<ZoneType>(InteropAccessMode.Default, null);
+        UserData.RegisterType<BGCtrl>(InteropAccessMode.Default, null);
     }
 }
