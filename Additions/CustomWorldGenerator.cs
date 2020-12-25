@@ -10,6 +10,8 @@ using MoonSharp.Interpreter;
 using System;
 using UnityEngine.UI;
 
+
+
 public class CustomWorldGenerator
 {
     public static CustomWorldGenerator CURRENT = null;
@@ -206,18 +208,18 @@ public class CustomWorldGenerator
         if (zoneGen.zoneType == ZoneType.World && !(zoneGen is ManualZoneGenerator && ((ManualZoneGenerator)zoneGen).automaticWorldSelection))
         {
             try
-            {   
+            {
                 dot.world = bar.runCtrl.worlds[zoneGen.worldName];
                 dot.worldName = zoneGen.worldName;
                 dot.imageName = dot.world.iconName;
                 if (zoneGen.refreshCurrentworld) refreshWorldDots.Add(dot);
                 else refreshWorldDots.Remove(dot);
-            } 
+            }
             catch
             {
                 Debug.LogError("No world exists with name: " + zoneGen.worldName);
             }
-            
+
         }
         else if (dot.type == ZoneType.World)
         {
@@ -348,8 +350,8 @@ public class CustomWorldGenerator
                 dot.transform.localPosition = new Vector3(0.0f, ((float)(step.Count - 1) / 2f - (float)(i)) * zoneDot.verticalSpacing * rectTransform.localScale.y, 0.0f);
             }
         }
-        
-        
+
+
         if (gen.zoneType == ZoneType.World && gen is ManualZoneGenerator)
         {
             ManualZoneGenerator manual = (ManualZoneGenerator)gen;
@@ -384,7 +386,7 @@ public class CustomWorldGenerator
                 zoneDot.world = bar.runCtrl.worlds[zoneDot.worldName];
                 zoneDot.imageName = zoneDot.world.iconName;
             }
-            
+
         }
         EditDotWithGen(zoneDot, gen);
 
@@ -434,10 +436,10 @@ public class CustomWorldGenerator
                 RunManualGeneration();
             }
 
-            world.numZones = bar.currentZoneSteps.Count-1;
+            world.numZones = bar.currentZoneSteps.Count - 1;
 
             RunPostProcessGenerators(manual);
-        } 
+        }
         catch (Exception e)
         {
             Debug.LogError("Exception created when running world generation: " + e.Message + "\n" + e.StackTrace);
@@ -499,8 +501,8 @@ public class CustomWorldGenerator
     {
         if (dot != otherDot)
         {
-            var source1 = source.ContainsKey(dot)       ? source[dot]       : null;
-            var source2 = source.ContainsKey(otherDot)  ? source[otherDot]  : null;
+            var source1 = source.ContainsKey(dot) ? source[dot] : null;
+            var source2 = source.ContainsKey(otherDot) ? source[otherDot] : null;
             bool b1 = false;
             if (source1 != null)
             {
@@ -617,7 +619,7 @@ public class CustomWorldGenerator
                 {
                     Debug.LogError("PreviousDot - NextDot Mismatch");
                 }
-                
+
             }
         }
 
@@ -636,7 +638,7 @@ public class CustomWorldGenerator
         {
             Debug.LogError("World Generation did not result in any zone steps (columns)");
         }
-       
+
     }
 
     //================================================================================================================================================================================================================================================================================================
@@ -689,7 +691,7 @@ public class CustomWorldGenerator
             {
                 columns.Add(i);
             }
-            
+
         }
 
         public virtual bool CanActivate(ZoneDot dot)
@@ -877,7 +879,8 @@ public class CustomWorldGenerator
 
         public void SetInvisible(string activationKey, string sectionKey)
         {
-            cond = (dot) => {
+            cond = (dot) =>
+            {
                 var source = CustomWorldGenerator.CURRENT.source.ContainsKey(dot) ? CustomWorldGenerator.CURRENT.source[dot] : null;
                 return source != null && source.activationKey == activationKey && !(invisDots.ContainsKey(dot) && invisDots[dot] == activationKey);
             };
@@ -936,8 +939,6 @@ public class CustomWorldGenerator
     }
 
 
-    //==============================LUA(MANUAL)=============================================================================================================================================================================================
-
     public ManualZoneGenerator CreateManualGenerator()
     {
         var gen = new ManualZoneGenerator();
@@ -958,48 +959,44 @@ public class CustomWorldGenerator
 
     public void CreateColumn()
     {
-        if (!post || true)
-        {
-            RectTransform rectTransform = new GameObject("ZoneStep").AddComponent<RectTransform>();
-            Vector3 vector3 = bar.zoneDotContainer.transform.position - new Vector3((float)((double)bar.width / 2.0 - (double)bar.width / 6 * (double)bar.currentZoneSteps.Count) * bar.zoneDotContainer.lossyScale.x, 0.0f, 0.0f);
-            rectTransform.localScale = bar.zoneDotContainer.lossyScale;
-            rectTransform.SetParent(bar.zoneDotContainer, true);
-            rectTransform.position = vector3;
-            rectTransform.sizeDelta = new Vector2(10f, 100f);
-            columnTransforms.Add(rectTransform);
-            bar.currentZoneSteps.Add(new List<ZoneDot>());
-        }
+
+        RectTransform rectTransform = new GameObject("ZoneStep").AddComponent<RectTransform>();
+        Vector3 vector3 = bar.zoneDotContainer.transform.position - new Vector3((float)((double)bar.width / 2.0 - (double)bar.width / 6 * (double)bar.currentZoneSteps.Count) * bar.zoneDotContainer.lossyScale.x, 0.0f, 0.0f);
+        rectTransform.localScale = bar.zoneDotContainer.lossyScale;
+        rectTransform.SetParent(bar.zoneDotContainer, true);
+        rectTransform.position = vector3;
+        rectTransform.sizeDelta = new Vector2(10f, 100f);
+        columnTransforms.Add(rectTransform);
+        bar.currentZoneSteps.Add(new List<ZoneDot>());
+
     }
 
     public void InsertNewColumn(int index)
     {
-        if (!post || true)
-        {
-            RectTransform rectTransform = new GameObject("ZoneStep").AddComponent<RectTransform>();
-            Vector3 vector3 = bar.zoneDotContainer.transform.position - new Vector3((float)((double)bar.width / 2.0 - (double)bar.width / 6 * (double)index) * bar.zoneDotContainer.lossyScale.x, 0.0f, 0.0f);
-            rectTransform.localScale = bar.zoneDotContainer.lossyScale;
-            rectTransform.SetParent(bar.zoneDotContainer, true);
-            rectTransform.transform.position = vector3;
-            rectTransform.sizeDelta = new Vector2(10f, 100f);
-            for (int i = index; i < bar.currentZoneSteps.Count; i++)
-            {
-                var step = bar.currentZoneSteps[i];
-                var transform = columnTransforms[i];
-                transform.localScale = bar.zoneDotContainer.lossyScale;
-                transform.position = transform.position + new Vector3(((float)bar.width / 6f * (float)1) * bar.zoneDotContainer.lossyScale.x, 0.0f, 0.0f);
-                transform.sizeDelta = new Vector2(10f, 100f);
-                foreach (ZoneDot zoneDot in step)
-                {
-                    zoneDot.stepNum = zoneDot.stepNum + 1;
-                    zoneDot.transform.position = transform.position + new Vector3(0.0f, ((float)(step.Count - 1) / 2f - (float)(step.IndexOf(zoneDot) - 1)) * zoneDot.verticalSpacing * bar.rect.localScale.y, 0.0f);
-                }
-            }
-            columnTransforms.Insert(index, rectTransform);
-            bar.currentZoneSteps.Insert(index, new List<ZoneDot>());
-        }
-    }
 
-    //===========================LUA(POST)========================================================
+        RectTransform rectTransform = new GameObject("ZoneStep").AddComponent<RectTransform>();
+        Vector3 vector3 = bar.zoneDotContainer.transform.position - new Vector3((float)((double)bar.width / 2.0 - (double)bar.width / 6 * (double)index) * bar.zoneDotContainer.lossyScale.x, 0.0f, 0.0f);
+        rectTransform.localScale = bar.zoneDotContainer.lossyScale;
+        rectTransform.SetParent(bar.zoneDotContainer, true);
+        rectTransform.transform.position = vector3;
+        rectTransform.sizeDelta = new Vector2(10f, 100f);
+        for (int i = index; i < bar.currentZoneSteps.Count; i++)
+        {
+            var step = bar.currentZoneSteps[i];
+            var transform = columnTransforms[i];
+            transform.localScale = bar.zoneDotContainer.lossyScale;
+            transform.position = transform.position + new Vector3(((float)bar.width / 6f * (float)1) * bar.zoneDotContainer.lossyScale.x, 0.0f, 0.0f);
+            transform.sizeDelta = new Vector2(10f, 100f);
+            foreach (ZoneDot zoneDot in step)
+            {
+                zoneDot.stepNum = zoneDot.stepNum + 1;
+                zoneDot.transform.position = transform.position + new Vector3(0.0f, ((float)(step.Count - 1) / 2f - (float)(step.IndexOf(zoneDot) - 1)) * zoneDot.verticalSpacing * bar.rect.localScale.y, 0.0f);
+            }
+        }
+        columnTransforms.Insert(index, rectTransform);
+        bar.currentZoneSteps.Insert(index, new List<ZoneDot>());
+
+    }
 
     public PostProcessZoneGenerator CreatePostProcessGenerator()
     {

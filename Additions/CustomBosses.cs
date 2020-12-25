@@ -12,6 +12,8 @@ using System.Runtime.InteropServices;
 using System.Xml;
 using UnityEngine;
 
+//EXPERIMENTAL CODE! BREAKS EASILY
+
 namespace CustomBosses
 {
     public class CustomBoss : Boss
@@ -419,6 +421,8 @@ namespace CustomBosses
             spCtrl.CreateBeingObjectPrototypes(info.Name, (BeingType)Enum.Parse(typeof(BeingType), "Boss"), true, info.DirectoryName);
         }
 
+
+        //inserts a function call before the switch statement in the function in order to nab the xml without destroying it.
         [HarmonyPatch(typeof(BeingObject))]
         [HarmonyPatch("ReadXmlPrototype")]
         static class CustomBoss_ReadXmlPrototype
@@ -454,7 +458,7 @@ namespace CustomBosses
 
                 if (!success)
                 {
-                    Debug.LogError("Custom Boss XML Reader Transpiler FAILURE!!! This is likely the result of an update.");
+                    Debug.LogError("Custom Boss XML Reader Transpiler FAILURE!!! This is likely the result of an update. Please inform the makers of MoreLuaPower");
                 }
             }
 
@@ -463,7 +467,6 @@ namespace CustomBosses
 
         static class CustomBoss_Read
         {
-            private static string last_id = "";
 
             public static void Switch(XmlReader reader, BeingObject beingObj)
             {
@@ -603,41 +606,5 @@ namespace CustomBosses
                 return codes.AsEnumerable();
             }
         }
-
-        /*[HarmonyPatch(typeof(SpawnCtrl))]
-        [HarmonyPatch(nameof(SpawnCtrl.CreateBeingObjectPrototypes))]
-        static class CustomBoss_CreateBeingObjectPrototypes
-        {
-
-            static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
-            {
-                bool found_first_create_object = false;
-                bool finished = false;
-                var constructor = typeof(BeingObject).GetConstructor(new Type[] { });
-                List<CodeInstruction> move = new List<CodeInstruction>();
-                LocalBuilder builder = null;
-                foreach (var instruction in instructions)
-                {
-                    yield return instruction;
-                    if (!finished && found_first_create_object && builder == null)
-                    {
-                        builder = (LocalBuilder) instruction.operand;
-                        yield return new CodeInstruction(OpCodes.Ldloc_S, builder);
-                        yield return new CodeInstruction(OpCodes.Ldarg_2);
-                        yield return new CodeInstruction(OpCodes.Stfld, AccessTools.Field(typeof(BeingObject), nameof(BeingObject.type)));
-                        finished = true;
-                    }
-                    if (!finished && instruction.opcode == OpCodes.Newobj && instruction.operand == (object)constructor)
-                    {
-                        found_first_create_object = true;
-                    }
-                }
-                if (!finished)
-                {
-                    Debug.LogError("CreateBeingObjectPrototypes Transpiler failed!!! This is likely the result of an update.");
-                }
-            }
-        }*/
-
     }
 }
