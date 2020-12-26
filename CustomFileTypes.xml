@@ -5,4 +5,9 @@
 		<HandlerType>MP3Loader.FileOperations</HandlerType>
 		<HandlerMethod>Handle</HandlerMethod>
 	</CustomFileType>
+	<CustomFileType>
+		<Filename>Bosses.xml</Filename>
+		<HandlerType>CustomBosses.DataHandler</HandlerType>
+		<HandlerMethod>BossHandler</HandlerMethod>
+	</CustomFileType>
 </CustomFileTypes>

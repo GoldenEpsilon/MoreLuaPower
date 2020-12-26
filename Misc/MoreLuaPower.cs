@@ -26,6 +26,8 @@ class MoreLuaPower
 		Debug.Log("MoreLuaPower Version 2.2");
 		LuaPowerData.Setup();
 		LuaPowerCustomEnumsSetup.Setup();
+		CustomZoneUtil.Setup();
+		CustomBosses.DataHandler.Setup();
 		if (S.I.GetComponent<PowerMonoBehavior>() == null) {
 			S.I.gameObject.AddComponent<PowerMonoBehavior>();
 		}

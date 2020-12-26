@@ -66,6 +66,14 @@ public static class LuaPowerData
         if (!customEnums.ContainsKey(typeof(Effect))) {
             customEnums.Add(typeof(Effect), new List<string>());
         }
+        if (!customEnums.ContainsKey(typeof(ZoneType)))
+        {
+            customEnums.Add(typeof(ZoneType), new List<string>());
+        }
+        if (!customEnums.ContainsKey(typeof(BeingType)))
+        {
+            customEnums.Add(typeof(BeingType), new List<string>());
+        }
     }
 
     public class CustomMusic
@@ -73,12 +81,16 @@ public static class LuaPowerData
         public AudioClip AudioClip;
         public float StartTime;
         public float Volume;
+        public float IntroBoundry;
+        public float EndBoundry;
 
-        public CustomMusic(AudioClip clip, float vol, float startTime)
+        public CustomMusic(AudioClip clip, float vol, float startTime = 0, float introBoundry = 0, float endBoundry = 99999)
         {
             AudioClip = clip;
             Volume = vol;
             StartTime = startTime;
+            IntroBoundry = introBoundry;
+            EndBoundry = endBoundry;
         }
     }
 }

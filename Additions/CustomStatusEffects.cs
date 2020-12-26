@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HarmonyLib;
+using System;
 using UnityEngine;
 
 
@@ -54,5 +55,18 @@ class LuaPowerStatus
         }
         Status eff = (Status)LuaPowerData.customEnums[typeof(Status)].FindIndex(new Predicate<string>((string str) => str == effect));
         being.RemoveStatus(eff);
+    }
+}
+
+//Makes certain checks work when they normally wouldn't
+[HarmonyPatch]
+static class LuaPowerStatusPatches
+{
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(ItemObject), nameof(ItemObject.Trigger))]
+    public static bool TriggerPrefix(ItemObject __instance, ref Being hitBeing)
+    {
+        if (hitBeing == null) hitBeing = __instance.being;
+        return true;
     }
 }

@@ -24,6 +24,7 @@ class MoreLuaPower_GlobalLuaFunctions
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["ParticleEffect"] = (Action<Being, Dictionary<string, string>>)LuaPowerParticles.ParticleEffect;
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["PlayCustomSound"] = (Action<Being, string>)LuaPowerSound.PlaySound;
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["PlayCustomMusic"] = (Action<string>)LuaPowerSound.PlayCustomMusic;
+        Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["PlayCustomMusicIntroLoop"] = (Action<string, float, float>)LuaPowerSound.PlayCustomMusicIntroLoop;
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["SetVariable"] = (Action<Being, string, string>)LuaPowerBeingVariables.SetVariable;
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["GetVariable"] = (Func<Being, string, string>)LuaPowerBeingVariables.GetVariable;
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["AddHook"] = (Action<FTrigger, string, Being>)LuaPowerHooks.AddHook;
@@ -33,12 +34,18 @@ class MoreLuaPower_GlobalLuaFunctions
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["GetPlayer"] = (Func<Player>)MoreLuaPower.GetPlayer;
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["PrintDev"] = (Action<string>)PowerMonoBehavior.PrintDev;
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["RunDev"] = (Action<string>)PowerMonoBehavior.RunDev;
-        Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["AddCustomMusic"] = (Action<string, float, float>)PowerMonoBehavior.AddCustomMusic;
+        Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["AddCustomMusic"] = (Action<string, float, float, float, float>)PowerMonoBehavior.AddCustomMusic;
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["AddMusicHook"] = (Action<string, string, string>)PowerMonoBehavior.AddMusicHook;
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["AddZoneIcon"] = (Action<string, string>)PowerMonoBehavior.AddZoneIcon;
+        Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["AddZoneType"] = (Action<string, string>)CustomZoneUtil.AddZoneType;
+        Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["AddWorldToManualGeneration"] = (Action<string>)CustomZoneUtil.AddWorldToManualGeneration;
+        Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["TriggerZoneEvent"] = (Action<string>)CustomZoneUtil.TriggerZoneEvent;
+        Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["GetZoneType"] = (Func<string, ZoneType>)CustomZoneUtil.GetZoneType;
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["AddUpgrade"] = (Action<string, string, string, string, string>)LuaPowerUpgrades.AddUpgrade;
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["AddXMLToSpell"] = (Action<SpellObject, string>)LuaPowerUpgrades.AddXMLToSpell;
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["MakeZoneGenocideLenient"] = (Action<string>)PowerMonoBehavior.MakeZoneGenocideLenient;
+        Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["AddWorldToCustomCampaign"] = (Action<string, string, bool>)CustomZoneUtil.AddWorldToCustomCampaign;
+        Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["AddCharacterToCustomCampaign"] = (Action<string, string>)CustomZoneUtil.AddCharacterToCustomCampaign;
     }
 }
 
@@ -46,7 +53,12 @@ class MoreLuaPower_GlobalLuaFunctions
 [HarmonyPatch("AddScript")]
 class MoreLuaPower_LuaFunctions
 {
+
+    static List<string> loadedScripts = new List<string>();
+
     static void Postfix(Script ___myLuaScript, string scriptPath) {
+        if (loadedScripts.Contains(scriptPath)) return;
+        loadedScripts.Add(scriptPath);
         object obj;
         obj = ___myLuaScript.Globals["Init"];
         if (obj != null && scriptPath != null) {
@@ -89,8 +101,63 @@ class MoreLuaPower_LuaFunctions
             }
             ___myLuaScript.Globals.Remove("GameUpdate");
         }
+        obj = ___myLuaScript.Globals["WorldInit"];
+        if (obj != null)
+        {
+            bool unique = true;
+            foreach (object o in PowerMonoBehavior.GameUpdateScripts)
+            {
+                if (DynValue.FromObject(___myLuaScript, o).Function.EntryPointByteCodeLocation == DynValue.FromObject(___myLuaScript, obj).Function.EntryPointByteCodeLocation)
+                {
+                    unique = false;
+                }
+            }
+            if (unique)
+            {
+                CustomWorldGenerator.WorldInitScripts.Add(obj);
+                CustomWorldGenerator.WorldInitBaseScripts.Add(___myLuaScript);
+            }
+            ___myLuaScript.Globals.Remove("WorldInit");
+        }
+        obj = ___myLuaScript.Globals["WorldPost"];
+        if (obj != null)
+        {
+            bool unique = true;
+            foreach (object o in PowerMonoBehavior.GameUpdateScripts)
+            {
+                if (DynValue.FromObject(___myLuaScript, o).Function.EntryPointByteCodeLocation == DynValue.FromObject(___myLuaScript, obj).Function.EntryPointByteCodeLocation)
+                {
+                    unique = false;
+                }
+            }
+            if (unique)
+            {
+                CustomWorldGenerator.WorldPostScripts.Add(obj);
+                CustomWorldGenerator.WorldPostBaseScripts.Add(___myLuaScript);
+            }
+            ___myLuaScript.Globals.Remove("WorldPost");
+        }
+        obj = ___myLuaScript.Globals["ZoneEvent"];
+        if (obj != null)
+        {
+            bool unique = true;
+            foreach (object o in PowerMonoBehavior.GameUpdateScripts)
+            {
+                if (DynValue.FromObject(___myLuaScript, o).Function.EntryPointByteCodeLocation == DynValue.FromObject(___myLuaScript, obj).Function.EntryPointByteCodeLocation)
+                {
+                    unique = false;
+                }
+            }
+            if (unique)
+            {
+                CustomZoneUtil.ZoneEventScripts.Add(obj);
+                CustomZoneUtil.ZoneEventBaseScripts.Add(___myLuaScript);
+            }
+            ___myLuaScript.Globals.Remove("ZoneEvent");
+        }
     }
 }
+
 class MoreLuaPower_FunctionHelper
 {
     public static IEnumerator EffectRoutine(DynValue result) {
