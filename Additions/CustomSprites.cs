@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
 using System.IO;
 
-static class LuaPowerSprites
+public static class LuaPowerSprites
 {
-    static public void MakeSprite(string image, string PATH, string name) {
+    public static void MakeSprite(string image, string PATH, string name) {
         string str = Path.Combine(PATH, image);
         if (S.I.GetComponent<PowerMonoBehavior>() == null) {
             S.I.gameObject.AddComponent<PowerMonoBehavior>();
@@ -25,7 +25,7 @@ static class LuaPowerSprites
          }));
     }
 
-    static public Sprite GetSprite(string image) {
+    public static Sprite GetSprite(string image) {
         if (LuaPowerData.sprites.ContainsKey(image) && LuaPowerData.sprites[image] != null) {
             return LuaPowerData.sprites[image];
         }
