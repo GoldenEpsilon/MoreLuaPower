@@ -7,9 +7,11 @@ public class LuaPowerTrigger
 {
     public FTrigger _trigger;
     public string _func;
-    public LuaPowerTrigger(FTrigger trigger, string func) {
+    public Being _being;
+    public LuaPowerTrigger(FTrigger trigger, string func, Being being) {
         _trigger = trigger;
         _func = func;
+        _being = being;
     }
 }
 public static class LuaPowerData

@@ -116,6 +116,7 @@
     <Compile Include="Data\CustomFileLoader.cs" />
     <Compile Include="Data\CustomLanguage.cs" />
     <Compile Include="Data\MP3Loader.cs" />
+    <Compile Include="Data\MPLHook.cs" />
     <Compile Include="Lua\BeingVariables.cs" />
     <Compile Include="Data\CustomData.cs" />
     <Compile Include="Data\CustomEnums.cs" />

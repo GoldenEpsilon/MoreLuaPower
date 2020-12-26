@@ -13,9 +13,10 @@
  *  I am also open to help; If you have something you want to add in here, just let me know/add it in yourself! You will be credited.
 */
 
-KEEPING TRACK:
-    if the effect won't parse, make it call a lua function of the same name
-
+DONE:
+    Custom Hooks aren't passing the item correctly
+    Optional argument for custom hooks for the being
+    add a hook to when Card Drops are randomly generated that, when a spell is chosen if that spell had the Param 'DropCheck', it will attempt to run the function DropCheck states; that function must return a boolean. If true, its allowed to drop
 
 PRIORITY:
     CreateAudio(string name, string soundName, bool loop), PlayAudio(string name), PauseAudio(string name), and StopAudio(string name), ToggleLoopAudio
@@ -25,7 +26,7 @@ PRIORITY:
     setting custom effect replaces parameters
 
 TODO:
-    Custom Hooks aren't passing the item correctly
+    Add shenanigans credit for "tons of stuff"
     Add custom settings
     Hooks for world gen
     Reverse engineer the menus
@@ -36,7 +37,6 @@ TODO:
     Add custom check for brands
     Custom Trigger Stuff:
         Add a Harmony patch that runs after DeckCtrl.RemoveArtifactCard(cardToRemove) and pass the cardToRemove to custom code based on custom triggers
-            Same for spells
         last PROJECTILE that hit the being
         multiple inputs for cases like OnHit that have different objects, like the projectile that hit
         maybe make the system general enough that people can do those on their own?
@@ -44,7 +44,7 @@ TODO:
     Look into sprite swapping
     add example file
     add credits to credits
-    add a hook to when Card Drops are randomly generated that, when a spell is chosen if that spell had the Param 'DropCheck', it will attempt to run the function DropCheck states; that function must return a boolean. If true, its allowed to drop
+    if the effect won't parse, make it call a lua function of the same name
 
 LOOK INTO:
     input system
@@ -55,22 +55,3 @@ LOOK INTO:
     changing the number of cast slots
     adding mod name to script variable
     patching script bytecode on the fly. Because why not.
-
-ENUMS TO FIGURE OUT:
-    Effect
-    Enhancement
-    FTrigger 
-    InputAction 
-    Location (?)
-    RewardType 
-    State
-    Tag 
-    Target 
-    TileType 
-    ZoneType 
-    Sort 
-    Brand 
-    BeingType 
-    ArcType 
-    AmountType (?)
-    Aim 
