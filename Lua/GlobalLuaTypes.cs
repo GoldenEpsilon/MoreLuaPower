@@ -10,6 +10,7 @@ using System.Collections.Generic;
 [HarmonyPatch(new Type[] { typeof(string) })]
 class MoreLuaPower_GlobalLuaTypes
 {
+    [HarmonyPriority(Priority.HigherThanNormal)]
     static void Postfix() {
         UserData.RegisterType<Rewired.Player>(InteropAccessMode.Default, null);
         UserData.RegisterType<S>(InteropAccessMode.Default, null);
@@ -42,7 +43,6 @@ class MoreLuaPower_GlobalLuaTypes
         UserData.RegisterType<GameMode>(InteropAccessMode.Default, null);
         UserData.RegisterType<GScene>(InteropAccessMode.Default, null);
         UserData.RegisterType<GState>(InteropAccessMode.Default, null);
-        UserData.RegisterType<GunPointSetting>(InteropAccessMode.Default, null);
         UserData.RegisterType<InputAction>(InteropAccessMode.Default, null);
         UserData.RegisterType<KeyCode>(InteropAccessMode.Default, null);
         UserData.RegisterType<Location>(InteropAccessMode.Default, null);
