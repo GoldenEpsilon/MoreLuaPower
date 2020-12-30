@@ -1,8 +1,7 @@
 ﻿/*
  *  More Lua Power, made by Golden Epsilon
- *  Tons of stuff added by Sunreal
+ *  Tons of stuff added by Sunreal and Shenanigans
  *  PetBuff for MoreLuaPower by stephanreiken
- *  Subfolder loading by Shenanigans
  *  Workshop URL: https://steamcommunity.com/sharedfiles/filedetails/?id=2066319533
  *  GitHub Page: https://github.com/GoldenEpsilon/MoreLuaPower
  *
@@ -26,7 +25,6 @@ PRIORITY:
     setting custom effect replaces parameters
 
 TODO:
-    Add shenanigans credit for "tons of stuff"
     Add custom settings
     Hooks for world gen
     Reverse engineer the menus
@@ -45,6 +43,7 @@ TODO:
     add example file
     add credits to credits
     if the effect won't parse, make it call a lua function of the same name
+    levels of logging
 
 LOOK INTO:
     input system

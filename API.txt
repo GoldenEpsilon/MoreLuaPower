@@ -1,8 +1,7 @@
 ﻿/*
  *  More Lua Power, made by Golden Epsilon
- *  Tons of stuff added by Sunreal
+ *  Tons of stuff added by Sunreal and Shenanigans
  *  PetBuff for MoreLuaPower by stephanreiken
- *  Subfolder loading by Shenanigans
  *  Workshop URL: https://steamcommunity.com/sharedfiles/filedetails/?id=2066319533
  *  GitHub Page: https://github.com/GoldenEpsilon/MoreLuaPower
  *
@@ -161,8 +160,15 @@ MoreLuaPower:
 		//Plays the sound specified.
 		// If the sound does not exist, it logs that the effect does not exist in the chat.
 
-	bool GetCustomInput		(KeyCode {code})
-		//Checks whether the key {code} is pressed
+	void PlayCustomMusic	(|Music| {music})
+		//plays the specified sound as music. 
+		// What you put here is the same string as you put in for {AudioName} for MakeCustomMusic.
+		// Recommended for stuff like bosses
+
+	void PlayCustomMusicIntroLoop	(|Music| {music}, float {IntroBoundry}, float {EndBoundry})
+		//plays the specified sound as music with looping. 
+		// What you put here is the same string as you put in for {AudioName} for MakeCustomMusic.
+		// You'd have to check with Sunreal, but I believe the music goes back to IntroBoundry whenever it reaches EndBoundry
 
 	void SetVariable		(Being {being}, string {variableName}, string {variable})
 		//Sets the Custom Variable {variableName} to {variable} for {being}, adding it if it doesn't exist.
@@ -177,10 +183,23 @@ MoreLuaPower:
 		//Adds a term to the language dictionary, optionally letting you choose a language other than english.
 		// Mainly used behind the scenes for adding brands right now, but also works for changing whatever 
 		// text you want if you look into the code.
+
+	bool GetCustomInput		(KeyCode {code})
+		//Checks whether the key {code} is pressed
+
+	bool EnableDeveloperTools()
+		//Turns on the dev console, returning whether it just opened or closed
+		// As of right now this function is redundant because you can press ` to open the console when MoreLuaPower is loaded
 		
 	Player GetPlayer		()
 		//Simply returns the current player.
 		// Meant to be used in Update, GameUpdate, and other similar functions.
+
+	void PrintDev			(string {str})
+		//Prints a message to the dev console
+
+	void RunDev				(string {str})
+		//Runs a command from the dev console
 	
 	void AddCustomMusic		(string {AudioName}, float {volume} = 1, float {startTime} = 0)
 		//Adds the file specified by {AudioName} as |Music| that you can call with other functions.
@@ -189,21 +208,6 @@ MoreLuaPower:
 		//Sets the zone's music to {music}
 		// The valid inputs for {type} are "Idle" and "Battle", both self-explanatory.
 		// {music} is the same string as you put in for {AudioName} for MakeCustomMusic.
-
-	void PlayCustomMusic	(|Music| {music})
-		//plays the specified sound as music. 
-		// What you put here is the same string as you put in for {AudioName} for MakeCustomMusic.
-		// Recommended for stuff like bosses
-
-	bool EnableDeveloperTools()
-		//Turns on the dev console, returning whether it just opened or closed
-		// As of right now this function is redundant because you can press ` to open the console when MoreLuaPower is loaded
-
-	void RunDev				(string {str})
-		//Runs a command from the dev console
-
-	void PrintDev			(string {str})
-		//Prints a message to the dev console
 
 	void AddZoneIcon		(|Sprite| {spriteName}, string {dotName})
 		//Sets the zone {dotName}'s icon to {spriteName}, I believe (you use the name in zones.xml)
@@ -229,6 +233,24 @@ MoreLuaPower:
 		//Adds a line of XML to the SpellObject
 		// Meant to be used for upgrading spells
 		// Does not need tags like <Spells> or <Spell>, just put the tags that you would want in the spell directly like <OnHit>Flame</OnHit>
+
+	void MakeZoneGenocideLenient(string <zoneName>)
+		//Makes the zone not matter for the game's route (pacifist, neutral, genocide)
+		// Meant for custom bosses as sparing has not been fully figured out yet
+
+	void Log(string <message>, LogLevel <logLevel>)
+		//Writes <message> to the debug log and/or the console, depending on <logLevel>.
+		// Meant to be a flexible replacement for print() that prints to the console as well
+
+	void ChangeFileLogLevel(LogLevel <logLevel>)
+		//Sets what logs get written to the debug log (<logLevel> or higher)
+		// Great for debugging errors that aren't obviously failing
+		
+	void ChangeConsoleLogLevel(LogLevel <logLevel>)
+		//Sets what logs get written to the console (<logLevel> or higher)
+		// Great for debugging errors that aren't obviously failing
+
+
 
 Lua-based:
 

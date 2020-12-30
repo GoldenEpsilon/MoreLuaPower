@@ -11,7 +11,7 @@ using System;
 using UnityEngine.UI;
 
 
-
+/*
 public class CustomWorldGenerator
 {
     public static CustomWorldGenerator CURRENT = null;
@@ -1006,3 +1006,4 @@ public class CustomWorldGenerator
     }
 }
 
+*/

@@ -41,7 +41,13 @@ static class MoreLuaPower_CustomUpgrades
 	static void Prefix(SpellObject spellObj, Enhancement enhancement) {
 		if ((int)enhancement >= LuaPowerData.baseGameEnumAmount[typeof(Enhancement)] && LuaPowerData.customUpgrades.ContainsKey(enhancement.ToString())) {
 			Script mainscr = Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>();
+			MPLog.Log(" Creating Enhancement: " + enhancement.ToString() + 
+			" Check function: " + LuaPowerData.customUpgrades[enhancement.ToString()].Item2
+			, LogLevel.Info);
 			if (mainscr.Call(mainscr.Globals[LuaPowerData.customUpgrades[enhancement.ToString()].Item2], new object[] { spellObj }).Boolean) {
+				MPLog.Log(" Creating Enhancement: " + enhancement.ToString() +
+				" Apply function: " + LuaPowerData.customUpgrades[enhancement.ToString()].Item3
+				, LogLevel.Info);
 				mainscr.Call(mainscr.Globals[LuaPowerData.customUpgrades[enhancement.ToString()].Item3], new object[] { spellObj });
 				spellObj.nameString += U.I.Colorify(" " + LuaPowerData.customUpgrades[enhancement.ToString()].Item1, UIColor.Enhancement);
 				spellObj.enhancements.Add(enhancement);

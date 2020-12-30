@@ -26,9 +26,9 @@ class MoreLuaPower_GlobalLuaTypes
         UserData.RegisterType<GameObject>(InteropAccessMode.Default, null);
         UserData.RegisterType<World>(InteropAccessMode.Default, null);
         UserData.RegisterType<ZoneDot>(InteropAccessMode.Default, null);
-        UserData.RegisterType<CustomWorldGenerator>(InteropAccessMode.Default, null);
-        UserData.RegisterType<CustomWorldGenerator.PostProcessZoneGenerator>(InteropAccessMode.Default, null);
-        UserData.RegisterType<CustomWorldGenerator.ManualZoneGenerator>(InteropAccessMode.Default, null);
+        //UserData.RegisterType<CustomWorldGenerator>(InteropAccessMode.Default, null);
+        //UserData.RegisterType<CustomWorldGenerator.PostProcessZoneGenerator>(InteropAccessMode.Default, null);
+        //UserData.RegisterType<CustomWorldGenerator.ManualZoneGenerator>(InteropAccessMode.Default, null);
         UserData.RegisterType<ArcType>(InteropAccessMode.Default, null);
         UserData.RegisterType<BeingType>(InteropAccessMode.Default, null);
         UserData.RegisterType<Brand>(InteropAccessMode.Default, null);
@@ -57,5 +57,8 @@ class MoreLuaPower_GlobalLuaTypes
         UserData.RegisterType<UIColor>(InteropAccessMode.Default, null);
         UserData.RegisterType<ZoneType>(InteropAccessMode.Default, null);
         UserData.RegisterType<BGCtrl>(InteropAccessMode.Default, null);
+        UserData.RegisterType<DiskReference>(InteropAccessMode.Default, null);
+        UserData.RegisterType<ShuffleTrail>(InteropAccessMode.Default, null);
+        UserData.RegisterType<LogLevel>(InteropAccessMode.Default, null);
     }
 }

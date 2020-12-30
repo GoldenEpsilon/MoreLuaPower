@@ -23,11 +23,11 @@ class MoreLuaPower
 		if (Harmony.HasAnyPatches("com.MoreLuaPower.patch")) {
 			return;
 		}
-		Debug.Log("MoreLuaPower Version 2.2");
+		Debug.Log("MoreLuaPower Version 2.3");
 		LuaPowerData.Setup();
 		LuaPowerCustomEnumsSetup.Setup();
-		CustomZoneUtil.Setup();
-		CustomBosses.DataHandler.Setup();
+		//CustomZoneUtil.Setup();
+		//CustomBosses.DataHandler.Setup();
 		if (S.I.GetComponent<PowerMonoBehavior>() == null) {
 			S.I.gameObject.AddComponent<PowerMonoBehavior>();
 		}

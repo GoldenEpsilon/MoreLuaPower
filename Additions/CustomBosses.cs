@@ -249,7 +249,6 @@ namespace CustomBosses
                         {
                             return false;
                         }
-                        break;
                     case "Mercy":
                         if (CustomBossIndex.mercy_lines.ContainsKey(__instance.beingObj.beingID))
                         {

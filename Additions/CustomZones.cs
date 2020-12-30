@@ -11,7 +11,7 @@ using MoonSharp.Interpreter;
 using System;
 using UnityEngine.UI;
 using I2.Loc;
-
+/*
 [HarmonyPatch(typeof(XMLReader), nameof(XMLReader.XMLtoZoneData))]
 public static class ZoneXMLPatch
 {
@@ -360,3 +360,4 @@ public static class CustomZoneUtil
     }
 
 }
+*/

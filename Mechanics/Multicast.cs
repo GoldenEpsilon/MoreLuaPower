@@ -62,20 +62,22 @@ class MoreLuaPower_Multicast
 class MoreLuaPower_Multicast2
 {
     static bool Prefix(DuelDisk __instance, int slotNum, bool forceConsume) {
-        if (__instance.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary.ContainsKey("DontDiscard") &&
+        if (__instance.castSlots[slotNum] != null && __instance.castSlots[slotNum].spellObj != null && __instance.castSlots[slotNum].spellObj.spell != null && __instance.castSlots[slotNum].spellObj.spell.itemObj != null) {
+            if (__instance.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary.ContainsKey("DontDiscard") &&
             __instance.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["DontDiscard"] == "true" &&
             forceConsume == false) {
-            if (__instance.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary.ContainsKey("ShotsRemaining")) {
-                __instance.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["ShotsRemaining"] = (Int32.Parse(__instance.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["ShotsRemaining"]) - 1).ToString();
-                if (Int32.Parse(__instance.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["ShotsRemaining"]) < 1) {
-                    if (__instance.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary.ContainsKey("MaxShots")) {
-                        __instance.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["ShotsRemaining"] = __instance.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["MaxShots"];
+                if (__instance.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary.ContainsKey("ShotsRemaining")) {
+                    __instance.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["ShotsRemaining"] = (Int32.Parse(__instance.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["ShotsRemaining"]) - 1).ToString();
+                    if (Int32.Parse(__instance.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["ShotsRemaining"]) < 1) {
+                        if (__instance.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary.ContainsKey("MaxShots")) {
+                            __instance.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["ShotsRemaining"] = __instance.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["MaxShots"];
+                        }
+                        return true;
                     }
-                    return true;
+                    return false;
                 }
                 return false;
             }
-            return false;
         }
         return true;
     }

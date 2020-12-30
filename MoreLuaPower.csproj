@@ -110,7 +110,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Additions\CustomBosses.cs" />
     <Compile Include="Additions\CustomBrands.cs" />
     <Compile Include="Additions\CustomDropChecks.cs" />
     <Compile Include="Additions\CustomUpgrades.cs" />
@@ -130,7 +129,8 @@
     <Compile Include="Mechanics\KickerCast.cs" />
     <Compile Include="Lua\LuaHooks.cs" />
     <Compile Include="Mechanics\Multicast.cs" />
-    <Compile Include="Core\PowerMonoBehavior.cs" />
+    <Compile Include="Misc\MPLLogging.cs" />
+    <Compile Include="Misc\PowerMonoBehavior.cs" />
     <Compile Include="Additions\CustomStatusEffects.cs" />
     <Compile Include="Lua\GlobalLuaFunctions.cs" />
     <Compile Include="Lua\GlobalLuaVariables.cs" />
