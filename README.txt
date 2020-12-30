@@ -1,4 +1,4 @@
-﻿/*
+/*
  *  More Lua Power, made by Golden Epsilon
  *  Tons of stuff added by Sunreal and Shenanigans
  *  PetBuff for MoreLuaPower by stephanreiken
