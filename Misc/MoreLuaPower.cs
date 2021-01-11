@@ -20,10 +20,7 @@ using UnityEngine;
 class MoreLuaPower
 {
 	static void Prepare() {
-		if (Harmony.HasAnyPatches("com.MoreLuaPower.patch")) {
-			return;
-		}
-		Debug.Log("MoreLuaPower Version 2.3.1");
+		Debug.Log("MoreLuaPower Version 2.3.2a");
 		LuaPowerData.Setup();
 		LuaPowerCustomEnumsSetup.Setup();
 		//CustomZoneUtil.Setup();
@@ -36,6 +33,19 @@ class MoreLuaPower
 	}
 	static public Player GetPlayer() {
 		return S.I.batCtrl.currentPlayer;
+	}
+}
+
+[HarmonyPatch(typeof(HarmonyMain))]
+[HarmonyPatch("LoadMod")]
+class MoreLuaPowerOnlyOne
+{
+	static bool Prefix(string modName) {
+		if (Harmony.HasAnyPatches("com."+modName+".patch")) {
+			MPLog.Log(modName + " is not being reinstalled", LogLevel.Info);
+			return false;
+		}
+		return true;
 	}
 }
 /*

@@ -25,6 +25,10 @@ PRIORITY:
     setting custom effect replaces parameters
 
 TODO:
+    custom AmountType s
+    custom Check s
+    custom Tag s (set from xml)
+    AI XML (states (string) are moved to and from because of Actions and Interrupts - Actions get chosed randomly within a state (can be weighted), Interrupts are triggered whenever an FTrigger activates and the check passes)
     Add custom settings
     Hooks for world gen
     Reverse engineer the menus
