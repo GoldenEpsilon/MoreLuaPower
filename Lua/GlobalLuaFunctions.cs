@@ -50,6 +50,8 @@ class MoreLuaPower_GlobalLuaFunctions
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["Log"] = (Action<string, LogLevel>)MPLog.Log;
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["ChangeFileLogLevel"] = (Action<LogLevel>)MPLog.ChangeFileLogLevel;
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["ChangeConsoleLogLevel"] = (Action<LogLevel>)MPLog.ChangeConsoleLogLevel;
+        Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["AddTriggerTooltip"] = (Action<FTrigger, string, string>)LuaPowerCustomTooltips.AddTriggerTooltip;
+        Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["AddEffectTooltip"] = (Action<Effect, string, string>)LuaPowerCustomTooltips.AddEffectTooltip;
     }
 }
 
