@@ -20,36 +20,41 @@ class MoreLuaPower_Multicast
 {
     [HarmonyPriority(Priority.LowerThanNormal)]
     static void Prefix(ref Player __instance, int slotNum, ref int manaOverride, bool consumeOverride) {
-        if (__instance.duelDisk.castSlots[slotNum] != null && __instance.duelDisk.castSlots[slotNum].spellObj != null && __instance.duelDisk.castSlots[slotNum].spellObj.spell != null && __instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj != null)
+        if (slotNum >= __instance.duelDisk.castSlots.Count) {
+            return;
+        }
+        slotNum = Traverse.Create(__instance).Method("GetSlotNum", slotNum).GetValue<int>();
+        if (__instance.duelDisk.castSlots[slotNum].cardtridgeFill == null) {
+            return;
+        }
+        SpellObject spellToCast = __instance.duelDisk.castSlots[slotNum].cardtridgeFill.spellObj;
+        if (spellToCast.spell.itemObj.paramDictionary.ContainsKey("DontDiscard") &&
+        spellToCast.spell.itemObj.paramDictionary["DontDiscard"] == "true")
         {
-            if (__instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary.ContainsKey("DontDiscard") &&
-            __instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["DontDiscard"] == "true")
+            if (spellToCast.spell.itemObj.paramDictionary.ContainsKey("ShotsRemaining"))
             {
-                if (__instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary.ContainsKey("ShotsRemaining"))
+                if (spellToCast.spell.itemObj.paramDictionary.ContainsKey("ManaCost"))
                 {
-                    if (__instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary.ContainsKey("ManaCost"))
+                    switch (spellToCast.spell.itemObj.paramDictionary["ManaCost"])
                     {
-                        switch (__instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["ManaCost"])
-                        {
-                            case "Start":
-                                if (__instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary.ContainsKey("MaxShots") &&
-                                __instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["ShotsRemaining"] !=
-                                __instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["MaxShots"])
-                                {
-                                    manaOverride = 0;
-                                }
-                                break;
-                            case "End":
-                                if (Int32.Parse(__instance.duelDisk.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["ShotsRemaining"]) > 1)
-                                {
-                                    manaOverride = 0;
-                                }
-                                break;
-                            case "All":
-                                break;
-                            default:
-                                break;
-                        }
+                        case "Start":
+                            if (spellToCast.spell.itemObj.paramDictionary.ContainsKey("MaxShots") &&
+                            spellToCast.spell.itemObj.paramDictionary["ShotsRemaining"] !=
+                            spellToCast.spell.itemObj.paramDictionary["MaxShots"])
+                            {
+                                manaOverride = 0;
+                            }
+                            break;
+                        case "End":
+                            if (Int32.Parse(spellToCast.spell.itemObj.paramDictionary["ShotsRemaining"]) > 1)
+                            {
+                                manaOverride = 0;
+                            }
+                            break;
+                        case "All":
+                            break;
+                        default:
+                            break;
                     }
                 }
             }

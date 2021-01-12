@@ -112,6 +112,7 @@
   <ItemGroup>
     <Compile Include="Additions\CustomBrands.cs" />
     <Compile Include="Additions\CustomDropChecks.cs" />
+    <Compile Include="Additions\CustomTooltips.cs" />
     <Compile Include="Additions\CustomUpgrades.cs" />
     <Compile Include="Additions\CustomWorldGenerator.cs" />
     <Compile Include="Additions\CustomZones.cs" />
