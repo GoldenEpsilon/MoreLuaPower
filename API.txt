@@ -176,8 +176,9 @@ MoreLuaPower:
 	string GetVariable		(Being {being}, string {variableName})
 		//Gets the Custom Variable {variableName} from {being}, returning "Variable Not Set" if it doesn't exist.
 
-	void AddHook			(FTrigger {trigger}, string {functionName})
+	void AddHook			(FTrigger {trigger}, string {functionName}, being {attachedBeing} = null)
 		//Adds the function {functionName} as a hook, which means that it will be activated every time {trigger} is activated
+		// You can attach it to any being, by default it'll attach to a player.
 
 	void AddLangTerm		(string {termName}, string {translation}, string {language} = "English")
 		//Adds a term to the language dictionary, optionally letting you choose a language other than english.
@@ -257,7 +258,6 @@ MoreLuaPower:
 	void AddEffectTooltip(Effect <effect>, string <name>, string <tooltip>)
 		//Adds a tooltip for the given Effect for hovering over spells/artifacts.
 		// <name> should be the name to be used in the popup, <tooltip> is the description.
-
 
 
 Lua-based:

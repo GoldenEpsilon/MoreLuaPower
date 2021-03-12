@@ -115,6 +115,7 @@
     <Compile Include="Additions\CustomTooltips.cs" />
     <Compile Include="Additions\CustomUpgrades.cs" />
     <Compile Include="Additions\CustomWorldGenerator.cs" />
+    <Compile Include="Additions\CustomXML.cs" />
     <Compile Include="Additions\CustomZones.cs" />
     <Compile Include="Data\CustomFileLoader.cs" />
     <Compile Include="Data\CustomLanguage.cs" />

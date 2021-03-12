@@ -20,7 +20,7 @@ using UnityEngine;
 class MoreLuaPower
 {
 	static void Prepare() {
-		Debug.Log("MoreLuaPower Version 2.3.2a");
+		Debug.Log("MoreLuaPower Version 2.3.2");
 		LuaPowerData.Setup();
 		LuaPowerCustomEnumsSetup.Setup();
 		//CustomZoneUtil.Setup();
@@ -46,6 +46,31 @@ class MoreLuaPowerOnlyOne
 			return false;
 		}
 		return true;
+	}
+}
+[HarmonyPatch(typeof(ModCtrl))]
+[HarmonyPatch("InstallMods")]
+class MoreLuaPowerReset
+{
+	static void Prefix() {
+		LuaPowerData.GenocideLenientStages.Clear();
+		LuaPowerData.customEnums.Clear();
+		LuaPowerData.enumAdditions.Clear();
+		LuaPowerData.customMusic.Clear(); ;
+		LuaPowerData.sprites.Clear();
+		LuaPowerData.materials.Clear();
+		LuaPowerData.scripts.Clear();
+		LuaPowerData.luaHooks.Clear();
+		LuaPowerData.customUpgrades.Clear();
+		LuaPowerData.baseGameEnumAmount.Clear();
+		LuaPowerData.dropChecks.Clear();
+		LuaPowerData.luaFunctionLoaded.Clear();
+		LuaPowerData.Setup();
+		LuaPowerCustomEnumsSetup.Setup();
+		if (S.I.GetComponent<PowerMonoBehavior>() == null) {
+			S.I.gameObject.AddComponent<PowerMonoBehavior>();
+		}
+		if (!LuaPowerData.customEnums[typeof(Effect)].Contains("Lua")) { LuaPowerData.customEnums[typeof(Effect)].Add("Lua"); }
 	}
 }
 /*

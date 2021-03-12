@@ -19,6 +19,7 @@ public static class LuaPowerData
     static public List<String> GenocideLenientStages = new List<string>();
     static public Dictionary<Type, List<string>> customEnums = new Dictionary<Type, List<string>>();
     static public Dictionary<Enum, List<string>> enumAdditions = new Dictionary<Enum, List<string>>();
+    //static public Dictionary<EffectApp, Dictionary<string, string>> xmlAttributes = new Dictionary<EffectApp, Dictionary<string, string>>();
     static public Dictionary<String, CustomMusic> customMusic = new Dictionary<string, CustomMusic>();
     static public Dictionary<string, Sprite> sprites = new Dictionary<string, Sprite>();
     static public Dictionary<string, Material> materials = new Dictionary<string, Material>();

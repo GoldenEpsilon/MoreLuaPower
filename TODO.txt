@@ -28,6 +28,8 @@ TODO:
     custom AmountType s
     custom Check s
     custom Tag s (set from xml)
+    custom Shape s
+    BeforeHit trigger
     AI XML (states (string) are moved to and from because of Actions and Interrupts - Actions get chosed randomly within a state (can be weighted), Interrupts are triggered whenever an FTrigger activates and the check passes)
     Add custom settings
     Hooks for world gen
