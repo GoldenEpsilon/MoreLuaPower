@@ -12,7 +12,7 @@ using System.Runtime.InteropServices;
 using System.Xml;
 using UnityEngine;
 
-//EXPERIMENTAL CODE! BREAKS EASILY
+
 
 namespace CustomBosses
 {
@@ -426,39 +426,9 @@ namespace CustomBosses
         [HarmonyPatch("ReadXmlPrototype")]
         static class CustomBoss_ReadXmlPrototype
         {
-            static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+            static void Prefix(BeingObject __instance, XmlReader reader_parent)
             {
-                bool after_virtual = false;
-                bool done = false;
-                var to_call = AccessTools.Method(typeof(CustomBoss_Read), nameof(CustomBoss_Read.Switch));
-                var reader_code = OpCodes.Ldloc_0;
-                var success = false;
-                CodeInstruction prev = null;
-                foreach (CodeInstruction instruction in instructions)
-                {
-
-                    yield return instruction;
-                    if (!done && after_virtual && (instruction.opcode == reader_code))
-                    {
-                        Debug.Log("Custom Boss XML Reader Transpiler Success!");
-                        yield return new CodeInstruction(OpCodes.Ldarg_0);
-                        yield return new CodeInstruction(OpCodes.Call, to_call);
-                        yield return new CodeInstruction(reader_code);
-                        success = true;
-                        done = true;
-                    }
-                    if (!done && instruction.opcode == OpCodes.Callvirt && (MethodInfo)instruction.operand == AccessTools.PropertyGetter(typeof(XmlReader), "IsEmptyElement"))
-                    {
-                        after_virtual = true;
-                        reader_code = prev.opcode;
-                    }
-                    prev = instruction;
-                }
-
-                if (!success)
-                {
-                    Debug.LogError("Custom Boss XML Reader Transpiler FAILURE!!! This is likely the result of an update. Please inform the makers of MoreLuaPower");
-                }
+                CustomBoss_Read.Loop(reader_parent.ReadSubtree(), __instance);
             }
 
         }
@@ -466,18 +436,21 @@ namespace CustomBosses
 
         static class CustomBoss_Read
         {
-
-            public static void Switch(XmlReader reader, BeingObject beingObj)
-            {
-                switch (reader.Name)
-                {
+            public static void Loop(XmlReader reader, BeingObject beingObj) {
+                while (reader.Read()) {
+                    if (!reader.IsEmptyElement) {
+                        Switch(reader, beingObj);
+                    }
+                }
+            }
+            public static void Switch(XmlReader reader, BeingObject beingObj) {
+                switch (reader.Name) {
                     case "FaceRight":
                         CustomBossIndex.face_right.Add(beingObj.beingID);
                         break;
                     case "Unlocks":
                         var heroID = beingObj.nameString.Replace("Boss", "");
-                        if (S.I.spCtrl.heroDictionary.ContainsKey(heroID))
-                        {
+                        if (S.I.spCtrl.heroDictionary.ContainsKey(heroID)) {
                             S.I.spCtrl.heroDictionary[heroID].tags.Remove(Tag.Unlock);
                         }
                         break;
@@ -486,15 +459,13 @@ namespace CustomBosses
                         SaveDataCtrl.Set<bool>(heroID2, false);
                         break;
                     case "Music":
-                        if (!CustomBossIndex.boss_music.ContainsKey(beingObj.beingID))
-                        {
+                        if (!CustomBossIndex.boss_music.ContainsKey(beingObj.beingID)) {
                             var content = reader.ReadElementContentAsString();
                             if (!string.IsNullOrEmpty(content)) CustomBossIndex.boss_music.Add(beingObj.beingID, content);
                         }
                         break;
                     case "SerifMode":
-                        if (reader.ReadElementContentAsBoolean())
-                        {
+                        if (reader.ReadElementContentAsBoolean()) {
                             Debug.Log("Serif mode boss added with ID" + beingObj.beingID);
                             CustomBossIndex.serif_mode_bosses.Add(beingObj.beingID);
                         }
@@ -503,50 +474,43 @@ namespace CustomBosses
                         if (reader.ReadElementContentAsBoolean()) CustomBossIndex.final_bosses.Add(beingObj.beingID);
                         break;
                     case "IntroLine":
-                        if (!CustomBossIndex.intro_lines.ContainsKey(beingObj.beingID))
-                        {
+                        if (!CustomBossIndex.intro_lines.ContainsKey(beingObj.beingID)) {
                             CustomBossIndex.intro_lines.Add(beingObj.beingID, new List<string>());
                         }
                         CustomBossIndex.intro_lines[beingObj.beingID].Add(reader.ReadElementContentAsString());
                         break;
                     case "ExecutionLine":
-                        if (!CustomBossIndex.execution_lines.ContainsKey(beingObj.beingID))
-                        {
+                        if (!CustomBossIndex.execution_lines.ContainsKey(beingObj.beingID)) {
                             CustomBossIndex.execution_lines.Add(beingObj.beingID, new List<string>());
                         }
                         CustomBossIndex.execution_lines[beingObj.beingID].Add(reader.ReadElementContentAsString());
                         break;
                     case "SpareLine":
-                        if (!CustomBossIndex.spare_lines.ContainsKey(beingObj.beingID))
-                        {
+                        if (!CustomBossIndex.spare_lines.ContainsKey(beingObj.beingID)) {
                             CustomBossIndex.spare_lines.Add(beingObj.beingID, new List<string>());
                         }
                         CustomBossIndex.spare_lines[beingObj.beingID].Add(reader.ReadElementContentAsString());
                         break;
                     case "DownedLine":
-                        if (!CustomBossIndex.defeated_lines.ContainsKey(beingObj.beingID))
-                        {
+                        if (!CustomBossIndex.defeated_lines.ContainsKey(beingObj.beingID)) {
                             CustomBossIndex.defeated_lines.Add(beingObj.beingID, new List<string>());
                         }
                         CustomBossIndex.defeated_lines[beingObj.beingID].Add(reader.ReadElementContentAsString());
                         break;
                     case "FlawlessLine":
-                        if (!CustomBossIndex.perfect_lines.ContainsKey(beingObj.beingID))
-                        {
+                        if (!CustomBossIndex.perfect_lines.ContainsKey(beingObj.beingID)) {
                             CustomBossIndex.perfect_lines.Add(beingObj.beingID, new List<string>());
                         }
                         CustomBossIndex.perfect_lines[beingObj.beingID].Add(reader.ReadElementContentAsString());
                         break;
                     case "KilledLine":
-                        if (!CustomBossIndex.genocide_lines.ContainsKey(beingObj.beingID))
-                        {
+                        if (!CustomBossIndex.genocide_lines.ContainsKey(beingObj.beingID)) {
                             CustomBossIndex.genocide_lines.Add(beingObj.beingID, new List<string>());
                         }
                         CustomBossIndex.genocide_lines[beingObj.beingID].Add(reader.ReadElementContentAsString());
                         break;
                     case "MercyLine":
-                        if (!CustomBossIndex.mercy_lines.ContainsKey(beingObj.beingID))
-                        {
+                        if (!CustomBossIndex.mercy_lines.ContainsKey(beingObj.beingID)) {
                             CustomBossIndex.mercy_lines.Add(beingObj.beingID, new List<string>());
                         }
                         CustomBossIndex.mercy_lines[beingObj.beingID].Add(reader.ReadElementContentAsString());
@@ -555,14 +519,11 @@ namespace CustomBosses
                         if (!CustomBossIndex.mercy.ContainsKey(beingObj.beingID)) CustomBossIndex.mercy.Add(beingObj.beingID, reader.ReadElementContentAsBoolean());
                         break;
                     case "DontCountKill":
-                        if (reader.ReadElementContentAsBoolean())
-                        {
+                        if (reader.ReadElementContentAsBoolean()) {
                             CustomBossIndex.kill_not_counted.Add(beingObj.beingID);
                         }
                         break;
                 }
-
-
             }
         }
 

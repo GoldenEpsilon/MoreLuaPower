@@ -60,5 +60,9 @@ class MoreLuaPower_GlobalLuaTypes
         UserData.RegisterType<DiskReference>(InteropAccessMode.Default, null);
         UserData.RegisterType<ShuffleTrail>(InteropAccessMode.Default, null);
         UserData.RegisterType<LogLevel>(InteropAccessMode.Default, null);
+        UserData.RegisterType<Ally>(InteropAccessMode.Default, null);
+        UserData.RegisterType<Cpu>(InteropAccessMode.Default, null);
+        UserData.RegisterType<TMPro.TextMeshProUGUI>(InteropAccessMode.Default, null);
+        UserData.RegisterType<FillBar>(InteropAccessMode.Default, null);
     }
 }

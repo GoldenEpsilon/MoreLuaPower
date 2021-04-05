@@ -110,6 +110,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Additions\CustomBosses.cs" />
     <Compile Include="Additions\CustomBrands.cs" />
     <Compile Include="Additions\CustomDropChecks.cs" />
     <Compile Include="Additions\CustomTooltips.cs" />

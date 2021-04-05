@@ -12,17 +12,41 @@
  *  I am also open to help; If you have something you want to add in here, just let me know/add it in yourself! You will be credited.
 */
 
-DONE:
-    Custom Hooks aren't passing the item correctly
-    Optional argument for custom hooks for the being
-    add a hook to when Card Drops are randomly generated that, when a spell is chosen if that spell had the Param 'DropCheck', it will attempt to run the function DropCheck states; that function must return a boolean. If true, its allowed to drop
-
 PRIORITY:
     CreateAudio(string name, string soundName, bool loop), PlayAudio(string name), PauseAudio(string name), and StopAudio(string name), ToggleLoopAudio
     Have a <DropCheck> tag for artifacts and spells that makes sure the spell/artifact can appear
     make custom statuses work with XML checks (make it work like brands)
         add the status to Check
     setting custom effect replaces parameters
+
+    triggers to add:
+        OnSave
+        OnLoad
+        OnChooseArtifact
+        OnRemoveArtifact
+        OnChoosePact
+        OnRemovePact
+        OnUpgrade
+        OnRemove
+        OnClear (when a structure gets cleared..?)
+        PreMove
+        PreHit
+        "I can think of a few uses for an OnHit that returns the projectile that hit something"
+        OnOwnedPetDeath
+        OnPetDeath
+        OnLoop
+        OnBossKill
+        OnBossSpare
+        OnFocusChange
+        ChangedStatus
+        EnemyChangedStatus
+        GainedInvincible
+        EnemyGainedInvincible
+        OnHeal
+        OnEnemyHeal
+        PetChangedStatus
+        PetHeal
+        OnEnemyMove
 
 TODO:
     custom AmountType s

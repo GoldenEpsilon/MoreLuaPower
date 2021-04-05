@@ -390,6 +390,8 @@ MoreLuaPower:
 	KeyCode
 	ItemObject
 	AnimationOverrider
+	Ally
+	Cpu
 
 Vanilla:
     Transform
