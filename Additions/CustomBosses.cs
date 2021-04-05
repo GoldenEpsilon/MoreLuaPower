@@ -12,7 +12,7 @@ using System.Runtime.InteropServices;
 using System.Xml;
 using UnityEngine;
 
-
+//EXPERIMENTAL CODE! BREAKS EASILY
 
 namespace CustomBosses
 {
@@ -23,17 +23,13 @@ namespace CustomBosses
 
         public bool lock_facing_direction = false;
 
-        public override void Start()
-        {
+        public override void Start() {
 
             var music = CustomBossIndex.boss_music.ContainsKey(beingObj.beingID) ? CustomBossIndex.boss_music[beingObj.beingID] : "";
             var AllAudioClips = Traverse.Create(S.I.itemMan).Field("allAudioClips").GetValue<Dictionary<string, AudioClip>>();
-            if (!AllAudioClips.ContainsKey(music))
-            {
+            if (!AllAudioClips.ContainsKey(music)) {
                 Debug.Log(music + " does not exist");
-            }
-            else
-            {
+            } else {
                 S.I.muCtrl.Stop();
                 S.I.muCtrl.Play(AllAudioClips[music], true);
             }
@@ -42,38 +38,29 @@ namespace CustomBosses
             Debug.Log("Custom Boss Start");
             if (CustomBossIndex.final_bosses.Contains(beingObj.beingID)) endGameOnExecute = true;
             base.Start();
-            if (CustomBossIndex.serif_mode_bosses.Contains(beingObj.beingID))
-            {
+            if (CustomBossIndex.serif_mode_bosses.Contains(beingObj.beingID)) {
                 battleGrid.SetSerif();
                 serif_mode = true;
             }
 
-            if (CustomBossIndex.face_right.Contains(beingObj.beingID))
-            {
+            if (CustomBossIndex.face_right.Contains(beingObj.beingID)) {
                 transform.right = Vector3.zero - Vector3.left;
             }
         }
 
-        protected override void Update()
-        {
+        protected override void Update() {
             base.Update();
-            if (serif_mode)
-            {
-                foreach (Player currentPlayer in ctrl.currentPlayers)
-                {
-                    if ((bool)(UnityEngine.Object)currentPlayer)
-                    {
-                        if (currentPlayer.mov.currentTile.x > mov.currentTile.x)
-                        {
+            if (serif_mode) {
+                foreach (Player currentPlayer in ctrl.currentPlayers) {
+                    if ((bool)(UnityEngine.Object)currentPlayer) {
+                        if (currentPlayer.mov.currentTile.x > mov.currentTile.x) {
                             if (!lock_facing_direction)
                                 transform.right = Vector3.zero - Vector3.left;
                             currentPlayer.transform.right = Vector3.zero - Vector3.right;
                             transform.right = Vector3.zero - Vector3.left;
                             foreach (Component currentPet in currentPlayer.currentPets)
                                 currentPet.transform.right = Vector3.zero - Vector3.right;
-                        }
-                        else if (currentPlayer.mov.currentTile.x < mov.currentTile.x)
-                        {
+                        } else if (currentPlayer.mov.currentTile.x < mov.currentTile.x) {
                             if (!lock_facing_direction)
                                 transform.right = Vector3.zero - Vector3.right;
                             currentPlayer.transform.right = Vector3.zero - Vector3.left;
@@ -86,8 +73,7 @@ namespace CustomBosses
             }
         }
 
-        public override void ExecutePlayer()
-        {
+        public override void ExecutePlayer() {
             //ChangeState(beingObj.beingID + "_Execute");
             ClearProjectiles();
             ctrl.DestroyEnemiesAndStructures(this);
@@ -100,57 +86,45 @@ namespace CustomBosses
             mov.lerpTimeMods.Clear();
             battleGrid.FixAllTiles();
             anim.SetTrigger("toIdle");
-            if (!(CustomBossIndex.mercy.ContainsKey(beingObj.beingID) && !CustomBossIndex.mercy[beingObj.beingID]) && UnityEngine.Random.Range(1, 101) > beingObj.lethality + runCtrl.currentRun.hostagesKilled + runCtrl.currentRun.worldTierNum + runCtrl.currentRun.bossExecutions * 2)
-            {
+            if (!(CustomBossIndex.mercy.ContainsKey(beingObj.beingID) && !CustomBossIndex.mercy[beingObj.beingID]) && UnityEngine.Random.Range(1, 101) > beingObj.lethality + runCtrl.currentRun.hostagesKilled + runCtrl.currentRun.worldTierNum + runCtrl.currentRun.bossExecutions * 2) {
                 StartCoroutine(_Mercy());
-            }
-            else
-            {
+            } else {
                 //this.attemptedToExecute = true;
                 StartCoroutine(ExecutePlayerC());
             }
         }
 
-        public IEnumerator _DialogueC(string line)
-        {
+        public IEnumerator _DialogueC(string line) {
             talkBubble.Show();
             yield return new WaitForSeconds(talkBubble.AnimateText(line));
             talkBubble.Hide();
         }
 
-        protected override void LastWord()
-        {
+        protected override void LastWord() {
             talkBubble.StopAllCoroutines();
             talkBubble.Show();
-            if (CustomBossIndex.genocide_lines.ContainsKey(beingObj.beingID))
-            {
+            if (CustomBossIndex.genocide_lines.ContainsKey(beingObj.beingID)) {
                 talkBubble.SetText(CustomBossIndex.genocide_lines[beingObj.beingID][UnityEngine.Random.Range(0, CustomBossIndex.genocide_lines[beingObj.beingID].Count())]);
             }
             DownEffects();
         }
 
-        public List<CustomBossAction> GetValidAtIndex(CustomBossStatePattern pattern, int index)
-        {
+        public List<CustomBossAction> GetValidAtIndex(CustomBossStatePattern pattern, int index) {
             List<CustomBossAction> re = new List<CustomBossAction>();
 
-            if (pattern.length > 0)
-            {
+            if (pattern.length > 0) {
                 re.AddRange(from action in pattern.actions where action.index == index select action);
-                if (re.Count == 0)
-                {
+                if (re.Count == 0) {
                     re.AddRange(from action in pattern.actions where action.index == 0 select action);
                 }
-            }
-            else
-            {
+            } else {
                 re.AddRange(pattern.actions.AsEnumerable());
             }
 
             return re;
         }
 
-        public override IEnumerator Executed()
-        {
+        public override IEnumerator Executed() {
             var doesnt_count = CustomBossIndex.kill_not_counted.Contains(beingObj.beingID);
             runCtrl.progressBar.SetBossFate();
             if (!doesnt_count) ctrl.IncrementStat("TotalExecutions");
@@ -161,8 +135,7 @@ namespace CustomBosses
             ctrl.runCtrl.worldBar.Close();
             ctrl.idCtrl.HideOnwardButton();
             runCtrl.worldBar.available = false;
-            foreach (Player currentPlayer in ctrl.currentPlayers)
-            {
+            foreach (Player currentPlayer in ctrl.currentPlayers) {
                 Player thePlayer = currentPlayer;
                 thePlayer.RemoveStatus(Status.Poison);
                 thePlayer = (Player)null;
@@ -175,10 +148,8 @@ namespace CustomBosses
             S.I.StartCoroutine(_DeathFinal().CancelWith(gameObject));
         }
 
-        public static void AddBeing(GameObject gameObject, BeingObject being)
-        {
-            if (being.type == (BeingType)Enum.Parse(typeof(BeingType), "Boss"))
-            {
+        public static void AddBeing(GameObject gameObject, BeingObject being) {
+            if (being.type == (BeingType)Enum.Parse(typeof(BeingType), "Boss")) {
                 Debug.Log("Created CustomBoss component");
                 gameObject.AddComponent<CustomBoss>();
             }
@@ -192,104 +163,76 @@ namespace CustomBosses
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(Boss), nameof(Boss._StartDialogue))]
-        static bool _StartDialogue(Boss __instance, string key, ref IEnumerator __result)
-        {
-            if (__instance is CustomBoss)
-            {
-                switch (key)
-                {
+        static bool _StartDialogue(Boss __instance, string key, ref IEnumerator __result) {
+            if (__instance is CustomBoss) {
+                switch (key) {
 
                     case "Intro":
-                        if (CustomBossIndex.intro_lines.ContainsKey(__instance.beingObj.beingID))
-                        {
+                        if (CustomBossIndex.intro_lines.ContainsKey(__instance.beingObj.beingID)) {
                             __result = ((CustomBoss)__instance)._DialogueC(CustomBossIndex.intro_lines[__instance.beingObj.beingID][UnityEngine.Random.Range(0, CustomBossIndex.intro_lines[__instance.beingObj.beingID].Count())]);
                             return false;
-                        }
-                        else
-                        {
+                        } else {
                             return false;
                         }
                     case "Execution":
-                        if (CustomBossIndex.execution_lines.ContainsKey(__instance.beingObj.beingID))
-                        {
+                        if (CustomBossIndex.execution_lines.ContainsKey(__instance.beingObj.beingID)) {
                             __result = ((CustomBoss)__instance)._DialogueC(CustomBossIndex.execution_lines[__instance.beingObj.beingID][UnityEngine.Random.Range(0, CustomBossIndex.execution_lines[__instance.beingObj.beingID].Count())]);
                             return false;
-                        }
-                        else
-                        {
+                        } else {
                             return false;
                         }
                     case "Spare":
-                        if (CustomBossIndex.spare_lines.ContainsKey(__instance.beingObj.beingID))
-                        {
+                        if (CustomBossIndex.spare_lines.ContainsKey(__instance.beingObj.beingID)) {
                             __result = ((CustomBoss)__instance)._DialogueC(CustomBossIndex.spare_lines[__instance.beingObj.beingID][UnityEngine.Random.Range(0, CustomBossIndex.spare_lines[__instance.beingObj.beingID].Count())]);
                             return false;
-                        }
-                        else
-                        {
+                        } else {
                             return false;
                         }
                     case "Downed":
-                        if (CustomBossIndex.defeated_lines.ContainsKey(__instance.beingObj.beingID))
-                        {
+                        if (CustomBossIndex.defeated_lines.ContainsKey(__instance.beingObj.beingID)) {
                             __result = ((CustomBoss)__instance)._DialogueC(CustomBossIndex.defeated_lines[__instance.beingObj.beingID][UnityEngine.Random.Range(0, CustomBossIndex.defeated_lines[__instance.beingObj.beingID].Count())]);
                             return false;
-                        }
-                        else
-                        {
+                        } else {
                             return false;
                         }
                     case "Flawless":
-                        if (CustomBossIndex.perfect_lines.ContainsKey(__instance.beingObj.beingID))
-                        {
+                        if (CustomBossIndex.perfect_lines.ContainsKey(__instance.beingObj.beingID)) {
                             __result = ((CustomBoss)__instance)._DialogueC(CustomBossIndex.perfect_lines[__instance.beingObj.beingID][UnityEngine.Random.Range(0, CustomBossIndex.perfect_lines[__instance.beingObj.beingID].Count())]);
                             return false;
-                        }
-                        else
-                        {
+                        } else {
                             return false;
                         }
                     case "Mercy":
-                        if (CustomBossIndex.mercy_lines.ContainsKey(__instance.beingObj.beingID))
-                        {
+                        if (CustomBossIndex.mercy_lines.ContainsKey(__instance.beingObj.beingID)) {
                             __result = ((CustomBoss)__instance)._DialogueC(CustomBossIndex.mercy_lines[__instance.beingObj.beingID][UnityEngine.Random.Range(0, CustomBossIndex.mercy_lines[__instance.beingObj.beingID].Count())]);
                             return false;
-                        }
-                        else
-                        {
+                        } else {
                             return false;
                         }
                 }
                 __result = ((CustomBoss)__instance)._DialogueC("I AM ERROR");
                 return false;
-            }
-            else
-            {
+            } else {
                 return true;
             }
         }
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(ItemObject), nameof(ItemObject.Trigger))]
-        public static bool Trigger(ItemObject __instance, FTrigger fTrigger, bool doublecast, ref Being hitBeing, int forwardedHitDamage)
-        {
+        public static bool Trigger(ItemObject __instance, FTrigger fTrigger, bool doublecast, ref Being hitBeing, int forwardedHitDamage) {
             if (hitBeing == null) hitBeing = __instance.being;
             return true;
         }
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(UnlockCtrl), nameof(UnlockCtrl.ShowNextUnlock))]
-        public static bool ShowNextUnlock(UnlockCtrl __instance, int i)
-        {
+        public static bool ShowNextUnlock(UnlockCtrl __instance, int i) {
             if (i >= __instance.hiddenUnlocks.Count)
                 i = 0;
-            if (__instance.hiddenUnlocks.Count > 0)
-            {
-                if (__instance.hiddenUnlocks[i].itemObj == null)
-                {
+            if (__instance.hiddenUnlocks.Count > 0) {
+                if (__instance.hiddenUnlocks[i].itemObj == null) {
                     CharacterCard component = __instance.hiddenUnlocks[i].GetComponent<CharacterCard>();
-                    if (component.charAnim.runtimeAnimatorController == null)
-                    {
+                    if (component.charAnim.runtimeAnimatorController == null) {
                         component.charAnim.runtimeAnimatorController = S.I.batCtrl.baseCharacterAnim;
                         var overrider = component.charAnim.gameObject.AddComponent<AnimationOverrider>();
                         var animator = component.charAnim.gameObject.AddComponent<SpriteAnimator>();
@@ -363,8 +306,7 @@ namespace CustomBosses
 
         public static List<string> face_right = new List<string>();
 
-        static public void Setup()
-        {
+        static public void Setup() {
             boss_music.Clear();
             intro_lines.Clear();
             execution_lines.Clear();
@@ -378,7 +320,7 @@ namespace CustomBosses
             serif_mode_bosses.Clear();
         }
 
-        
+
     }
 
     [HarmonyPatch]
@@ -386,19 +328,15 @@ namespace CustomBosses
     {
         [HarmonyPrefix]
         [HarmonyPatch(typeof(RunCtrl), nameof(RunCtrl.GoToNextZone))]
-        public static bool Next(RunCtrl __instance)
-        {
+        public static bool Next(RunCtrl __instance) {
             var battleGrid = S.I.tiCtrl.mainBattleGrid;
-            for (int index1 = 0; index1 < battleGrid.gridLength; ++index1)
-            {
+            for (int index1 = 0; index1 < battleGrid.gridLength; ++index1) {
                 for (int index2 = 0; index2 < battleGrid.gridHeight; ++index2)
                     battleGrid.grid[index1, index2].SetAlign(index1 < battleGrid.gridLength / 2 ? 1 : -1);
             }
-            foreach (var player in S.I.batCtrl.currentPlayers)
-            {
+            foreach (var player in S.I.batCtrl.currentPlayers) {
                 player.transform.right = Vector3.zero - Vector3.left;
-                if (player.mov.currentTile.x > 3)
-                {
+                if (player.mov.currentTile.x > 3) {
                     player.mov.MoveTo(player.mov.currentTile.x - 4, player.mov.currentTile.y, false, true, false, false);
                 }
             }
@@ -409,13 +347,11 @@ namespace CustomBosses
     public static class DataHandler
     {
 
-        public static void Setup()
-        {
+        public static void Setup() {
             if (!LuaPowerData.customEnums[typeof(BeingType)].Contains("Boss")) LuaPowerData.customEnums[typeof(BeingType)].Add("Boss");
         }
 
-        public static void BossHandler(FileInfo info)
-        {
+        public static void BossHandler(FileInfo info) {
             SpawnCtrl spCtrl = S.I.spCtrl;
             spCtrl.CreateBeingObjectPrototypes(info.Name, (BeingType)Enum.Parse(typeof(BeingType), "Boss"), true, info.DirectoryName);
         }
@@ -426,9 +362,34 @@ namespace CustomBosses
         [HarmonyPatch("ReadXmlPrototype")]
         static class CustomBoss_ReadXmlPrototype
         {
-            static void Prefix(BeingObject __instance, XmlReader reader_parent)
-            {
-                CustomBoss_Read.Loop(reader_parent.ReadSubtree(), __instance);
+            static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+                bool after_virtual = false;
+                bool done = false;
+                var to_call = AccessTools.Method(typeof(CustomBoss_Read), nameof(CustomBoss_Read.Switch));
+                var reader_code = OpCodes.Ldloc_0;
+                var success = false;
+                CodeInstruction prev = null;
+                foreach (CodeInstruction instruction in instructions) {
+
+                    yield return instruction;
+                    if (!done && after_virtual && (instruction.opcode == reader_code)) {
+                        Debug.Log("Custom Boss XML Reader Transpiler Success!");
+                        yield return new CodeInstruction(OpCodes.Ldarg_0);
+                        yield return new CodeInstruction(OpCodes.Call, to_call);
+                        yield return new CodeInstruction(reader_code);
+                        success = true;
+                        done = true;
+                    }
+                    if (!done && instruction.opcode == OpCodes.Callvirt && (MethodInfo)instruction.operand == AccessTools.PropertyGetter(typeof(XmlReader), "IsEmptyElement")) {
+                        after_virtual = true;
+                        reader_code = prev.opcode;
+                    }
+                    prev = instruction;
+                }
+
+                if (!success) {
+                    Debug.LogError("Custom Boss XML Reader Transpiler FAILURE!!! This is likely the result of an update. Please inform the makers of MoreLuaPower");
+                }
             }
 
         }
@@ -436,13 +397,7 @@ namespace CustomBosses
 
         static class CustomBoss_Read
         {
-            public static void Loop(XmlReader reader, BeingObject beingObj) {
-                while (reader.Read()) {
-                    if (!reader.IsEmptyElement) {
-                        Switch(reader, beingObj);
-                    }
-                }
-            }
+
             public static void Switch(XmlReader reader, BeingObject beingObj) {
                 switch (reader.Name) {
                     case "FaceRight":
@@ -524,6 +479,8 @@ namespace CustomBosses
                         }
                         break;
                 }
+
+
             }
         }
 
@@ -532,8 +489,7 @@ namespace CustomBosses
         static class CustomBoss_CreateBeing
         {
 
-            static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
-            {
+            static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
                 var code_start = -1;
 
                 MethodInfo addBeing = AccessTools.Method(type: typeof(CustomBoss), name: nameof(CustomBoss.AddBeing));
@@ -541,16 +497,13 @@ namespace CustomBosses
                 MethodInfo debugcall = AccessTools.Method(type: typeof(Debug), name: nameof(Debug.LogError), parameters: new Type[] { typeof(object) });
 
                 var codes = new List<CodeInstruction>(instructions);
-                for (int i = 0; i < codes.Count; i++)
-                {
-                    if (codes[i].opcode == OpCodes.Call && codes[i].OperandIs(debugcall))
-                    {
+                for (int i = 0; i < codes.Count; i++) {
+                    if (codes[i].opcode == OpCodes.Call && codes[i].OperandIs(debugcall)) {
                         code_start = i;
                         break;
                     }
                 }
-                if (code_start == -1)
-                {
+                if (code_start == -1) {
                     Debug.LogError("CreateBeingTranspiler Failed");
                     return codes.AsEnumerable();
                 }

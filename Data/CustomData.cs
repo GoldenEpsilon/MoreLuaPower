@@ -58,6 +58,9 @@ public static class LuaPowerData
         if (!customEnums.ContainsKey(typeof(Status))) {
             customEnums.Add(typeof(Status), new List<string>());
         }
+        if (!customEnums.ContainsKey(typeof(FTrigger))) {
+            customEnums.Add(typeof(FTrigger), new List<string>());
+        }
         if (!customEnums.ContainsKey(typeof(Brand))) {
             customEnums.Add(typeof(Brand), new List<string>());
         }

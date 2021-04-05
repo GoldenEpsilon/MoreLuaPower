@@ -42,8 +42,6 @@ class MoreLuaPower
 		LuaPowerData.customEnums[typeof(FTrigger)].Add("OnOwnedPetDeath");
 		LuaPowerData.customEnums[typeof(FTrigger)].Add("OnPetDeath");
 		LuaPowerData.customEnums[typeof(FTrigger)].Add("OnLoop");
-		LuaPowerData.customEnums[typeof(FTrigger)].Add("OnBossKill");
-		LuaPowerData.customEnums[typeof(FTrigger)].Add("OnBossSpare");
 	}
 	static public Player GetPlayer() {
 		return S.I.batCtrl.currentPlayer;
