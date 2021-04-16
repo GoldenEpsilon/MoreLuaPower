@@ -64,5 +64,6 @@ class MoreLuaPower_GlobalLuaTypes
         UserData.RegisterType<Cpu>(InteropAccessMode.Default, null);
         UserData.RegisterType<TMPro.TextMeshProUGUI>(InteropAccessMode.Default, null);
         UserData.RegisterType<FillBar>(InteropAccessMode.Default, null);
+        UserData.RegisterType<ReferenceCtrl>(InteropAccessMode.Default, null);
     }
 }

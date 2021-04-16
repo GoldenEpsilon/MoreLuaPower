@@ -13,7 +13,7 @@ using System.Xml;
 using UnityEngine;
 
 //EXPERIMENTAL CODE! BREAKS EASILY
-
+/*
 namespace CustomBosses
 {
     public class CustomBoss : Boss
@@ -521,3 +521,4 @@ namespace CustomBosses
         }
     }
 }
+*/
