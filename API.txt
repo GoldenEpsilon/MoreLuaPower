@@ -3,6 +3,7 @@
  *  Tons of stuff added by Sunreal and Shenanigans
  *  PetBuff for MoreLuaPower by stephanreiken
  *  OnSpellEnd for MoreLuaPower by DecoyDoge
+ *  Custom Bosses started by Shenanigans and picked up by DecoyDoge
  *  Workshop URL: https://steamcommunity.com/sharedfiles/filedetails/?id=2066319533
  *  GitHub Page: https://github.com/GoldenEpsilon/MoreLuaPower
  *
@@ -33,6 +34,7 @@ Table of Contents:
 	[ACCESSIBLE TYPES]
 	[ORGANIZATION]
 	[PETS]
+	[BOSSES]
 
 [MISC FEATURES]
 	Subfolder Loading
@@ -238,7 +240,12 @@ MoreLuaPower:
 
 	void MakeZoneGenocideLenient(string <zoneName>)
 		//Makes the zone not matter for the game's route (pacifist, neutral, genocide)
-		// Meant for custom bosses as sparing has not been fully figured out yet
+		// Meant for older custom bosses before sparing was figured out, or for zones that you don't want to affect the ending
+
+	int GetBossTier(Being {being})
+		// Returns the boss' current tier, or if the being isn't a boss, what the tier for a boss would currently be.
+		// Useful for scripting tier-based boss attack patterns in lua
+		// Ex: local tier = GetBossTier(item.being)
 
 	void Log(string <message>, LogLevel <logLevel>)
 		//Writes <message> to the debug log and/or the console, depending on <logLevel>.
@@ -627,3 +634,55 @@ Vanilla:
 
 	-Remove Frost, Fragile, and Poison from all Players' Pets-
 	<Params PetBuffTarget="AllPlayerPets" PetBuffStatus1="Fragile" PetBuffExtra1="Cleanse" PetBuffStatus2="Frost" PetBuffExtra1="Cleanse" PetBuffStatus3="Poison" PetBuffExtra1="Cleanse"></Params>
+
+[BOSSES]
+	CustomBosses (/ DogeBoss) created by Shenanigans
+	Edited, published, and currently supported by DecoyDoge
+
+	MPL makes it easy to turn what would have been a custom standard enemy into a legitimate boss by adding a few XML elements to your being in Enemies.xml
+	Primarily:
+
+	<Tags>Boss</Tags>
+
+	Simply add the Boss tag to your enemy, and the game will treat it as a boss for all intents and purposes.
+	However, this will give your boss placeholder text lines, and it will continue its standard attack cycle even when the player is downed.
+	You can use a few more elements to flesh out your boss. The following are examples of each new element and their attributes.
+
+	<Music introBoundary="5.3" endBoundary="234">BattleWithMyselfKokiRemix</Music>
+	- Plays the track with the given name when the boss battle starts. You don't need to include the file format in the name, just ensure the format is supported.
+	- The "introBoundary" and "endBoundary" are numbers of seconds between which, the track should loop. Useful for not replaying musical intro sequences.
+	- You can only have one of this element
+
+    <IntroLine>I'd hoped it wouldn't come to this...</IntroLine>
+	- Animates the line at the start of the boss battle
+	- Will play after your boss' "_spawn" animation, if they have one
+
+    <ExecutionLine>I'll take good care of your soul.</ExecutionLine>
+	- Animates the line before the boss executes the player (but after the pre-execution resolves, see below)
+
+    <MercyLine>My vengeance isn't meant for you.</MercyLine>
+	- Animates the line when the boss has mercy on the player
+
+    <DownedLine>You just... got lucky...</DownedLine>
+	- Animates the line while the boss is invincible after being defeated
+
+    <FlawlessLine>I guess I didn't stand a chance...</FlawlessLine>
+	- Same as the above, but only plays if the player didn't get hit for the whole fight
+
+    <KilledLine>Sis-</KilledLine>
+	- Quickly shows the line when the boss is executed from downed state
+
+    <SparedLine>Another chance... I accept.</SparedLine>
+	- Animates the line when the boss is spared
+
+	Note: for all "Line" elements, you can define multiple, and one will be chosen at random.
+
+    <ExecutionSpell tile="2" preExecution="BossEffestaSpinScythe">LifeSword</ExecutionSpell>
+	- Tells the boss what spell to use to execute the player. The spell should target the Player, or be guarenteed to hit from the chosen tile.
+	- The "tile" attribute is optional and tells the boss how far in front of the player to stand before the execution. If omitted it will default to 4.
+	- The "preExecution" attribute is optional an gives the boss a spell to cast before saying their execution line. Used for more intimidating execution animations.
+	- Note if the execution spell misses, the boss will resume their regular attack loop.
+
+    <DontCountKill/>
+	- Prevents the boss' execution from counting towards pacifist / genocide endings
+	- Useful if you want to make a spare-able mid-boss without affecting the run's outcome
