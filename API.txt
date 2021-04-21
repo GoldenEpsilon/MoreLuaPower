@@ -646,7 +646,11 @@ Vanilla:
 
 	Simply add the Boss tag to your enemy, and the game will treat it as a boss for all intents and purposes.
 	However, this will give your boss placeholder text lines, and it will continue its standard attack cycle even when the player is downed.
-	You can use a few more elements to flesh out your boss. The following are examples of each new element and their attributes.
+	Note that for the spare and mercy animations to display properly, your boss will need to have "_toIdle" and "_throw" animations defined in their _animInfo.xml.
+	If your boss also has a "_spawn" animation, it will be played at the start of the fight.
+	You can also use a few more XML elements to flesh out your boss. 
+	
+	The following are examples of each new element and their attributes.
 
 	<Music introBoundary="5.3" endBoundary="234">BattleWithMyselfKokiRemix</Music>
 	- Plays the track with the given name when the boss battle starts. You don't need to include the file format in the name, just ensure the format is supported.
@@ -686,3 +690,4 @@ Vanilla:
     <DontCountKill/>
 	- Prevents the boss' execution from counting towards pacifist / genocide endings
 	- Useful if you want to make a spare-able mid-boss without affecting the run's outcome
+	
