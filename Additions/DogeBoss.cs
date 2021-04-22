@@ -73,9 +73,10 @@ public class DogeBoss : Boss
         DogeBoss boss = this;
         //Debug.Log("DogeBoss: Executed");
         var doesnt_count = DogeBossData.kill_not_counted.Contains(beingObj.beingID);
-        boss.runCtrl.progressBar.SetBossFate();
         if (!doesnt_count) boss.ctrl.IncrementStat("TotalExecutions");
         if (!doesnt_count) boss.runCtrl.currentRun.RemoveAssist(beingObj);
+        SetCustomBossFate(false);
+        boss.runCtrl.progressBar.SetBossFate();
         if (boss.endGameOnExecute)
             boss.ctrl.AddObstacle((Being)this);
         boss.LastWord();
@@ -91,6 +92,28 @@ public class DogeBoss : Boss
         if (!doesnt_count) ++boss.runCtrl.currentRun.bossExecutions;
         boss.DeathEffects(false);
         S.I.StartCoroutine(boss._DeathFinalNoMEC());
+    }
+
+    protected override IEnumerator SpareC(ZoneDot nextZoneDot)
+    {
+        SetCustomBossFate(true);
+        return base.SpareC(nextZoneDot);
+    }
+
+    private void SetCustomBossFate(bool spared)
+    {
+        //var worldName = runCtrl.currentRun.visitedWorldNames[this.runCtrl.currentRun.visitedWorldNames.Count - 1];
+        //if (DogeBossData.worlds_spared.ContainsKey(worldName))
+        //{
+        //    DogeBossData.worlds_spared[worldName] = spared;
+        //}
+        //else
+        //{
+        //    DogeBossData.worlds_spared.Add(worldName, spared);
+        //}
+        //Debug.Log("DogeBoss: Set " + worldName + " to " + spared);
+        if (spared)
+            runCtrl.currentRun.assists.Add("Boss" + runCtrl.currentRun.visitedWorldNames[this.runCtrl.currentRun.visitedWorldNames.Count - 1], false);
     }
 
     public IEnumerator _DeathFinalNoMEC()
@@ -227,20 +250,51 @@ static class DogeBoss_Patches
         //}
     }
 
-    //[HarmonyPrefix]
-    //[HarmonyPatch(typeof(SpawnCtrl), nameof(SpawnCtrl.SpawnBoss))]
-    //static void SpawnBoss(ref SpawnCtrl __instance)
-    //{
-    //    Debug.Log("Spawning boss");
-    //    Debug.Log("Bosses to spawn: ");
-    //    __instance.bossesToSpawn.ForEach(b => Debug.Log(b));
-    //}
-
-    // From shenanigans
-
     [HarmonyPatch]
     static class DogeBoss_MiscPatches
     {
+        // Patches to get the world bar working properly when boss name doesn't match world name
+        //[HarmonyPostfix]
+        //[HarmonyPatch(typeof(ProgressBar), "SetWorldDotColor")]
+        //static void SetWorldDotColor(ref ProgressBar __instance, string worldDotName, bool passed)
+        //{
+        //    Debug.Log("DogeBoss: SetWorldDotColor");
+        //    if(!DogeBossData.worlds_spared.ContainsKey(worldDotName))
+        //    {
+        //        return;
+        //    }
+
+        //    Debug.Log("Setting world color");
+
+        //    bool spared = DogeBossData.worlds_spared[worldDotName];
+        //    if (spared)
+        //    {
+        //        __instance.worldDots[S.I.runCtrl.currentRun.visitedWorldNames.IndexOf(worldDotName)].transform.GetChild(0).gameObject.SetActive(false);
+        //        if(passed)
+        //        {
+        //            Debug.Log("Passed " + worldDotName);
+        //            __instance.worldDots[S.I.runCtrl.currentRun.visitedWorldNames.IndexOf(worldDotName)].color = new Color(1f, 1f, 1f, 0.8f);
+        //        } else
+        //        {
+        //            Debug.Log("Spared " + worldDotName);
+        //            __instance.worldDots[S.I.runCtrl.currentRun.visitedWorldNames.IndexOf(worldDotName)].color = Color.white;
+        //        }
+        //    }
+        //    else
+        //    {
+        //        Debug.Log("Executed " + worldDotName);
+        //        __instance.worldDots[S.I.runCtrl.currentRun.visitedWorldNames.IndexOf(worldDotName)].transform.GetChild(0).gameObject.SetActive(true);
+        //        __instance.worldDots[S.I.runCtrl.currentRun.visitedWorldNames.IndexOf(worldDotName)].color = S.I.runCtrl.progressBar.executedBossColor;
+        //    }
+        //}
+
+        // Resets spared worlds dictionary on loops
+        //[HarmonyPrefix]
+        //[HarmonyPatch(typeof(RunCtrl), nameof(RunCtrl.LoopRun))]
+        //static void LoopRun(ref RunCtrl __instance)
+        //{
+        //    DogeBossData.worlds_spared.Clear();
+        //}
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(Boss), nameof(Boss._StartDialogue))]
@@ -517,6 +571,8 @@ static class DogeBossData
 
     public static List<string> kill_not_counted = new List<string>();
 
+    //public static Dictionary<string, bool> worlds_spared = new Dictionary<string, bool>();
+
     static public void Setup()
     {
         boss_music.Clear();
@@ -527,6 +583,8 @@ static class DogeBossData
         perfect_lines.Clear();
         killed_lines.Clear();
         mercy_lines.Clear();
+        kill_not_counted.Clear();
+        //worlds_spared.Clear();
         //mercy.Clear();
     }
 
