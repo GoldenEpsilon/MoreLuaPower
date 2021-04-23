@@ -112,8 +112,14 @@ public class DogeBoss : Boss
         //    DogeBossData.worlds_spared.Add(worldName, spared);
         //}
         //Debug.Log("DogeBoss: Set " + worldName + " to " + spared);
-        if (spared)
-            runCtrl.currentRun.assists.Add("Boss" + runCtrl.currentRun.visitedWorldNames[this.runCtrl.currentRun.visitedWorldNames.Count - 1], false);
+        if (spared && runCtrl.currentZoneDot.type == ZoneType.Boss)
+        {
+            var worldNameKey = "Boss" + runCtrl.currentRun.visitedWorldNames[this.runCtrl.currentRun.visitedWorldNames.Count - 1];
+            if(!runCtrl.currentRun.HasAssist(worldNameKey))
+            {
+                runCtrl.currentRun.assists.Add(worldNameKey, false);
+            }
+        }
     }
 
     public IEnumerator _DeathFinalNoMEC()
