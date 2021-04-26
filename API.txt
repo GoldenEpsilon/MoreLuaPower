@@ -130,6 +130,7 @@ MoreLuaPower:
 		//Adds a brand called {name} to the game.
 		// MUST be called in either Init or from outside of any functions,
 		// because to work this must run the first frame that lua files are loaded.
+		// ALSO, if called from Init you cannot have any wait functions before calling this function.
 		// description is optional, but recommended.
 		// The recommendation for creating a brand is to use a variation of this in Init:
 
