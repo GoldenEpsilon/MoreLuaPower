@@ -3,6 +3,7 @@
  *  Tons of stuff added by Sunreal and Shenanigans
  *  PetBuff for MoreLuaPower by stephanreiken
  *  OnSpellEnd for MoreLuaPower by DecoyDoge
+ *  Custom Bosses started by Shenanigans and picked up by DecoyDoge
  *  Workshop URL: https://steamcommunity.com/sharedfiles/filedetails/?id=2066319533
  *  GitHub Page: https://github.com/GoldenEpsilon/MoreLuaPower
  *

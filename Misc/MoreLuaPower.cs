@@ -1,9 +1,9 @@
 ﻿/*
  *  More Lua Power, made by Golden Epsilon
- *  Audio loading, ProgramAdvance, Kickers, and Multicast added by Sunreal
+ *  Tons of stuff added by Sunreal and Shenanigans
  *  PetBuff for MoreLuaPower by stephanreiken
  *  OnSpellEnd for MoreLuaPower by DecoyDoge
- *  Subfolder loading by Shenanigans
+ *  Custom Bosses started by Shenanigans and picked up by DecoyDoge
  *  Workshop URL: https://steamcommunity.com/sharedfiles/filedetails/?id=2066319533
  *  GitHub Page: https://github.com/GoldenEpsilon/MoreLuaPower
  *
@@ -21,7 +21,7 @@ using UnityEngine;
 class MoreLuaPower
 {
 	static void Prepare() {
-		Debug.Log("MoreLuaPower Version 2.3.4a");
+		Debug.Log("MoreLuaPower Version 2.3.4");
 		LuaPowerData.Setup();
 		LuaPowerCustomEnumsSetup.Setup();
 		//CustomZoneUtil.Setup();
