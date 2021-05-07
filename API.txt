@@ -268,6 +268,10 @@ MoreLuaPower:
 		//Adds a tooltip for the given Effect for hovering over spells/artifacts.
 		// <name> should be the name to be used in the popup, <tooltip> is the description.
 
+	void OverrideAnimator(Being {being}, string {animName})
+		//Overrides the being's animator with the one for {animName}
+		//Allows base-game animators to be swapped for modded ones and vice versa
+
 
 Lua-based:
 

@@ -22,6 +22,7 @@ class MoreLuaPower_GlobalLuaTypes
         UserData.RegisterType<HeroSelectCtrl>(InteropAccessMode.Default, null);
         UserData.RegisterType<AnimatorOverrideController>(InteropAccessMode.Default, null);
         UserData.RegisterType<Sprite>(InteropAccessMode.Default, null);
+        UserData.RegisterType<SpriteRenderer>(InteropAccessMode.Default, null);
         UserData.RegisterType<Texture2D>(InteropAccessMode.Default, null);
         UserData.RegisterType<AnimationOverrider>(InteropAccessMode.Default, null);
         UserData.RegisterType<GameObject>(InteropAccessMode.Default, null);

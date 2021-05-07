@@ -100,18 +100,10 @@ public class DogeBoss : Boss
         return base.SpareC(nextZoneDot);
     }
 
+    // The killed / spared icon on the map is dependent on whether or not you have "Boss[WorldName]" as a key in the current run Assists list
+    // This spoofs that key on spare so the world bar is updated correctly. Fortunately it doesn't cause any problems with spawning assists.
     private void SetCustomBossFate(bool spared)
     {
-        //var worldName = runCtrl.currentRun.visitedWorldNames[this.runCtrl.currentRun.visitedWorldNames.Count - 1];
-        //if (DogeBossData.worlds_spared.ContainsKey(worldName))
-        //{
-        //    DogeBossData.worlds_spared[worldName] = spared;
-        //}
-        //else
-        //{
-        //    DogeBossData.worlds_spared.Add(worldName, spared);
-        //}
-        //Debug.Log("DogeBoss: Set " + worldName + " to " + spared);
         if (spared && runCtrl.currentZoneDot.type == ZoneType.Boss)
         {
             var worldNameKey = "Boss" + runCtrl.currentRun.visitedWorldNames[this.runCtrl.currentRun.visitedWorldNames.Count - 1];
@@ -122,6 +114,8 @@ public class DogeBoss : Boss
         }
     }
 
+    //_DeathFinal without MEC Wait coroutines, which for whatever reason (possibly they use some kind of internal timer MPL cant access)
+    // complete instantly, instead of the Unity Waits that actually pause for the given amount of time
     public IEnumerator _DeathFinalNoMEC()
     {
         //Debug.Log("DogeBoss : _DeathFinal");
@@ -157,6 +151,11 @@ public class DogeBoss : Boss
     }
 
 
+    //Override of ExecutePlayerC allowing for custom executions
+    //Moves the boss a configurable number of tiles in front of the player
+    //Casts a pre-execution spell if the boss has one, allowing for visual effects, anim changes, etc.
+    //Casts spell listed in the XML as its execution
+    //If the execution fails, the boss will continue its normal loop, hopefully killing the player
     public override IEnumerator ExecutePlayerC()
     {
         var executionExists = DogeBossData.execution_spells.ContainsKey(bossID);
@@ -208,13 +207,14 @@ static class DogeBoss_Patches
 {
     private static Dictionary<string, GameObject> customBosses = new Dictionary<string, GameObject>();
 
+    //Reads the "Boss" tag affixed to beings as the indicator to add them to the boss list
     [HarmonyPostfix]
     [HarmonyPatch(typeof(BeingObject), nameof(BeingObject.ReadXmlPrototype))]
     static void ReadXmlPrototype(ref BeingObject __instance)
     {
         if(__instance.tags.Contains(Tag.Boss) && !customBosses.ContainsKey(__instance.beingID))
         {
-            Debug.Log("Found boss tag, adding custom boss to allBosses"); 
+            //Debug.Log("Found boss tag, adding custom boss to allBosses"); 
             GameObject customBoss = new GameObject();
             customBoss.AddComponent<DogeBoss>();
             Boss bossComponent = customBoss.GetComponent<Boss>();
@@ -222,16 +222,17 @@ static class DogeBoss_Patches
             bossComponent.enabled = false;
             customBosses.Add(__instance.beingID, customBoss);
             Debug.Log("Added " + bossComponent.bossID + " to customBosses");
-            foreach (var bossObj in customBosses.Values.ToList())
-            {
-                foreach (var component in bossObj.GetComponents(typeof(Component)))
-                {
-                    Debug.Log(component.GetType());
-                }
-            }
+            //foreach (var bossObj in customBosses.Values.ToList())
+            //{
+            //    foreach (var component in bossObj.GetComponents(typeof(Component)))
+            //    {
+            //        Debug.Log(component.GetType());
+            //    }
+            //}
         }
     }
 
+    //Adds custom bosses to bossDictionary to have the game recognize them as bosses for things like Player.DownC()
     [HarmonyPrefix]
     [HarmonyPatch(typeof(RunCtrl), nameof(RunCtrl.StartCampaign))]
     static void StartCampaign(ref RunCtrl __instance, ref SpawnCtrl ___spCtrl)
@@ -244,64 +245,11 @@ static class DogeBoss_Patches
                 ___spCtrl.bossDictionary.Add(customBoss.GetComponent<Boss>().bossID, customBoss);
             }
         }
-
-        //Debug.Log("Boss dictionary contents:");
-        //foreach (var bossKVP in ___spCtrl.bossDictionary)
-        //{
-        //    Debug.Log(bossKVP.Key);
-        //    foreach (var component in bossKVP.Value.GetComponents(typeof(Component)))
-        //    {
-        //        Debug.Log(component.GetType());
-        //    }
-        //}
     }
 
     [HarmonyPatch]
     static class DogeBoss_MiscPatches
     {
-        // Patches to get the world bar working properly when boss name doesn't match world name
-        //[HarmonyPostfix]
-        //[HarmonyPatch(typeof(ProgressBar), "SetWorldDotColor")]
-        //static void SetWorldDotColor(ref ProgressBar __instance, string worldDotName, bool passed)
-        //{
-        //    Debug.Log("DogeBoss: SetWorldDotColor");
-        //    if(!DogeBossData.worlds_spared.ContainsKey(worldDotName))
-        //    {
-        //        return;
-        //    }
-
-        //    Debug.Log("Setting world color");
-
-        //    bool spared = DogeBossData.worlds_spared[worldDotName];
-        //    if (spared)
-        //    {
-        //        __instance.worldDots[S.I.runCtrl.currentRun.visitedWorldNames.IndexOf(worldDotName)].transform.GetChild(0).gameObject.SetActive(false);
-        //        if(passed)
-        //        {
-        //            Debug.Log("Passed " + worldDotName);
-        //            __instance.worldDots[S.I.runCtrl.currentRun.visitedWorldNames.IndexOf(worldDotName)].color = new Color(1f, 1f, 1f, 0.8f);
-        //        } else
-        //        {
-        //            Debug.Log("Spared " + worldDotName);
-        //            __instance.worldDots[S.I.runCtrl.currentRun.visitedWorldNames.IndexOf(worldDotName)].color = Color.white;
-        //        }
-        //    }
-        //    else
-        //    {
-        //        Debug.Log("Executed " + worldDotName);
-        //        __instance.worldDots[S.I.runCtrl.currentRun.visitedWorldNames.IndexOf(worldDotName)].transform.GetChild(0).gameObject.SetActive(true);
-        //        __instance.worldDots[S.I.runCtrl.currentRun.visitedWorldNames.IndexOf(worldDotName)].color = S.I.runCtrl.progressBar.executedBossColor;
-        //    }
-        //}
-
-        // Resets spared worlds dictionary on loops
-        //[HarmonyPrefix]
-        //[HarmonyPatch(typeof(RunCtrl), nameof(RunCtrl.LoopRun))]
-        //static void LoopRun(ref RunCtrl __instance)
-        //{
-        //    DogeBossData.worlds_spared.Clear();
-        //}
-
         [HarmonyPrefix]
         [HarmonyPatch(typeof(Boss), nameof(Boss._StartDialogue))]
         static bool _StartDialogue(Boss __instance, string key, ref IEnumerator __result)
