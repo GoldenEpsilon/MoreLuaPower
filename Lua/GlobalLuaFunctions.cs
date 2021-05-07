@@ -54,6 +54,7 @@ class MoreLuaPower_GlobalLuaFunctions
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["AddEffectTooltip"] = (Action<Effect, string, string>)LuaPowerCustomTooltips.AddEffectTooltip;
         //Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["GetXMLAttribute"] = (Func<EffectApp, string, string>)LuaPowerXMLAttributes.GetXMLAttribute;
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["GetBossTier"] = (Func<Being, int>)DogeBossData.GetBossTier;
+        Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["OverrideAnimator"] = (Action<Being, string>)UtilityFunctions.OverrideAnimator;
     }
 }
 
