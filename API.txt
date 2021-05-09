@@ -649,7 +649,8 @@ Vanilla:
 
 	<Tags>Boss</Tags>
 
-	Simply add the Boss tag to your enemy, and the game will treat it as a boss for all intents and purposes.
+	Note however, your boss' beingID should also start with "Boss", as the base game expects this in some places.
+	Simply add the Boss tag to your enemy, and the game will treat it as a boss for all intents and purposes. 
 	However, this will give your boss placeholder text lines, and it will continue its standard attack cycle even when the player is downed.
 	Note that for the spare and mercy animations to display properly, your boss will need to have "_toIdle" and "_throw" animations defined in their _animInfo.xml.
 	If your boss also has a "_spawn" animation, it will be played at the start of the fight.
@@ -684,7 +685,11 @@ Vanilla:
     <SparedLine>Another chance... I accept.</SparedLine>
 	- Animates the line when the boss is spared
 
-	Note: for all "Line" elements, you can define multiple, and one will be chosen at random.
+	Note: for all "Line" elements, you can define multiple, and one will be chosen at random. Furthermore, you can also specify a name to restrict the line to for character-specific lines using the "character" parameter:
+	
+	<IntroLine character="Saffron">Are you sure you're a real scientist?</IntroLine>
+
+	If the player character's <Name> in Heroes.xml matches the text in the "character" parameter, lines for that character will be prioritized.
 
     <ExecutionSpell tile="2" preExecution="BossEffestaSpinScythe">LifeSword</ExecutionSpell>
 	- Tells the boss what spell to use to execute the player. The spell should target the Player, or be guarenteed to hit from the chosen tile.
@@ -696,3 +701,11 @@ Vanilla:
 	- Prevents the boss' execution from counting towards pacifist / genocide endings
 	- Useful if you want to make a spare-able mid-boss without affecting the run's outcome
 	
+[ASSISTS]
+	Because Assists are linked to bosses in OSFE, you can also create custom assists for your custom bosses!
+	All you need to do is create a being in Structures.xml that has a beingID of "[Your boss' name]Assist".
+	So, for example, "BossEffesta", when spared, would look for a structure named "EffestaAssist" at the start of each fight to call as an assist.
+	You can take the existing assists in Structures.xml as examples and modify them to suit your needs.
+
+	You can also create assists that appear in the final cutscene of a Pacifist run. These assists follow the same format but also include an "F" at the end,
+	such as "EffestaAssistF". Again, you can look at existing "AssistF" structures as reference.
