@@ -63,7 +63,7 @@ public class DogeBoss : Boss
             //Debug.Log("DogeBoss: Playing last word");
             talkBubble.Show(true);
             S.I.PlayOnce(talkBubble.vocSynth);
-            talkBubble.SetText(DogeBossData.killed_lines[beingObj.beingID][UnityEngine.Random.Range(0, DogeBossData.killed_lines[beingObj.beingID].Count())]);
+            talkBubble.SetText(DogeBossData.GetRandomBossLine(DogeBossData.killed_lines, beingObj.beingID, S.I.batCtrl.currentHeroObj.nameString));
         }
         DownEffects();
     }
@@ -264,37 +264,37 @@ static class DogeBoss_Patches
                     case "Intro":
                         if (DogeBossData.intro_lines.ContainsKey(__instance.beingObj.beingID))
                         {
-                            __result = ((DogeBoss)__instance)._DialogueC(DogeBossData.intro_lines[__instance.beingObj.beingID][UnityEngine.Random.Range(0, DogeBossData.intro_lines[__instance.beingObj.beingID].Count())]);
+                            __result = ((DogeBoss)__instance)._DialogueC(DogeBossData.GetRandomBossLine(DogeBossData.intro_lines, __instance.beingObj.beingID, S.I.batCtrl.currentHeroObj.nameString));
                         }
                         break;
                     case "Execution":
                         if (DogeBossData.execution_lines.ContainsKey(__instance.beingObj.beingID))
                         {
-                            __result = ((DogeBoss)__instance)._DialogueC(DogeBossData.execution_lines[__instance.beingObj.beingID][UnityEngine.Random.Range(0, DogeBossData.execution_lines[__instance.beingObj.beingID].Count())]);
+                            __result = ((DogeBoss)__instance)._DialogueC(DogeBossData.GetRandomBossLine(DogeBossData.execution_lines, __instance.beingObj.beingID, S.I.batCtrl.currentHeroObj.nameString));
                         }
                         break;
                     case "Spare":
                         if (DogeBossData.spare_lines.ContainsKey(__instance.beingObj.beingID))
                         {
-                            __result = ((DogeBoss)__instance)._DialogueC(DogeBossData.spare_lines[__instance.beingObj.beingID][UnityEngine.Random.Range(0, DogeBossData.spare_lines[__instance.beingObj.beingID].Count())]);
+                            __result = ((DogeBoss)__instance)._DialogueC(DogeBossData.GetRandomBossLine(DogeBossData.spare_lines, __instance.beingObj.beingID, S.I.batCtrl.currentHeroObj.nameString));
                         }
                         break;
                     case "Downed":
                         if (DogeBossData.defeated_lines.ContainsKey(__instance.beingObj.beingID))
                         {
-                            __result = ((DogeBoss)__instance)._DialogueC(DogeBossData.defeated_lines[__instance.beingObj.beingID][UnityEngine.Random.Range(0, DogeBossData.defeated_lines[__instance.beingObj.beingID].Count())]);
+                            __result = ((DogeBoss)__instance)._DialogueC(DogeBossData.GetRandomBossLine(DogeBossData.defeated_lines, __instance.beingObj.beingID, S.I.batCtrl.currentHeroObj.nameString));
                         }
                         break;
                     case "Flawless":
                         if (DogeBossData.perfect_lines.ContainsKey(__instance.beingObj.beingID))
                         {
-                            __result = ((DogeBoss)__instance)._DialogueC(DogeBossData.perfect_lines[__instance.beingObj.beingID][UnityEngine.Random.Range(0, DogeBossData.perfect_lines[__instance.beingObj.beingID].Count())]);
+                            __result = ((DogeBoss)__instance)._DialogueC(DogeBossData.GetRandomBossLine(DogeBossData.perfect_lines, __instance.beingObj.beingID, S.I.batCtrl.currentHeroObj.nameString));
                         }
                         break;
                     case "Mercy":
                         if (DogeBossData.mercy_lines.ContainsKey(__instance.beingObj.beingID))
                         {
-                            __result = ((DogeBoss)__instance)._DialogueC(DogeBossData.mercy_lines[__instance.beingObj.beingID][UnityEngine.Random.Range(0, DogeBossData.mercy_lines[__instance.beingObj.beingID].Count())]);
+                            __result = ((DogeBoss)__instance)._DialogueC(DogeBossData.GetRandomBossLine(DogeBossData.mercy_lines, __instance.beingObj.beingID, S.I.batCtrl.currentHeroObj.nameString));
                         }
                         break;
                     default:
@@ -374,53 +374,25 @@ static class DogeBoss_Patches
                         }
                         break;
                     case "IntroLine":
-                        if (!DogeBossData.intro_lines.ContainsKey(beingObj.beingID))
-                        {
-                            DogeBossData.intro_lines.Add(beingObj.beingID, new List<string>());
-                        }
-                        DogeBossData.intro_lines[beingObj.beingID].Add(reader.ReadElementContentAsString());
+                        AddBossLine(ref DogeBossData.intro_lines, beingObj.beingID, reader);
                         break;
                     case "ExecutionLine":
-                        if (!DogeBossData.execution_lines.ContainsKey(beingObj.beingID))
-                        {
-                            DogeBossData.execution_lines.Add(beingObj.beingID, new List<string>());
-                        }
-                        DogeBossData.execution_lines[beingObj.beingID].Add(reader.ReadElementContentAsString());
+                        AddBossLine(ref DogeBossData.execution_lines, beingObj.beingID, reader);
                         break;
                     case "SparedLine":
-                        if (!DogeBossData.spare_lines.ContainsKey(beingObj.beingID))
-                        {
-                            DogeBossData.spare_lines.Add(beingObj.beingID, new List<string>());
-                        }
-                        DogeBossData.spare_lines[beingObj.beingID].Add(reader.ReadElementContentAsString());
+                        AddBossLine(ref DogeBossData.spare_lines, beingObj.beingID, reader);
                         break;
                     case "DownedLine":
-                        if (!DogeBossData.defeated_lines.ContainsKey(beingObj.beingID))
-                        {
-                            DogeBossData.defeated_lines.Add(beingObj.beingID, new List<string>());
-                        }
-                        DogeBossData.defeated_lines[beingObj.beingID].Add(reader.ReadElementContentAsString());
+                        AddBossLine(ref DogeBossData.defeated_lines, beingObj.beingID, reader);
                         break;
                     case "FlawlessLine":
-                        if (!DogeBossData.perfect_lines.ContainsKey(beingObj.beingID))
-                        {
-                            DogeBossData.perfect_lines.Add(beingObj.beingID, new List<string>());
-                        }
-                        DogeBossData.perfect_lines[beingObj.beingID].Add(reader.ReadElementContentAsString());
+                        AddBossLine(ref DogeBossData.perfect_lines, beingObj.beingID, reader);
                         break;
                     case "KilledLine":
-                        if (!DogeBossData.killed_lines.ContainsKey(beingObj.beingID))
-                        {
-                            DogeBossData.killed_lines.Add(beingObj.beingID, new List<string>());
-                        }
-                        DogeBossData.killed_lines[beingObj.beingID].Add(reader.ReadElementContentAsString());
+                        AddBossLine(ref DogeBossData.killed_lines, beingObj.beingID, reader);
                         break;
                     case "MercyLine":
-                        if (!DogeBossData.mercy_lines.ContainsKey(beingObj.beingID))
-                        {
-                            DogeBossData.mercy_lines.Add(beingObj.beingID, new List<string>());
-                        }
-                        DogeBossData.mercy_lines[beingObj.beingID].Add(reader.ReadElementContentAsString());
+                        AddBossLine(ref DogeBossData.mercy_lines, beingObj.beingID, reader);
                         break;
                     case "ExecutionSpell":
                         if (!DogeBossData.execution_spells.ContainsKey(beingObj.beingID))
@@ -440,6 +412,27 @@ static class DogeBoss_Patches
                         }
                         break;
                 }
+            }
+
+            public static void AddBossLine(ref Dictionary<string, Dictionary<string, List<string>>> lines, string beingID, XmlReader reader)
+            {
+                if (!lines.ContainsKey(beingID))
+                {
+                    lines.Add(beingID, new Dictionary<string, List<string>>());
+                }
+
+                var bossLines = lines[beingID];
+                var characterAttrb = reader.GetAttribute("character");
+                if (characterAttrb == null)
+                {
+                    characterAttrb = "";
+                }
+                if (!bossLines.ContainsKey(characterAttrb))
+                {
+                    bossLines.Add(characterAttrb, new List<string>());
+                }
+
+                bossLines[characterAttrb].Add(reader.ReadElementContentAsString());
             }
         }
     }
@@ -505,19 +498,19 @@ static class DogeBossData
 {
     public static Dictionary<string, CustomBossMusic> boss_music = new Dictionary<string, CustomBossMusic>();
 
-    public static Dictionary<string, List<string>> intro_lines = new Dictionary<string, List<string>>();
+    public static Dictionary<string, Dictionary<string,List<string>>> intro_lines = new Dictionary<string, Dictionary<string, List<string>>>();
 
-    public static Dictionary<string, List<string>> execution_lines = new Dictionary<string, List<string>>();
+    public static Dictionary<string, Dictionary<string, List<string>>> execution_lines = new Dictionary<string, Dictionary<string, List<string>>>();
 
-    public static Dictionary<string, List<string>> spare_lines = new Dictionary<string, List<string>>();
+    public static Dictionary<string, Dictionary<string, List<string>>> spare_lines = new Dictionary<string, Dictionary<string, List<string>>>();
 
-    public static Dictionary<string, List<string>> defeated_lines = new Dictionary<string, List<string>>();
+    public static Dictionary<string, Dictionary<string, List<string>>> defeated_lines = new Dictionary<string, Dictionary<string, List<string>>>();
 
-    public static Dictionary<string, List<string>> perfect_lines = new Dictionary<string, List<string>>();
+    public static Dictionary<string, Dictionary<string, List<string>>> perfect_lines = new Dictionary<string, Dictionary<string, List<string>>>();
 
-    public static Dictionary<string, List<string>> killed_lines = new Dictionary<string, List<string>>();
+    public static Dictionary<string, Dictionary<string, List<string>>> killed_lines = new Dictionary<string, Dictionary<string, List<string>>>();
 
-    public static Dictionary<string, List<string>> mercy_lines = new Dictionary<string, List<string>>();
+    public static Dictionary<string, Dictionary<string, List<string>>> mercy_lines = new Dictionary<string, Dictionary<string, List<string>>>();
 
     public static Dictionary<string, List<CustomExecution>> execution_spells = new Dictionary<string, List<CustomExecution>>();
 
@@ -558,5 +551,28 @@ static class DogeBossData
 
         tier = Mathf.Clamp(tier, 0, 6);
         return tier;
+    }
+
+    public static string GetRandomBossLine(Dictionary<string, Dictionary<string, List<string>>> lines, string beingID, string characterID)
+    {
+        if (!lines.ContainsKey(beingID))
+        {
+            Debug.Log("Missing line for custom boss " + beingID);
+            return "";
+        }
+
+        var bossLines = lines[beingID];
+        if (!bossLines.ContainsKey(characterID))
+        {
+            if(!bossLines.ContainsKey(""))
+            {
+                Debug.Log("Missing line for custom boss " + beingID);
+                return "";
+            }
+
+            return bossLines[""][UnityEngine.Random.Range(0, bossLines[""].Count())];
+        }
+
+        return bossLines[characterID][UnityEngine.Random.Range(0, bossLines[characterID].Count())];
     }
 }
