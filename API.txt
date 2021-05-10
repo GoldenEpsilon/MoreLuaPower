@@ -260,12 +260,14 @@ MoreLuaPower:
 		//Sets what logs get written to the console (<logLevel> or higher)
 		// Great for debugging errors that aren't obviously failing
 		
-	void AddTriggerTooltip(FTrigger <trigger>, string <name>, string <tooltip>)
+	void AddTriggerTooltip(string <trigger>, string <name>, string <tooltip>)
 		//Adds a tooltip for the given FTrigger for hovering over spells/artifacts.
+		// <trigger> is the name of the FTrigger internally, 
 		// <name> should be the name to be used in the popup, <tooltip> is the description.
 		
-	void AddEffectTooltip(Effect <effect>, string <name>, string <tooltip>)
+	void AddEffectTooltip(string <effect>, string <name>, string <tooltip>)
 		//Adds a tooltip for the given Effect for hovering over spells/artifacts.
+		// <effect> is the name of the Effect internally, 
 		// <name> should be the name to be used in the popup, <tooltip> is the description.
 
 	void OverrideAnimator(Being {being}, string {animName})
@@ -282,6 +284,7 @@ Lua-based:
 	PetBuffArtifactPetIDFunction(item, petid, status, amount, duration, extra) 	
 		// Targeting by PetID runs this function instead
 		// Look at the [PETS] section for more info
+
 
 [CALLED LUA FUNCTIONS]
 //note: these do not come with an object as an input, you will want to use S.I.whatever to access objects.
@@ -300,17 +303,32 @@ Lua-based:
 	GameUpdate:
 	//Is called every physics update, does not run on certain menus intentionally like the main menu and the game over menu. Meant for updating during gameplay.
 
+[NEW FTRIGGERS]
+//NOTE: THESE ARE COMPLETELY UNTESTED, DO NOT BE SURPRISED IF THEY DO NOT WORK
+	OnSave				//untested
+	OnLoad				//untested
+	OnChooseArtifact	//untested
+	OnRemoveArtifact	//untested
+	OnChoosePact		//untested
+	OnRemovePact		//untested
+	OnUpgrade			//untested
+	OnRemove			//untested, gets called on the removed item
+	PreMove				//unimplemented
+	PreHit				//unimplemented
+	OnOwnedPetDeath		//unimplemented
+	OnPetDeath			//unimplemented
+	OnLoop				//unimplemented
+
+
 [GLOBAL LUA VARIABLES]
 
 MoreLuaPower:
-    Check:				Check
-    Shape:				Shape
-    Location:			Location
-    ArcType:			ArcType
     Time:				Time			//I HAVEN'T CHECKED IF THIS WORKS YET
     TimeScale:			Time.timeScale
     DeltaTime:			Time.deltaTime
+	S:					S				//NOTE: access correctly with S.I
 	PATH:				the path to your mod's directory
+	And a bunch of other enums that I'm not gonna list for now because there are too many to keep track of XD
 
 Vanilla:
 	State:				State
@@ -372,6 +390,11 @@ Vanilla:
         { emissionRate = "10" },
         { burstCount = "1" },				//Integers only
         { shape = "Sphere" },				//Sphere, Hemisphere, Cone, Donut, Box, Circle, Edge, Rectangle //TODO
+
+	|Function|
+		//A string that is the name of the function you want to call. THIS SHOULD BE UNIQUE.
+		//If another mod has a function with the same name, it may cause problems, 
+		//so I recommend making a prefix (for example, for More Powerful Lua it'd be "MPLFoo")
 
 
 [CUSTOM FILE TYPES]

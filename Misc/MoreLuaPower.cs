@@ -21,7 +21,7 @@ using UnityEngine;
 class MoreLuaPower
 {
 	static void Prepare() {
-		Debug.Log("MoreLuaPower Version 2.3.5a");
+		Debug.Log("MoreLuaPower Version 2.3.5");
 		LuaPowerData.Setup();
 		LuaPowerCustomEnumsSetup.Setup();
 		//CustomZoneUtil.Setup();
@@ -29,20 +29,20 @@ class MoreLuaPower
 		if (S.I.GetComponent<PowerMonoBehavior>() == null) {
 			S.I.gameObject.AddComponent<PowerMonoBehavior>();
 		}
-		LuaPowerData.customEnums[typeof(Effect)].Add("Lua");
-		LuaPowerData.customEnums[typeof(FTrigger)].Add("OnSave");
-		LuaPowerData.customEnums[typeof(FTrigger)].Add("OnLoad");
-		LuaPowerData.customEnums[typeof(FTrigger)].Add("OnChooseArtifact");
-		LuaPowerData.customEnums[typeof(FTrigger)].Add("OnRemoveArtifact");
-		LuaPowerData.customEnums[typeof(FTrigger)].Add("OnChoosePact");
-		LuaPowerData.customEnums[typeof(FTrigger)].Add("OnRemovePact");
-		LuaPowerData.customEnums[typeof(FTrigger)].Add("OnUpgrade");
-		LuaPowerData.customEnums[typeof(FTrigger)].Add("OnRemove");
-		LuaPowerData.customEnums[typeof(FTrigger)].Add("PreMove");
-		LuaPowerData.customEnums[typeof(FTrigger)].Add("PreHit");
-		LuaPowerData.customEnums[typeof(FTrigger)].Add("OnOwnedPetDeath");
-		LuaPowerData.customEnums[typeof(FTrigger)].Add("OnPetDeath");
-		LuaPowerData.customEnums[typeof(FTrigger)].Add("OnLoop");
+		if (!LuaPowerData.customEnums[typeof(Effect)].Contains("Lua")) { LuaPowerData.customEnums[typeof(Effect)].Add("Lua"); }
+		if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("OnSave")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("OnSave"); }
+		if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("OnLoad")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("OnLoad"); }
+		if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("OnChooseArtifact")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("OnChooseArtifact"); }
+		if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("OnRemoveArtifact")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("OnRemoveArtifact"); }
+		if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("OnChoosePact")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("OnChoosePact"); }
+		if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("OnRemovePact")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("OnRemovePact"); }
+		if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("OnUpgrade")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("OnUpgrade"); }
+		if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("OnRemove")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("OnRemove"); }
+		if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("PreMove")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("PreMove"); }
+		if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("PreHit")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("PreHit"); }
+		if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("OnOwnedPetDeath")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("OnOwnedPetDeath"); }
+		if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("OnPetDeath")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("OnPetDeath"); }
+		if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("OnLoop")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("OnLoop"); }
 	}
 	static public Player GetPlayer() {
 		return S.I.batCtrl.currentPlayer;
@@ -84,19 +84,19 @@ class MoreLuaPowerReset
 			S.I.gameObject.AddComponent<PowerMonoBehavior>();
 		}
 		if (!LuaPowerData.customEnums[typeof(Effect)].Contains("Lua")) { LuaPowerData.customEnums[typeof(Effect)].Add("Lua"); }
-		LuaPowerData.customEnums[typeof(FTrigger)].Add("OnSave");
-		LuaPowerData.customEnums[typeof(FTrigger)].Add("OnLoad");
-		LuaPowerData.customEnums[typeof(FTrigger)].Add("OnChooseArtifact");
-		LuaPowerData.customEnums[typeof(FTrigger)].Add("OnRemoveArtifact");
-		LuaPowerData.customEnums[typeof(FTrigger)].Add("OnChoosePact");
-		LuaPowerData.customEnums[typeof(FTrigger)].Add("OnRemovePact");
-		LuaPowerData.customEnums[typeof(FTrigger)].Add("OnUpgrade");
-		LuaPowerData.customEnums[typeof(FTrigger)].Add("OnRemove");
-		LuaPowerData.customEnums[typeof(FTrigger)].Add("PreMove");
-		LuaPowerData.customEnums[typeof(FTrigger)].Add("PreHit");
-		LuaPowerData.customEnums[typeof(FTrigger)].Add("OnOwnedPetDeath");
-		LuaPowerData.customEnums[typeof(FTrigger)].Add("OnPetDeath");
-		LuaPowerData.customEnums[typeof(FTrigger)].Add("OnLoop");
+		if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("OnSave")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("OnSave"); }
+		if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("OnLoad")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("OnLoad"); }
+		if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("OnChooseArtifact")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("OnChooseArtifact"); }
+		if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("OnRemoveArtifact")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("OnRemoveArtifact"); }
+		if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("OnChoosePact")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("OnChoosePact"); }
+		if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("OnRemovePact")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("OnRemovePact"); }
+		if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("OnUpgrade")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("OnUpgrade"); }
+		if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("OnRemove")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("OnRemove"); }
+		if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("PreMove")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("PreMove"); }
+		if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("PreHit")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("PreHit"); }
+		if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("OnOwnedPetDeath")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("OnOwnedPetDeath"); }
+		if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("OnPetDeath")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("OnPetDeath"); }
+		if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("OnLoop")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("OnLoop"); }
 	}
 }
 /*
