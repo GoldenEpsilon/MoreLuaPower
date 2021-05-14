@@ -27,7 +27,7 @@ public static class LuaPowerData
     static public List<LuaPowerTrigger> luaHooks = new List<LuaPowerTrigger>();
     static public Dictionary<string, Tuple<string, string, string>> customUpgrades = new Dictionary<string, Tuple<string, string, string>>();
     static public Dictionary<Type, int> baseGameEnumAmount = new Dictionary<Type, int>();
-    static public Dictionary<ItemObject, string> dropChecks = new Dictionary<ItemObject, string>();
+    static public Dictionary<string, string> dropChecks = new Dictionary<string, string>();
     static public List<string> luaFunctionLoaded = new List<string>();
     static public Dictionary<string, string> DPS = new Dictionary<string, string>() //Default Particle System
     {

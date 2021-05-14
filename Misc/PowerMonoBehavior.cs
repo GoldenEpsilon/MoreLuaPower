@@ -119,6 +119,13 @@ public class PowerMonoBehavior : MonoBehaviour
         LuaPowerData.customMusic[AudioName] = myAudio;
     }
 
+    public static bool AudioExists(string AudioName) {
+        if (LuaPowerData.customMusic.ContainsKey(AudioName) && LuaPowerData.customMusic[AudioName] != null) {
+            return true;
+        }
+        return false;
+    }
+
     public static void AddMusicHook(string AudioName, string zoneBgName, string type) {
         if (LuaPowerData.customMusic.ContainsKey(AudioName)) {
             if (type == "Battle") {

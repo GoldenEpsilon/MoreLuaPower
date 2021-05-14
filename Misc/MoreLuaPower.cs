@@ -21,7 +21,7 @@ using UnityEngine;
 class MoreLuaPower
 {
 	static void Prepare() {
-		Debug.Log("MoreLuaPower Version 2.3.5");
+		Debug.Log("MoreLuaPower Version 2.3.6");
 		LuaPowerData.Setup();
 		LuaPowerCustomEnumsSetup.Setup();
 		//CustomZoneUtil.Setup();

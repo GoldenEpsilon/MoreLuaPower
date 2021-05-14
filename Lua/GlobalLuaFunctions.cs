@@ -55,6 +55,7 @@ class MoreLuaPower_GlobalLuaFunctions
         //Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["GetXMLAttribute"] = (Func<EffectApp, string, string>)LuaPowerXMLAttributes.GetXMLAttribute;
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["GetBossTier"] = (Func<Being, int>)DogeBossData.GetBossTier;
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["OverrideAnimator"] = (Action<Being, string>)UtilityFunctions.OverrideAnimator;
+        Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["AudioExists"] = (Func<string, bool>)PowerMonoBehavior.AudioExists;
     }
 }
 
@@ -66,8 +67,6 @@ class MoreLuaPower_LuaFunctions
     static List<string> loadedScripts = new List<string>();
 
     static void Postfix(Script ___myLuaScript, string scriptPath) {
-        if (loadedScripts.Contains(scriptPath)) return;
-        loadedScripts.Add(scriptPath);
         object obj;
         obj = ___myLuaScript.Globals["Init"];
         if (obj != null && scriptPath != null) {
@@ -82,6 +81,8 @@ class MoreLuaPower_LuaFunctions
             S.I.mainCtrl.StartCoroutine(MoreLuaPower_FunctionHelper.EffectRoutine(___myLuaScript.CreateCoroutine(obj)));
             ___myLuaScript.Globals.Remove("Awake");
         }
+        if (loadedScripts.Contains(scriptPath)) return;
+        loadedScripts.Add(scriptPath);
         obj = ___myLuaScript.Globals["Update"];
         if (obj != null) {
             bool unique = true;

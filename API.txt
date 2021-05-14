@@ -209,6 +209,11 @@ MoreLuaPower:
 	void AddCustomMusic		(string {AudioName}, float {volume} = 1, float {startTime} = 0)
 		//Adds the file specified by {AudioName} as |Music| that you can call with other functions.
 
+	bool AudioExists()		(string {AudioName})
+		//returns false while {AudioName} is loading - used to make sure AddMusicHook works properly.
+		// After AddCustomMusic, add a line like this:
+		// while(!AudioExists("AUDIONAMEHERE")){WaitForFrames(1);}
+
 	void AddMusicHook		(|Music| {music}, string {zoneBgName}, string {type})
 		//Sets the zone's music to {music}
 		// The valid inputs for {type} are "Idle" and "Battle", both self-explanatory.
