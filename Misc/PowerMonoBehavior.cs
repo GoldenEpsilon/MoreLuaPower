@@ -127,18 +127,21 @@ public class PowerMonoBehavior : MonoBehaviour
     }
 
     public static void AddMusicHook(string AudioName, string zoneBgName, string type) {
-        if (LuaPowerData.customMusic.ContainsKey(AudioName)) {
-            if (type == "Battle") {
-                LuaPowerData.customMusic[zoneBgName + "_Battle"] = LuaPowerData.customMusic[AudioName];
-            }
-            if (type == "Idle") {
-                LuaPowerData.customMusic[zoneBgName + "_Idle"] = LuaPowerData.customMusic[AudioName];
-            }
-            if (type == "Boss") {
-                LuaPowerData.customMusic[zoneBgName] = LuaPowerData.customMusic[AudioName];
-            }
-        } else {
-            Debug.Log("Warning: " + AudioName + " is not added as music");
+        S.I.mainCtrl.StartCoroutine(_AddMusicHook(AudioName, zoneBgName, type));
+    }
+    public static IEnumerator _AddMusicHook(string AudioName, string zoneBgName, string type) {
+        while (!LuaPowerData.customMusic.ContainsKey(AudioName)) {
+            MPLog.Log("Warning: " + AudioName + " is not added as music yet, trying again next frame", LogLevel.Info);
+            yield return new WaitForSeconds(0f);
+        }
+        if (type == "Battle") {
+            LuaPowerData.customMusic[zoneBgName + "_Battle"] = LuaPowerData.customMusic[AudioName];
+        }
+        if (type == "Idle") {
+            LuaPowerData.customMusic[zoneBgName + "_Idle"] = LuaPowerData.customMusic[AudioName];
+        }
+        if (type == "Boss") {
+            LuaPowerData.customMusic[zoneBgName] = LuaPowerData.customMusic[AudioName];
         }
     }
 

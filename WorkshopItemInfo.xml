@@ -5,7 +5,7 @@
   <Description>Gives your lua mods MOOOORE POOOWERRRR</Description>
   <IconFileName>workshopIcon.png</IconFileName>
   <Tags />
-  <Priority>0</Priority>
+  <Priority>1000</Priority>
   <ModVersion>2</ModVersion>
   <GameVersion>1.4.2</GameVersion>
 </WorkshopItemInfo>

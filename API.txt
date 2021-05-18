@@ -136,9 +136,6 @@ MoreLuaPower:
 
 		// MakeSprite("ExampleSprite.png", PATH, "ExampleSprite");
 		// MakeBrand("ExampleBrand");
-		// while(GetSprite("ExampleSprite") == nil) do
-		// 	WaitForFrames(1);
-		// end
 		// SetBrandImage("ExampleBrand", "ExampleSprite");
 		
 	Brand GetBrand			(Brand {brand})
@@ -151,9 +148,6 @@ MoreLuaPower:
 
 		// MakeSprite("ExampleSprite.png", PATH, "ExampleSprite");
 		// MakeBrand("ExampleBrand");
-		// while(GetSprite("ExampleSprite") == nil) do
-		// 	WaitForFrames(1);
-		// end
 		// SetBrandImage("ExampleBrand", "ExampleSprite");
 
 	void ParticleEffect		(Being {being}, |ParticleSystem| {system})
@@ -209,10 +203,8 @@ MoreLuaPower:
 	void AddCustomMusic		(string {AudioName}, float {volume} = 1, float {startTime} = 0)
 		//Adds the file specified by {AudioName} as |Music| that you can call with other functions.
 
-	bool AudioExists()		(string {AudioName})
-		//returns false while {AudioName} is loading - used to make sure AddMusicHook works properly.
-		// After AddCustomMusic, add a line like this:
-		// while(!AudioExists("AUDIONAMEHERE")){WaitForFrames(1);}
+	bool AudioExists		(string {AudioName})
+		//returns false while {AudioName} doesn't exist or is loading
 
 	void AddMusicHook		(|Music| {music}, string {zoneBgName}, string {type})
 		//Sets the zone's music to {music}
