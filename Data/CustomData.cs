@@ -29,6 +29,7 @@ public static class LuaPowerData
     static public Dictionary<Type, int> baseGameEnumAmount = new Dictionary<Type, int>();
     static public Dictionary<string, string> dropChecks = new Dictionary<string, string>();
     static public List<string> luaFunctionLoaded = new List<string>();
+    static public Dictionary<string, string> videos = new Dictionary<string, string>();
     static public Dictionary<string, string> DPS = new Dictionary<string, string>() //Default Particle System
     {
         { "sprite", "Normal" },             //sprite name from MakeSprite

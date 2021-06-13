@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-class LuaPowerBeingVariables
+public class LuaPowerBeingVariables
 {
     public static void SetVariable(Being being, string variableName, string variable) {
         if (being.GetComponent<LuaPowerBeingVariablesMonoBehavior>() == null) {
@@ -21,7 +21,7 @@ class LuaPowerBeingVariables
     }
 }
 
-class LuaPowerBeingVariablesMonoBehavior : MonoBehaviour
+public class LuaPowerBeingVariablesMonoBehavior : MonoBehaviour
 {
     public Dictionary<string, string> BeingVariables = new Dictionary<string, string>();
 }

@@ -94,6 +94,7 @@ MoreLuaPower:
 		// compared to your mod's base directory, the PATH global variable,
 		// and a name for the sprite. Keep track of that name, because
 		// that's how you use the |Sprite| later. More info in [custom data types].
+		// this function MUST be called in the first frame of Init() to be used at all.
 
 	Sprite GetSprite		(|Sprite| {sprite})
 		//Turns the string-based sprite into a unity sprite - 
@@ -231,12 +232,12 @@ MoreLuaPower:
 		// {name} is the name of the item to add the check to
 		// {check} is the function that you want to use (it needs to return true or false, false to have the item not show up)
 
-	void AddXMLToSpell(SpellObject <spellObj>, string <XML>)
+	void AddXMLToSpell(SpellObject {spellObj}, string {XML})
 		//Adds a line of XML to the SpellObject
 		// Meant to be used for upgrading spells
-		// Does not need tags like <Spells> or <Spell>, just put the tags that you would want in the spell directly like <OnHit>Flame</OnHit>
+		// Does not need tags like {Spells} or {Spell}, just put the tags that you would want in the spell directly like {OnHit>Flame{/OnHit>
 
-	void MakeZoneGenocideLenient(string <zoneName>)
+	void MakeZoneGenocideLenient(string {zoneName})
 		//Makes the zone not matter for the game's route (pacifist, neutral, genocide)
 		// Meant for older custom bosses before sparing was figured out, or for zones that you don't want to affect the ending
 
@@ -245,31 +246,51 @@ MoreLuaPower:
 		// Useful for scripting tier-based boss attack patterns in lua
 		// Ex: local tier = GetBossTier(item.being)
 
-	void Log(string <message>, LogLevel <logLevel>)
-		//Writes <message> to the debug log and/or the console, depending on <logLevel>.
+	void Log(string {message}, LogLevel {logLevel})
+		//Writes {message} to the debug log and/or the console, depending on {logLevel}.
 		// Meant to be a flexible replacement for print() that prints to the console as well
 
-	void ChangeFileLogLevel(LogLevel <logLevel>)
-		//Sets what logs get written to the debug log (<logLevel> or higher)
+	void ChangeFileLogLevel(LogLevel {logLevel})
+		//Sets what logs get written to the debug log ({logLevel} or higher)
 		// Great for debugging errors that aren't obviously failing
 		
-	void ChangeConsoleLogLevel(LogLevel <logLevel>)
-		//Sets what logs get written to the console (<logLevel> or higher)
+	void ChangeConsoleLogLevel(LogLevel {logLevel})
+		//Sets what logs get written to the console ({logLevel} or higher)
 		// Great for debugging errors that aren't obviously failing
 		
-	void AddTriggerTooltip(string <trigger>, string <name>, string <tooltip>)
+	void AddTriggerTooltip(string {trigger}, string {name}, string {tooltip})
 		//Adds a tooltip for the given FTrigger for hovering over spells/artifacts.
-		// <trigger> is the name of the FTrigger internally, 
-		// <name> should be the name to be used in the popup, <tooltip> is the description.
+		// {trigger} is the name of the FTrigger internally, 
+		// {name} should be the name to be used in the popup, {tooltip} is the description.
 		
-	void AddEffectTooltip(string <effect>, string <name>, string <tooltip>)
+	void AddEffectTooltip(string {effect}, string {name}, string {tooltip})
 		//Adds a tooltip for the given Effect for hovering over spells/artifacts.
-		// <effect> is the name of the Effect internally, 
-		// <name> should be the name to be used in the popup, <tooltip> is the description.
+		// {effect} is the name of the Effect internally, 
+		// {name} should be the name to be used in the popup, {tooltip} is the description.
 
 	void OverrideAnimator(Being {being}, string {animName})
 		//Overrides the being's animator with the one for {animName}
-		//Allows base-game animators to be swapped for modded ones and vice versa
+		// Allows base-game animators to be swapped for modded ones and vice versa
+
+	void LoadCutscene(string {path}, PATH, string {name})
+		//Takes the path for a video and loads it under {name}
+		// The basics, like PATH, are the same as MakeSprite.
+		// To be used with PlayCutscene.
+		// {name} is what you use in the |Video| parameter to access the loaded video.
+		// Must be called the first frame of Init().
+
+    void PlayCutscene(|Video| clip, bool {pausemusic} = false, bool {clearprojectiles} = false, bool {stopenemies} = false, int {endlag} = 1)
+		//Takes the name of a loaded video and plays it. 
+		// set {pausemusic} to true to pause the current song, false to not pause it.
+		// {clearprojectiles} makes projectiles disappear except for heals and sera on the ground
+		// {stopenemies} anchors enemies and stops their routines so they don't act until the cutscene ends. 
+		//  Doesn't affect timers, such as from Hostages and chests.
+		// {endlag} is how many seconds before the player regains control (and enemies if {stopenemies} is true)
+		//  after the end of the cutscene.
+	
+    void PlayCutsceneURL(string {URL}, bool {pausemusic} = false, bool {clearprojectiles} = false, bool {stopenemies} = false, int {endlag} = 1)
+		//Same as PlayCutscene, just with a string input for the URL so that you
+		// can link to online content. It doesn't work with Youtube, though.
 
 
 Lua-based:
@@ -429,7 +450,7 @@ MoreLuaPower:
 Vanilla:
     Transform
 	Cardtridge
-	Vector3>
+	Vector3
 	List<Being>
 	List<Cpu>
 	Animator

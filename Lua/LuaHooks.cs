@@ -1,7 +1,7 @@
 ﻿using HarmonyLib;
 using UnityEngine;
 
-class LuaPowerHooks
+public class LuaPowerHooks
 {
 	public static ItemObject triggerItem;
 	public static void AddHook(FTrigger trigger, string func, Being being = null) {

@@ -56,6 +56,9 @@ class MoreLuaPower_GlobalLuaFunctions
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["GetBossTier"] = (Func<Being, int>)DogeBossData.GetBossTier;
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["OverrideAnimator"] = (Action<Being, string>)UtilityFunctions.OverrideAnimator;
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["AudioExists"] = (Func<string, bool>)PowerMonoBehavior.AudioExists;
+        Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["LoadCutscene"] = (Action<string, string, string>)LuaPowerCutscenes.LoadCutscene;
+        Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["PlayCutscene"] = (Action<string, bool, bool, bool, int>)LuaPowerCutscenes.PlayCutscene;
+        Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["PlayCutsceneURL"] = (Action<string, bool, bool, bool, int>)LuaPowerCutscenes.PlayCutsceneURL;
     }
 }
 
@@ -165,6 +168,7 @@ class MoreLuaPower_LuaFunctions
             }
             ___myLuaScript.Globals.Remove("ZoneEvent");
         }
+        ___myLuaScript.Globals.Remove("PATH");
     }
 }
 

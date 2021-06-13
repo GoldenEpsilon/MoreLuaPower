@@ -60,7 +60,7 @@ class LuaPowerStatus
 
 //Makes certain checks work when they normally wouldn't
 [HarmonyPatch]
-static class LuaPowerStatusPatches
+static class MoreLuaPower_StatusEffects
 {
     [HarmonyPrefix]
     [HarmonyPatch(typeof(ItemObject), nameof(ItemObject.Trigger))]

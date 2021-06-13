@@ -1,6 +1,6 @@
 ﻿using I2.Loc;
 
-class LuaPowerLang
+public class LuaPowerLang
 {
     public static void ImportTerm(string termName, string translation, string language = "English") {
         var i2languagesPrefab = LocalizationManager.Sources[0];

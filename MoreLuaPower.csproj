@@ -92,6 +92,10 @@
       <HintPath>..\Managed\UnityEngine.UI.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="UnityEngine.UIModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Managed\UnityEngine.UIModule.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.UNETModule">
       <HintPath>..\Managed\UnityEngine.UNETModule.dll</HintPath>
       <Private>False</Private>
@@ -108,10 +112,15 @@
       <HintPath>..\Managed\UnityEngine.UnityWebRequestTextureModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="UnityEngine.VideoModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Managed\UnityEngine.VideoModule.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Additions\CustomBosses.cs" />
     <Compile Include="Additions\CustomBrands.cs" />
+    <Compile Include="Additions\CustomCutscenes.cs" />
     <Compile Include="Additions\CustomDropChecks.cs" />
     <Compile Include="Additions\CustomTooltips.cs" />
     <Compile Include="Additions\CustomUpgrades.cs" />

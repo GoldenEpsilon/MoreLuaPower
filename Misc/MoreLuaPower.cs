@@ -21,9 +21,10 @@ using UnityEngine;
 class MoreLuaPower
 {
 	static void Prepare() {
-		Debug.Log("MoreLuaPower Version 2.3.7a");
+		Debug.Log("MoreLuaPower Version 2.3.7");
 		LuaPowerData.Setup();
 		LuaPowerCustomEnumsSetup.Setup();
+		LuaPowerCutscenes.Setup();
 		//CustomZoneUtil.Setup();
 		//CustomBosses.DataHandler.Setup();
 		if (S.I.GetComponent<PowerMonoBehavior>() == null) {
@@ -78,8 +79,10 @@ class MoreLuaPowerReset
 		LuaPowerData.baseGameEnumAmount.Clear();
 		LuaPowerData.dropChecks.Clear();
 		LuaPowerData.luaFunctionLoaded.Clear();
+		LuaPowerData.videos.Clear();
 		LuaPowerData.Setup();
 		LuaPowerCustomEnumsSetup.Setup();
+		LuaPowerCutscenes.Setup();
 		if (S.I.GetComponent<PowerMonoBehavior>() == null) {
 			S.I.gameObject.AddComponent<PowerMonoBehavior>();
 		}
