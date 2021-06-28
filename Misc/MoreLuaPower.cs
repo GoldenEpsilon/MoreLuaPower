@@ -15,6 +15,7 @@
  *  I am also open to help; If you have something you want to add in here, just let me know/add it in yourself! You will be credited.
 */
 using HarmonyLib;
+using System;
 using UnityEngine;
 
 [HarmonyPatch(typeof(S))]
@@ -32,6 +33,7 @@ class MoreLuaPower
 			S.I.gameObject.AddComponent<PowerMonoBehavior>();
 		}
 		if (!LuaPowerData.customEnums[typeof(Effect)].Contains("Lua")) { LuaPowerData.customEnums[typeof(Effect)].Add("Lua"); }
+		S.I.deCtrl.effectTooltips.Add((Effect)Enum.Parse(typeof(Effect), "Lua"));
 		if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("OnSave")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("OnSave"); }
 		if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("OnLoad")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("OnLoad"); }
 		if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("OnChooseArtifact")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("OnChooseArtifact"); }
