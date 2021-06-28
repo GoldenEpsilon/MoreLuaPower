@@ -266,7 +266,9 @@ MoreLuaPower:
 		
 	void AddEffectTooltip(string {effect}, string {name}, string {tooltip})
 		//Adds a tooltip for the given Effect for hovering over spells/artifacts.
-		// {effect} is the name of the Effect internally, 
+		//Make sure to call NewEffect() before this.
+		//For use with Lua XML effects such as <OnHit value="MyEffect">Lua</OnHit>
+		// {effect} is the name of the Lua function in the value attribute ("MyEffect", in this example), 
 		// {name} should be the name to be used in the popup, {tooltip} is the description.
 
 	void OverrideAnimator(Being {being}, string {animName})
