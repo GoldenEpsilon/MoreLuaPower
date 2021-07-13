@@ -107,9 +107,9 @@ public class DogeBoss : Boss
         if (spared && runCtrl.currentZoneDot.type == ZoneType.Boss)
         {
             var worldNameKey = "Boss" + runCtrl.currentRun.visitedWorldNames[this.runCtrl.currentRun.visitedWorldNames.Count - 1];
-            if(!runCtrl.currentRun.HasAssist(worldNameKey))
+            if (!runCtrl.currentRun.HasAssist(worldNameKey))
             {
-                runCtrl.currentRun.assists.Add(worldNameKey, false);
+                runCtrl.currentRun.assists.Add(worldNameKey, true);
             }
         }
     }
@@ -207,7 +207,7 @@ static class DogeBoss_Patches
 {
     private static Dictionary<string, GameObject> customBosses = new Dictionary<string, GameObject>();
 
-    //Reads the "Boss" tag affixed to beings as the indicator to add them to the boss list
+        //Reads the "Boss" tag affixed to beings as the indicator to add them to the boss list
     [HarmonyPostfix]
     [HarmonyPatch(typeof(BeingObject), nameof(BeingObject.ReadXmlPrototype))]
     static void ReadXmlPrototype(ref BeingObject __instance)
