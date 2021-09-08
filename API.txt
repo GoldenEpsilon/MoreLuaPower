@@ -275,6 +275,37 @@ MoreLuaPower:
 		//Overrides the being's animator with the one for {animName}
 		// Allows base-game animators to be swapped for modded ones and vice versa
 
+	void AddBar(string {name}, string {barPosition}, Being {being}, float {current}, float {max}, int {segments}, int {colorR}, int {colorG}, int {colorB}, Sprite {sprite}, bool {showValue}, bool {showMax})
+		// Creates a bar on the screen with the given parameters. Remember to use GetSprite(), as this line requires the actual sprite and not just its name.
+		// Bar positions:
+		// TopLeft - Places the bar at the top of the screen, on the left side
+		// TopRight - Places the bar at the top of the screen, on the right side
+		// Left - Places the bar with a vertical orientation on the left side of the screen by the cardtridge queue
+		// OverMana - Places the bar above the mana bar
+		// UnderMana - Places the bar below the mana bar
+		// BesideMana - Places the bar to the right of the mana bar 
+		// OverBeing - Places the bar over the being's head
+		// UnderBeing - Places the bar under the being's HP display
+		// BesideBeing - Places the bar with a vertical orientation, attached to a being at its side
+
+	void UpdateBar(string {name}, float {current}, float {max})
+		// Updates the bar named {name} with the given values. Put this in your lua wherever the value of the bar is manipulated to visually update it.
+
+	void ChangeBarColor(string {name}, int {colorR}, int {colorG}, int {colorB})
+		// Sets the color of the bar using RGB 256 values.
+
+	void ChangeBarSprite(string {name}, Sprite {sprite})
+		// Updates the bar's sprite. Use in conjunction with GetSprite()
+
+	void ChangeBarAttributes(string {name}, bool {showValue}, bool {showMax}, int {segments})
+		// Allows you to change the segmentation of the bar and whether or not the value / max value are shown
+
+	void HideBar(string {name})
+		// Hides a bar named {name}
+
+	void ShowBar(string {name})
+		// Shows a hidden bar
+
 	void LoadCutscene(string {path}, PATH, string {name})
 		//Takes the path for a video and loads it under {name}
 		// The basics, like PATH, are the same as MakeSprite.

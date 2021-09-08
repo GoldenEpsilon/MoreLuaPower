@@ -59,6 +59,16 @@ class MoreLuaPower_GlobalLuaFunctions
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["LoadCutscene"] = (Action<string, string, string>)LuaPowerCutscenes.LoadCutscene;
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["PlayCutscene"] = (Action<string, bool, bool, bool, int>)LuaPowerCutscenes.PlayCutscene;
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["PlayCutsceneURL"] = (Action<string, bool, bool, bool, int>)LuaPowerCutscenes.PlayCutsceneURL;
+        // Custom Bar functions
+        Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["AddBar"] = (Action< string, string, Being, float, float, int, float, float, float, Sprite, bool, bool>)LuaPowerBars.AddBar;
+        Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["UpdateBar"] = (Action<string, float, float>)LuaPowerBars.UpdateBar;
+        Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["ChangeBarAttributes"] = (Action<string, bool, bool, int>)LuaPowerBars.ChangeBarAttributes;
+        Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["ChangeBarColor"] = (Action<string, float, float, float>)LuaPowerBars.ChangeBarColor;
+        Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["ChangeBarSprite"] = (Action<string, Sprite>)LuaPowerBars.ChangeBarSprite;
+        Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["ShowBar"] = (Action<string>)LuaPowerBars.ShowBar;
+        Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["HideBar"] = (Action<string>)LuaPowerBars.HideBar;
+        Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["RemoveBar"] = (Action<string>)LuaPowerBars.RemoveBar;
+        Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["GetBar"] = (Func<string, FillBar>)LuaPowerBars.GetBar;
     }
 }
 
