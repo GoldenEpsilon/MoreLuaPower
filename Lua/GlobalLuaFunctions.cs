@@ -69,6 +69,7 @@ class MoreLuaPower_GlobalLuaFunctions
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["HideBar"] = (Action<string>)LuaPowerBars.HideBar;
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["RemoveBar"] = (Action<string>)LuaPowerBars.RemoveBar;
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["GetBar"] = (Func<string, FillBar>)LuaPowerBars.GetBar;
+        Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["SetCheatcode"] = (Action<string, string, string>)CustomCheatcodesList.SetCheatcode;
     }
 }
 

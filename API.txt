@@ -1,10 +1,7 @@
 ﻿/*
- *  More Lua Power, made by Golden Epsilon
- *  Tons of stuff added by Sunreal and Shenanigans
+ *  More Lua Power, started by Golden Epsilon
+ *  Tons of stuff added by Sunreal, Shenanigans, Lea, and DecoyDoge
  *  PetBuff for MoreLuaPower by stephanreiken
- *  OnSpellEnd for MoreLuaPower by DecoyDoge
- *  Custom Bosses started by Shenanigans and picked up by DecoyDoge
- *  Custom Cutscenes by Lea
  *  Workshop URL: https://steamcommunity.com/sharedfiles/filedetails/?id=2066319533
  *  GitHub Page: https://github.com/GoldenEpsilon/MoreLuaPower
  *
@@ -325,6 +322,14 @@ MoreLuaPower:
     void PlayCutsceneURL(string {URL}, bool {pausemusic} = false, bool {clearprojectiles} = false, bool {stopenemies} = false, int {endlag} = 1)
 		//Same as PlayCutscene, just with a string input for the URL so that you
 		// can link to online content. It doesn't work with Youtube, though.
+
+	void SetCheatcode(string {characterName}, string {buttonName}, string {functionName})
+		//Lets you do "Cheatcodes" on the character select screen.
+		//For example, if you call this in init:
+		//CustomCheatcodes.SetCheatcode("QueenAurora", "Weapon", "QPQueenGetFullAuroraDeck");
+		//When the player select a character the game checks if the player is holding the weapon button, 
+		//if the being is Queen aurora and if so it calls the QPQueenGetFullAuroraDeck lua function
+
 
 
 Lua-based:
