@@ -135,6 +135,9 @@ MoreLuaPower:
 
 		// MakeSprite("ExampleSprite.png", PATH, "ExampleSprite");
 		// MakeBrand("ExampleBrand");
+		// while (GetSprite("ExampleSprite") == null) do
+        //     WaitForFrames(1);
+        // end
 		// SetBrandImage("ExampleBrand", "ExampleSprite");
 		
 	Brand GetBrand			(Brand {brand})
@@ -147,6 +150,9 @@ MoreLuaPower:
 
 		// MakeSprite("ExampleSprite.png", PATH, "ExampleSprite");
 		// MakeBrand("ExampleBrand");
+		// while (GetSprite("ExampleSprite") == null) do
+        //     WaitForFrames(1);
+        // end
 		// SetBrandImage("ExampleBrand", "ExampleSprite");
 
 	void ParticleEffect		(Being {being}, |ParticleSystem| {system})
