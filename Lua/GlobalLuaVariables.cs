@@ -47,7 +47,7 @@ class MoreLuaPower_GlobalLuaVariables
 class MoreLuaPower_PATHVariable
 {
     static void Prefix(string scriptPath, Script ___myLuaScript) {
-        ___myLuaScript.Globals["PATH"] = Path.GetDirectoryName(scriptPath);
+        ___myLuaScript.Globals["PATH"] = "file://" + Path.GetDirectoryName(scriptPath);
         LuaPowerData.scripts.Add(___myLuaScript);
     }
 }
