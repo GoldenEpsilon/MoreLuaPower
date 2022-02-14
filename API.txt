@@ -336,6 +336,10 @@ MoreLuaPower:
 		//When the player select a character the game checks if the player is holding the weapon button, 
 		//if the being is Queen aurora and if so it calls the QPQueenGetFullAuroraDeck lua function
 
+	void CharSetupTaunt(string {name})
+		//Lets a modded character and/or skin taunt
+		//Call this function in Init with {name} as the name of the character/skin and it will be able to taunt ingame.
+
 
 
 Lua-based:
