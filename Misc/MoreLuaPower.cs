@@ -20,7 +20,7 @@ using UnityEngine;
 class MoreLuaPower
 {
 	static void Prepare() {
-		Debug.Log("MoreLuaPower Version 2.3.12");
+		Debug.Log("MoreLuaPower Version 2.3.13");
 		LuaPowerData.Setup();
 		LuaPowerCustomEnumsSetup.Setup();
 		LuaPowerCutscenes.Setup();
