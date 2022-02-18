@@ -241,6 +241,13 @@ MoreLuaPower:
 		// Meant to be used for upgrading spells
 		// Does not need tags like {Spells} or {Spell}, just put the tags that you would want in the spell directly like {OnHit>Flame{/OnHit>
 
+	void ApplyRandomUpgrade(SpellObject {spellObj}, [List] {denyList})
+		// Applies a random valid upgrade to the spell, as if it were randomly generating an one using an Upgrader.
+		// Since this uses the same mechanism as the vanilla game, it can apply modded upgrades as well, using whatever checks to see if the spell can be applied.
+		// {spellObj} is the spell to upgrade
+		// {denyList} is any list of Enhancements to not add (can be empty)
+		// Ex: ApplyRandomUpgrade(mySpell, {}) or ApplyRandomUpgrade(mySpell, {Enhancement.Frost, Enhancement.Fragile})
+
 	void MakeZoneGenocideLenient(string {zoneName})
 		//Makes the zone not matter for the game's route (pacifist, neutral, genocide)
 		// Meant for older custom bosses before sparing was figured out, or for zones that you don't want to affect the ending
