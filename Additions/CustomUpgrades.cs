@@ -39,7 +39,7 @@ static class LuaPowerUpgrades
 		List<int> intList = Utils.RandomList(Enum.GetNames(typeof(Enhancement)).Length, true);
 		for (int i = 0; i < intList.Count; ++i) {
             if (denyList.Contains((Enhancement)intList[i])) {
-                // MPLog.Log(((Enhancement)intList[i]).ToString() + " is not allowed as an upgrade! skipping!");
+                MPLog.Log(((Enhancement)intList[i]).ToString() + " is not allowed as an upgrade! skipping!", LogLevel.Info);
                 continue;
             }
 			S.I.poCtrl.EnhanceSpell(spellObj, (Enhancement)intList[i]);
