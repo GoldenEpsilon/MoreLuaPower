@@ -34,14 +34,16 @@ static class LuaPowerUpgrades
 		}
 	}
 
-	static public void ApplyRandomUpgrade(SpellObject spellObj) {
+	static public void ApplyRandomUpgrade(SpellObject spellObj, List<Enhancement> denyList) {
 		int count = spellObj.enhancements.Count;
 		List<int> intList = Utils.RandomList(Enum.GetNames(typeof(Enhancement)).Length, true);
-		for (int i = 0; i < intList.Count; ++i)
-		{
+		for (int i = 0; i < intList.Count; ++i) {
+            if (denyList.Contains((Enhancement)intList[i])) {
+                // MPLog.Log(((Enhancement)intList[i]).ToString() + " is not allowed as an upgrade! skipping!");
+                continue;
+            }
 			S.I.poCtrl.EnhanceSpell(spellObj, (Enhancement)intList[i]);
-			if (spellObj.enhancements.Count > count)
-			{
+			if (spellObj.enhancements.Count > count) {
 				count = spellObj.enhancements.Count;
 				break;
 			}
