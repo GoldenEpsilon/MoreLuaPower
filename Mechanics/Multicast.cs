@@ -74,15 +74,27 @@ class MoreLuaPower_Multicast2
                 if (__instance.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary.ContainsKey("ShotsRemaining")) {
                     __instance.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["ShotsRemaining"] = (Int32.Parse(__instance.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["ShotsRemaining"]) - 1).ToString();
                     if (Int32.Parse(__instance.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["ShotsRemaining"]) < 1) {
-                        if (__instance.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary.ContainsKey("MaxShots")) {
-                            __instance.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["ShotsRemaining"] = __instance.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["MaxShots"];
-                        }
+                        //if (__instance.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary.ContainsKey("MaxShots")) {
+                        //    __instance.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["ShotsRemaining"] = __instance.castSlots[slotNum].spellObj.spell.itemObj.paramDictionary["MaxShots"];
+                        //}
                         return true;
                     }
                     return false;
                 }
                 return false;
             }
+        }
+        return true;
+    }
+}
+
+[HarmonyPatch(typeof(CastSlot))]
+[HarmonyPatch("Load")]
+class MoreLuaPower_Multicast3 
+{
+    static bool Prefix(Cardtridge cardtridge) {
+        if(cardtridge.spellObj.spell.itemObj.paramDictionary.ContainsKey("MaxShots")) {
+            cardtridge.spellObj.spell.itemObj.paramDictionary["ShotsRemaining"] = cardtridge.spellObj.spell.itemObj.paramDictionary["MaxShots"];
         }
         return true;
     }
