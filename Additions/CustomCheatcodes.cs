@@ -7,7 +7,7 @@ using UnityEngine;
 class UseCustomCheats
 {
     static void Postfix(Player __instance) {
-        if (!(__instance.rewiredPlayer == null)) {
+        if (!(__instance.rewiredPlayer == null || __instance.animOverrider == null)) {
 
             if (TauntReviverList.charlist.Contains(__instance.beingObj.beingID) || TauntReviverList.charlist.Contains(__instance.animOverrider.controllerName)) {
                 __instance.gameObject.AddComponent<TauntReviver>();
