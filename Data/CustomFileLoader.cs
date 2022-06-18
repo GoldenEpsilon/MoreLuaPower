@@ -12,18 +12,16 @@ using System.Threading;
 using System.Security;
 
 //Prefix patches LoadItemData because it is called right before modloading ends.
-[HarmonyPatch]
+
+[HarmonyPatch(typeof(ItemManager))]
+[HarmonyPatch("LoadItemData")]
 static class CustomFileLoader_Patches
 {
-    [HarmonyPrefix]
-    [HarmonyPatch(typeof(ItemManager), nameof(ItemManager.LoadItemData))]
-    static bool LoadItems(ItemManager __instance) {
+    static void Prefix(ItemManager __instance) {
         //Mod processing would not be marked as done when this is called during mod loading.
         if (S.I.modCtrl.processing) {
             CustomFileLoader.AfterInstall();
-            return true;
         }
-        return true;
     }
 }
 
