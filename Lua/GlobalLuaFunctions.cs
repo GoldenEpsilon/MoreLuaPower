@@ -73,6 +73,7 @@ class MoreLuaPower_GlobalLuaFunctions
         // End of Custom Bar functions
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["SetCheatcode"] = (Action<string, string, string>)CustomCheatcodesList.SetCheatcode;
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["CharSetupTaunt"] = (Action<string>)TauntReviverList.AddCharacter;
+        Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["GetFTrigger"] = (Func<string, FTrigger>)LuaPowerMisc.GetFTrigger;
     }
 }
 

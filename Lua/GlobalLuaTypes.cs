@@ -68,5 +68,6 @@ class MoreLuaPower_GlobalLuaTypes
         UserData.RegisterType<ReferenceCtrl>(InteropAccessMode.Default, null);
         UserData.RegisterType<Shader>(InteropAccessMode.Default, null);
         UserData.RegisterType<CastSlot>(InteropAccessMode.Default, null);
+        UserData.RegisterType<ArtData>(InteropAccessMode.Default, null);
     }
 }

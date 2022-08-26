@@ -347,6 +347,10 @@ MoreLuaPower:
 		//Lets a modded character and/or skin taunt
 		//Call this function in Init with {name} as the name of the character/skin and it will be able to taunt ingame.
 
+	void GetFTrigger(string {name})
+		//Takes the name of an FTrigger and returns the FTrigger object
+		//This is for custom FTriggers, because of how MoonSharp works.
+		//Use this instead of trying to do FTrigger.OnRemove or equivalent. (for specifically custom FTriggers)
 
 
 Lua-based:

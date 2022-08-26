@@ -49,6 +49,7 @@
     </Reference>
     <Reference Include="E7.Introloop, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <Private>False</Private>
+      <HintPath>..\..\..\Managed\E7.Introloop.dll</HintPath>
     </Reference>
     <Reference Include="NAudio, Version=1.10.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\NAudio.1.10.0\lib\net35\NAudio.dll</HintPath>
@@ -59,6 +60,7 @@
     </Reference>
     <Reference Include="Sirenix.Serialization, Version=2.0.20.0, Culture=neutral, PublicKeyToken=null">
       <Private>False</Private>
+      <HintPath>..\..\..\Managed\Sirenix.Serialization.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -73,27 +75,27 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>..\UnityEngine.dll</HintPath>
+      <HintPath>..\..\..\Managed\UnityEngine.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.AnimationModule">
-      <HintPath>..\Managed\UnityEngine.AnimationModule.dll</HintPath>
+      <HintPath>..\..\..\Managed\UnityEngine.AnimationModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.AudioModule">
-      <HintPath>..\Managed\UnityEngine.AudioModule.dll</HintPath>
+      <HintPath>..\..\..\Managed\UnityEngine.AudioModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
-      <HintPath>..\UnityEngine.CoreModule.dll</HintPath>
+      <HintPath>..\..\..\Managed\UnityEngine.CoreModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.ParticleSystemModule">
-      <HintPath>..\Managed\UnityEngine.ParticleSystemModule.dll</HintPath>
+      <HintPath>..\..\..\Managed\UnityEngine.ParticleSystemModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UI">
-      <HintPath>..\Managed\UnityEngine.UI.dll</HintPath>
+      <HintPath>..\..\..\Managed\UnityEngine.UI.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UIModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -101,19 +103,19 @@
       <HintPath>..\..\..\Managed\UnityEngine.UIModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UNETModule">
-      <HintPath>..\Managed\UnityEngine.UNETModule.dll</HintPath>
+      <HintPath>..\..\..\Managed\UnityEngine.UNETModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UnityWebRequestAudioModule">
-      <HintPath>..\Managed\UnityEngine.UnityWebRequestAudioModule.dll</HintPath>
+      <HintPath>..\..\..\Managed\UnityEngine.UnityWebRequestAudioModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UnityWebRequestModule">
-      <HintPath>..\Managed\UnityEngine.UnityWebRequestModule.dll</HintPath>
+      <HintPath>..\..\..\Managed\UnityEngine.UnityWebRequestModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UnityWebRequestTextureModule">
-      <HintPath>..\Managed\UnityEngine.UnityWebRequestTextureModule.dll</HintPath>
+      <HintPath>..\..\..\Managed\UnityEngine.UnityWebRequestTextureModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.VideoModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -149,6 +151,7 @@
     <Compile Include="Mechanics\KickerCast.cs" />
     <Compile Include="Lua\LuaHooks.cs" />
     <Compile Include="Mechanics\Multicast.cs" />
+    <Compile Include="Misc\MPLMisc.cs" />
     <Compile Include="Misc\MPLLogging.cs" />
     <Compile Include="Misc\PowerMonoBehavior.cs" />
     <Compile Include="Additions\CustomStatusEffects.cs" />
