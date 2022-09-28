@@ -44,7 +44,7 @@ class MoreLuaPower
 		if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("OnOwnedPetDeath")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("OnOwnedPetDeath"); }
 		if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("OnPetDeath")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("OnPetDeath"); }
 		if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("OnLoop")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("OnLoop"); }
-		Debug.Log((FTrigger)Enum.Parse(typeof(FTrigger), "OnRemove"));
+		if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("OnTaunt")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("OnTaunt"); }
 	}
 	static public Player GetPlayer() {
 		return S.I.batCtrl.currentPlayer;

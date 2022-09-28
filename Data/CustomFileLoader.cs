@@ -45,7 +45,7 @@ internal static class CustomFileLoader
             list.AddRange(temp);
         }
         if (SteamManager.Initialized) {
-            foreach (LapinerTools.Steam.Data.WorkshopItem workshopItem in LapinerTools.Steam.SteamMainBase<LapinerTools.Steam.SteamWorkshopMain>.Instance.m_activeItems.Values) {
+            foreach (LapinerTools.Steam.Data.WorkshopItem workshopItem in (Traverse.Create(LapinerTools.Steam.SteamMainBase<LapinerTools.Steam.SteamWorkshopMain>.Instance).Field("m_activeItems").GetValue() as IDictionary).Values) {
                 if (workshopItem.IsActive) {
                     DirectoryInfo dir = new DirectoryInfo(workshopItem.InstalledLocalFolder);
                     var temp = new List<CustomFileType>();
@@ -188,7 +188,7 @@ internal static class CustomFileLoader
             ReadAllFilesInDirectory(types, directoryInfo, true);
         }
         if (SteamManager.Initialized) {
-            foreach (LapinerTools.Steam.Data.WorkshopItem workshopItem in LapinerTools.Steam.SteamMainBase<LapinerTools.Steam.SteamWorkshopMain>.Instance.m_activeItems.Values) {
+            foreach (LapinerTools.Steam.Data.WorkshopItem workshopItem in (Traverse.Create(LapinerTools.Steam.SteamMainBase<LapinerTools.Steam.SteamWorkshopMain>.Instance).Field("m_activeItems").GetValue() as IDictionary).Values) {
                 if (workshopItem.IsActive) {
                     var directory = new DirectoryInfo(workshopItem.InstalledLocalFolder);
                     ReadAllFilesInDirectory(types, directory, true);

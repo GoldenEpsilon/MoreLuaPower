@@ -18,6 +18,7 @@ static class LuaPowerFTriggerPatches
     [HarmonyPostfix]
     [HarmonyPatch(typeof(RunCtrl), nameof(RunCtrl.CreateRunFromSave))]
     static void OnLoad() {
+        MPLog.Log("on load triggering");
         S.I.deCtrl.TriggerAllArtifacts((FTrigger)Enum.Parse(typeof(FTrigger), "OnLoad"));
     }
 
@@ -64,6 +65,7 @@ static class LuaPowerFTriggerPatches
     [HarmonyPrefix]
     [HarmonyPatch(typeof(ListCard), nameof(ListCard.RemoveThisCard))]
     static void OnRemove(ListCard __instance, bool useRemover) {
+        MPLog.Log("remove hook triggering");
         __instance.itemObj.Trigger((FTrigger)Enum.Parse(typeof(FTrigger), "OnRemove"));
     }
 }
