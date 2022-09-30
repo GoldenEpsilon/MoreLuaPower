@@ -24,6 +24,7 @@ Quick note: The features in here are in order of when they were added, so for ne
 Table of Contents:
 	[MISC FEATURES]
 	[NEW MECHANICS]
+	[NEW FTRIGGERS]
 	[LUA FUNCTIONS]
 	[CALLED LUA FUNCTIONS]
 	[GLOBAL LUA VARIABLES]
@@ -82,6 +83,26 @@ Table of Contents:
 	Pet Additions
 		//Go to the [PETS] section for more info.
 
+[NEW FTRIGGERS]
+
+(quick note: these are only lightly tested, if something doesn't work as you expect feel free to ask me about it)
+	OnSave				//When the game is saved, trigger
+	OnLoad				//When the game is loaded, trigger (NOTE: This doesn't work on artifacts, use it with custom hooks if you do.)
+	OnChooseArtifact	//When any artifact is chosen, trigger
+	OnRemoveArtifact	//When any artifact is removed, trigger
+	OnChoosePact		//When any pact is chosen, trigger
+	OnRemovePact		//When any pact is removed, trigger
+	OnUpgrade			//When any artifact or spell is upgraded, trigger
+	OnChoose			//When any artifact or spell is chosen to add to deck, trigger
+	OnRemove			//When any artifact or spell is removed, trigger
+	OnChooseThis		//When this artifact (or spell? Needs testing) is chosen to add to deck, trigger for this item
+	OnRemoveThis		//When this artifact (or spell? Needs testing) is removed, trigger for this item
+	OnTaunt				//When a player taunts, trigger
+	PreMove				//unimplemented
+	PreHit				//unimplemented
+	OnOwnedPetDeath		//unimplemented
+	OnPetDeath			//unimplemented
+	OnLoop				//unimplemented
 
 [LUA FUNCTIONS]
 
@@ -397,22 +418,6 @@ Lua-based:
 
 	GameUpdate:
 	//Is called every physics update, does not run on certain menus intentionally like the main menu and the game over menu. Meant for updating during gameplay.
-
-[NEW FTRIGGERS]
-//NOTE: THESE ARE COMPLETELY UNTESTED, DO NOT BE SURPRISED IF THEY DO NOT WORK
-	OnSave				//untested
-	OnLoad				//untested
-	OnChooseArtifact	//untested
-	OnRemoveArtifact	//untested
-	OnChoosePact		//untested
-	OnRemovePact		//untested
-	OnUpgrade			//untested
-	OnRemove			//untested, gets called on the removed item
-	PreMove				//unimplemented
-	PreHit				//unimplemented
-	OnOwnedPetDeath		//unimplemented
-	OnPetDeath			//unimplemented
-	OnLoop				//unimplemented
 
 
 [GLOBAL LUA VARIABLES]

@@ -38,12 +38,15 @@ class MoreLuaPower
 		if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("OnChoosePact")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("OnChoosePact"); }
 		if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("OnRemovePact")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("OnRemovePact"); }
 		if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("OnUpgrade")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("OnUpgrade"); }
+		if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("OnChoose")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("OnChoose"); }
 		if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("OnRemove")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("OnRemove"); }
-		if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("PreMove")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("PreMove"); }
-		if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("PreHit")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("PreHit"); }
-		if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("OnOwnedPetDeath")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("OnOwnedPetDeath"); }
-		if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("OnPetDeath")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("OnPetDeath"); }
-		if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("OnLoop")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("OnLoop"); }
+		if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("OnChooseThis")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("OnChooseThis"); }
+		if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("OnRemoveThis")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("OnRemoveThis"); }
+		//if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("PreMove")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("PreMove"); }
+		//if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("PreHit")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("PreHit"); }
+		//if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("OnOwnedPetDeath")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("OnOwnedPetDeath"); }
+		//if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("OnPetDeath")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("OnPetDeath"); }
+		//if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("OnLoop")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("OnLoop"); }
 		if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("OnTaunt")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("OnTaunt"); }
 	}
 	static public Player GetPlayer() {
