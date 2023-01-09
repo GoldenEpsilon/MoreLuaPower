@@ -97,7 +97,7 @@ public class LuaPowerSound
 
     static public void PlayCustomMusic(string MusicName)
     {
-        if (LuaPowerData.customMusic.ContainsKey(MusicName))
+        if (LuaPowerData.customMusic.ContainsKey(MusicName) && LuaPowerData.customMusic[MusicName] != null)
         {
             S.I.StartCoroutine(PowerMonoBehavior.FadeAudioOut(S.I.muCtrl.audioSource, .3f, S.I.muCtrl.audioSource.volume));
             S.I.muCtrl.StopIntroLoop();
@@ -107,10 +107,13 @@ public class LuaPowerSound
             S.I.muCtrl.Play(LuaPowerData.customMusic[MusicName].AudioClip);
             S.I.muCtrl.audioSource.clip.name = MusicName;
             S.I.StartCoroutine(PowerMonoBehavior.CheckAudioLoops(S.I.muCtrl.audioSource, LuaPowerData.customMusic[MusicName].IntroBoundry, LuaPowerData.customMusic[MusicName].EndBoundry));
+        } else {
+            Debug.Log(MusicName + " does not exist");
+            return;
         }
     }
 
-    static public void PlayCustomMusicIntroLoop(string MusicName, float IntroBoundry, float EndBoundry)
+static public void PlayCustomMusicIntroLoop(string MusicName, float IntroBoundry, float EndBoundry)
     {
         if (LuaPowerData.customMusic.ContainsKey(MusicName))
         {

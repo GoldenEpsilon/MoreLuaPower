@@ -1,8 +1,8 @@
 ﻿using HarmonyLib;
 using MoonSharp.Interpreter;
 using System;
-using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine;
 
 
 
@@ -69,5 +69,6 @@ class MoreLuaPower_GlobalLuaTypes
         UserData.RegisterType<Shader>(InteropAccessMode.Default, null);
         UserData.RegisterType<CastSlot>(InteropAccessMode.Default, null);
         UserData.RegisterType<ArtData>(InteropAccessMode.Default, null);
+        UserData.RegisterType<StatusStack>(InteropAccessMode.Default, null);
     }
 }

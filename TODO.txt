@@ -49,6 +49,7 @@ PRIORITY:
         OnEnemyMove
 
 TODO:
+    custom commands and a command to run lua
     custom AmountType s
     custom Check s
     custom Tag s (set from xml)

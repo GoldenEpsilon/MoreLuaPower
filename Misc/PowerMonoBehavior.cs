@@ -130,7 +130,7 @@ public class PowerMonoBehavior : MonoBehaviour
         S.I.mainCtrl.StartCoroutine(_AddMusicHook(AudioName, zoneBgName, type));
     }
     public static IEnumerator _AddMusicHook(string AudioName, string zoneBgName, string type) {
-        while (!LuaPowerData.customMusic.ContainsKey(AudioName)) {
+        while (!LuaPowerData.customMusic.ContainsKey(AudioName) || LuaPowerData.customMusic[AudioName] == null) {
             MPLog.Log("Warning: " + AudioName + " is not added as music yet, trying again next frame", LogLevel.Info);
             yield return new WaitForSeconds(0f);
         }

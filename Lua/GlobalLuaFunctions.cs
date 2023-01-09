@@ -76,6 +76,7 @@ class MoreLuaPower_GlobalLuaFunctions
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["GetFTrigger"] = (Func<string, FTrigger>)LuaPowerMisc.GetFTrigger;
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["AddCustomAchievement"] = (Action<string, string, string, bool>)LuaPowerAchievements.APIV.AddCustomAchievement;
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["UnlockCustomAchievement"] = (Action<string, int>)LuaPowerAchievements.APIV.UnlockCustomAchievement;
+        Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["CreateDrop"] = (Action<List<ItemObject>>)LuaPowerCustomDrops.CreateDrop;
     }
 }
 

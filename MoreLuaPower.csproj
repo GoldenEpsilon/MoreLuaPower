@@ -127,7 +127,7 @@
     <Compile Include="Additions\CustomBrands.cs" />
     <Compile Include="Additions\CustomCheatcodes.cs" />
     <Compile Include="Additions\CustomCutscenes.cs" />
-    <Compile Include="Additions\CustomDropChecks.cs" />
+    <Compile Include="Additions\CustomDrops.cs" />
     <Compile Include="Additions\CustomFTriggers.cs" />
     <Compile Include="Additions\CustomTooltips.cs" />
     <Compile Include="Additions\CustomUpgrades.cs" />
