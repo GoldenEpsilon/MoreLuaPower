@@ -11,6 +11,7 @@ using UnityEngine.Networking;
 using System.Threading;
 using System.Security;
 
+
 //Prefix patches LoadItemData because it is called right before modloading ends.
 
 [HarmonyPatch(typeof(ItemManager))]
@@ -20,8 +21,8 @@ static class CustomFileLoader_Patches
     static void Prefix(ItemManager __instance) {
         //Mod processing would not be marked as done when this is called during mod loading.
         if (S.I.modCtrl.processing) {
-            CustomFileLoader.AfterInstall();
-        }
+			CustomFileLoader.AfterInstall();
+		}
     }
 }
 
@@ -29,6 +30,11 @@ static class CustomFileLoader_Patches
 //Basically, this thing is written to stop the install button from switching back to its default when mods are being loaded again.
 internal static class CustomFileLoader
 {
+    //The new update needs item data to be reloaded again because of a new 1 frame delay before sprites are stored as accessible by LoadItemData
+    public static IEnumerator ReloadItemData() {
+		yield return new WaitForSeconds(0f);
+		S.I.itemMan.LoadItemData();
+	}
 
     //Function that is called when mod loading is almost done. Goes through all mods and looks for CustomFileTypes.xml, then passes it off to the loader for everything.
     public static void AfterInstall() {
@@ -60,7 +66,8 @@ internal static class CustomFileLoader
         S.I.modCtrl.pactMods = S.I.modCtrl.pactMods.Distinct().ToList();
         S.I.modCtrl.spellMods = S.I.modCtrl.spellMods.Distinct().ToList();
         S.I.modCtrl.artMods = S.I.modCtrl.artMods.Distinct().ToList();
-    }
+		S.I.modCtrl.StartCoroutine(ReloadItemData());
+	}
 
     //Looks for CustomFileTypes.xml throughout a mod. Looks for assemblies as well in order to load those file types with the correct handler.
     private static void FindCustomFileTypes(DirectoryInfo dir, List<CustomFileType> re, List<FileInfo> assembly_files, bool first) {
