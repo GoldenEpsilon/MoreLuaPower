@@ -31,8 +31,11 @@ static class CustomFileLoader_Patches
 internal static class CustomFileLoader
 {
     //The new update needs item data to be reloaded again because of a new 1 frame delay before sprites are stored as accessible by LoadItemData
+    //This waits for mods to be done loading before reloading itemdata
     public static IEnumerator ReloadItemData() {
-		yield return new WaitForSeconds(0f);
+        while (S.I.modCtrl.processing) {
+            yield return new WaitForSeconds(0);
+        }
 		S.I.itemMan.LoadItemData();
 	}
 
