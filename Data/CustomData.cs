@@ -79,7 +79,11 @@ public static class LuaPowerData
         {
             customEnums.Add(typeof(BeingType), new List<string>());
         }
-    }
+		if (!customEnums.ContainsKey(typeof(Check)))
+		{
+			customEnums.Add(typeof(Check), new List<string>());
+		}
+	}
 
     public class CustomMusic
     {
