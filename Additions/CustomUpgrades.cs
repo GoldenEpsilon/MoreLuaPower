@@ -20,7 +20,7 @@ static class LuaPowerUpgrades
 		}
 		object obj2 = Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals[effect];
 		if (obj2 == null) {
-			Debug.LogError("'" + check + "' is not a LUA Function.");
+			Debug.LogError("'" + effect + "' is not a LUA Function.");
 			return;
 		}
 		LuaPowerData.customUpgrades.Add(name, new Tuple<string, string, string>(abbreviation, check, effect));
