@@ -85,4 +85,60 @@ static class LuaPowerFTriggerPatches
             }
         }
     }
+
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(EffectActions), nameof(EffectActions.CallFunctionWithItem), new Type[] { typeof(string), typeof(ItemObject) } )]
+    static void OnEffectActionFunctionCall(EffectActions __instance, string fn, ItemObject itemObj)
+    {
+        if (fn == "Move")
+        {
+            MPLog.Log("OnMoveEffect hook triggering", LogLevel.Info);
+            S.I.deCtrl.TriggerAllArtifacts((FTrigger)Enum.Parse(typeof(FTrigger), "OnMoveEffect"));
+        }
+    }
+
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(Being), nameof(Being.AddStatus), new Type[] { typeof(Status), typeof(float), typeof(float), typeof(ItemObject) })]
+    static void OnAddStatus(Being __instance, Status statusType, float amount, float duration, ItemObject source)
+    {
+        MPLog.Log("OnAddStatus hook triggering", LogLevel.Info);
+        S.I.deCtrl.TriggerAllArtifacts((FTrigger)Enum.Parse(typeof(FTrigger), "OnAddStatus"), forwardedTargetHit: __instance, forwardedHitAmount: (int) statusType);
+    }
+
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(ItemObject), nameof(ItemObject.Trigger), new Type[] { typeof(FTrigger), typeof(bool), typeof(Being), typeof(int) })]
+    static bool ItemObjectTriggerOnAddStatusHandler(ItemObject __instance, FTrigger fTrigger, bool doublecast, Being hitBeing, int forwardedHitDamage)
+    {
+        if (fTrigger == (FTrigger)Enum.Parse(typeof(FTrigger), "OnAddStatus") && __instance.HasTrigger(fTrigger))
+        {
+            // Adapted from decompiled ItemObject.Trigger method (build ID 10865936)
+            foreach (EffectApp effectApp in __instance.efApps)
+            {
+                if (fTrigger == effectApp.fTrigger)
+                {
+                    if (effectApp.checks != null)
+                    {
+                        foreach (Check check in effectApp.checks)
+                        {
+                            if (check.ToString() == "AddedStatus")
+                            {
+                                // enum int value of applied Status is passed forward in forwardedHitDamage param for OnAddStatus triggers
+                                // The AddedStatus check passes iff the checkValue string corresponds to the name of a Status whose int value matches the passed int value 
+                                if (Enum.IsDefined(typeof(Status), effectApp.checkValue))
+                                {
+                                    Status checkStatus = (Status)Enum.Parse(typeof(Status), effectApp.checkValue);
+                                    if ((int)checkStatus != forwardedHitDamage)
+                                    {
+                                        return false;
+                                    }
+                                }
+                                
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return true;
+    }
 }

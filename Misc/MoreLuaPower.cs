@@ -20,7 +20,7 @@ using UnityEngine;
 class MoreLuaPower
 {
 	static void Prepare() {
-		Debug.Log("MoreLuaPower Version 2.5.1");
+		Debug.Log("MoreLuaPower Version 2.5.2");
 		LuaPowerData.Setup();
 		LuaPowerCustomEnumsSetup.Setup();
 		LuaPowerCutscenes.Setup();
@@ -48,6 +48,9 @@ class MoreLuaPower
 		//if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("OnPetDeath")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("OnPetDeath"); }
 		//if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("OnLoop")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("OnLoop"); }
 		if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("OnTaunt")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("OnTaunt"); }
+		if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("OnMoveEffect")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("OnMoveEffect"); }
+		if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("OnAddStatus")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("OnAddStatus"); }
+		if (!LuaPowerData.customEnums[typeof(Check)].Contains("AddedStatus")) { LuaPowerData.customEnums[typeof(Check)].Add("AddedStatus"); }
 	}
 	static public Player GetPlayer() {
 		return S.I.batCtrl.currentPlayer;
@@ -104,7 +107,10 @@ class MoreLuaPowerReset
 		if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("OnOwnedPetDeath")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("OnOwnedPetDeath"); }
 		if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("OnPetDeath")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("OnPetDeath"); }
 		if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("OnLoop")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("OnLoop"); }
-	}
+		if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("OnMoveEffect")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("OnMoveEffect"); }
+		if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("OnAddStatus")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("OnAddStatus"); }
+		if (!LuaPowerData.customEnums[typeof(Check)].Contains("AddedStatus")) { LuaPowerData.customEnums[typeof(Check)].Add("AddedStatus"); }
+    }
 }
 /*
 class MoreLuaPowerTesting

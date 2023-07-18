@@ -98,6 +98,8 @@ Table of Contents:
 	OnChooseThis		//When this artifact (or spell? Needs testing) is chosen to add to deck, trigger for this item
 	OnRemoveThis		//When this artifact (or spell? Needs testing) is removed, trigger for this item
 	OnTaunt				//When a player taunts, trigger
+	OnMoveEffect		//When a being is pushed or pulled by an effect, trigger
+	OnAddStatus			//When a being has a status applied, trigger. Use with check="AddedStatus" checkValue="NameOfStatus"
 	PreMove				//unimplemented
 	PreHit				//unimplemented
 	OnOwnedPetDeath		//unimplemented
