@@ -17,3 +17,15 @@ static class LuaPowerMisc
 		return (Enhancement)Enum.Parse(typeof(Enhancement), name);
 	}
 }
+
+[HarmonyPatch(typeof(Debug), nameof(Debug.Log))]
+[HarmonyPatch(new Type[] { typeof(object) })]
+static class SpriteLoadSpeedUp
+{
+	private static bool Prefix(ref object message) {
+		if (message.ToString().StartsWith("Creating SprClip Mod")) {
+			return false;
+		}
+		return true;
+	}
+}

@@ -14,13 +14,14 @@
 using HarmonyLib;
 using System;
 using UnityEngine;
+using static AssetBundles.AssetBundleManager;
 
 [HarmonyPatch(typeof(S))]
 [HarmonyPatch("Awake")]
 class MoreLuaPower
 {
 	static void Prepare() {
-		Debug.Log("MoreLuaPower Version 2.5.2");
+		Debug.Log("MoreLuaPower Version 2.5.3");
 		LuaPowerData.Setup();
 		LuaPowerCustomEnumsSetup.Setup();
 		LuaPowerCutscenes.Setup();

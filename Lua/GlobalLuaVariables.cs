@@ -39,6 +39,7 @@ class MoreLuaPower_GlobalLuaVariables
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["ZoneType"] = UserData.CreateStatic<ZoneType>();
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["Time"] = UserData.CreateStatic<Time>();
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["S"] = UserData.CreateStatic<S>();
+        Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["LogLevel"] = UserData.CreateStatic<LogLevel>();
     }
 }
 
