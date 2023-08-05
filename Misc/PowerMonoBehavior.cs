@@ -3,18 +3,32 @@ using HarmonyLib;
 using MoonSharp.Interpreter;
 using UnityEngine;
 using System.IO;
+using TMPro;
+using UnityEngine.UI;
 using System.Collections;
 using UnityEngine.Networking;
 using System.Collections.Generic;
 
 public class PowerMonoBehavior : MonoBehaviour
 {
+    public static List<Transform> sliders = new List<Transform>();
     public static List<object> UpdateScripts = new List<object>();
     public static List<Script> UpdateBaseScripts = new List<Script>();
     public void Update() {
         for (int i = 0; i < UpdateScripts.Count; i++) {
             S.I.mainCtrl.StartCoroutine(MoreLuaPower_FunctionHelper.EffectRoutine(UpdateBaseScripts[i].CreateCoroutine(UpdateScripts[i])));
         }
+        foreach(Transform slider in sliders) {
+            if (slider == null) { 
+                sliders.Remove(slider);
+                continue;
+            }
+            string temp = slider.GetChild(3).GetComponent<TextMeshProUGUI>().text;
+			slider.GetChild(3).GetComponent<TextMeshProUGUI>().text = string.Format("{0}: {1}", slider.name, slider.GetComponent<Slider>().value) + "%";
+            if (temp != slider.GetChild(3).GetComponent<TextMeshProUGUI>().text) {
+                PlayerPrefs.SetFloat(slider.name, slider.GetComponent<Slider>().value);
+            }
+		}
         if (Input.GetKeyDown(KeyCode.BackQuote)) {
             EnableDeveloperTools();
         }
@@ -61,7 +75,7 @@ public class PowerMonoBehavior : MonoBehaviour
     }
 
     public static void AddZoneIcon(string spriteName, string dotName) {
-        S.I.runCtrl.worldBar.zoneSprites.Add(dotName, S.I.itemMan.GetSprite(spriteName));
+        S.I.runCtrl.worldBar.zoneSprites.Add(dotName, LuaPowerData.sprites[spriteName]);
     }
 
     public static void AddCustomMusic(string AudioName, float volume = 1, float startTime = 0, float introBoundry = 0, float endBoundry = 99999) {

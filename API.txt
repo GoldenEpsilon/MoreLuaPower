@@ -397,6 +397,33 @@ MoreLuaPower:
 		// This is relatively untested, so make sure to test it out and let me know if you have issues with it.
 		// I *believe* it needs to be ran after the battle is already over, as it opens up the reward selection menu by itself
 
+	void AddSettingToggle(string {name}, bool {defaultval})
+		// Adds a Toggle setting named {name} that is either True or False 
+		// (starting at {defaultval}).
+		// Settings share names across mods, so make sure your name is not too generic!
+
+	void AddSettingRotation(string {name}, List<string> {values}, int {defaultval})
+		// Adds a Rotation setting named {name} that rotates between all the values in {values} 
+		// (starting at the position of {defaultval} in the list).
+		// In lua, values should be set up similar to {"a", "b", "c"}
+		// For a full example: AddSettingRotation("RotationTest", {"a", "b", "c"}, 0);
+		// Settings share names across mods, so make sure your name is not too generic!
+
+	void AddSettingSlider(string {name}, float {defaultval})
+		// Adds a Slider setting named {name} that ranges from 0 to 1
+		// (starting at {defaultval}).
+		// Settings share names across mods, so make sure your name is not too generic!
+
+	bool GetSettingToggle(string name)
+		// Returns the current value of the Toggle setting named {name}.
+
+	string GetSettingRotation(string name)
+		// Returns the current value of the Rotation setting named {name}.
+		// Specifically, this returns the string in the array that would be given in AddSettingRotation that the setting is currently on.
+
+	float GetSettingSlider(string name)
+		// Returns the current value of the Slider setting named {name}.
+		// This ranges from 0-1, assuming players do not make modifications to how sliders or settings work to allow values past maximums.
 
 Lua-based:
 

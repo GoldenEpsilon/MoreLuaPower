@@ -80,6 +80,12 @@ class MoreLuaPower_GlobalLuaFunctions
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["AddCustomAchievement"] = (Action<string, string, string, bool>)LuaPowerAchievements.APIV.AddCustomAchievement;
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["UnlockCustomAchievement"] = (Action<string, int>)LuaPowerAchievements.APIV.UnlockCustomAchievement;
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["CreateDrop"] = (Action<List<ItemObject>>)LuaPowerCustomDrops.CreateDrop;
+        Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["GetSettingToggle"] = (Func<string, bool>)MPLCustomSettings.GetSettingToggle;
+        Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["GetSettingRotation"] = (Func<string, string>)MPLCustomSettings.GetSettingRotation;
+        Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["GetSettingSlider"] = (Func<string, float>)MPLCustomSettings.GetSettingSlider;
+        Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["AddSettingToggle"] = (Action<string, bool>)MPLCustomSettings.AddSettingToggle;
+        Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["AddSettingRotation"] = (Action<string, List<string>, int>)MPLCustomSettings.AddSettingRotation;
+        Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["AddSettingSlider"] = (Action<string, float>)MPLCustomSettings.AddSettingSlider;
 	}
 }
 
