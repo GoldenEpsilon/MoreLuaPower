@@ -7,6 +7,9 @@ using MoonSharp.Interpreter;
 using UnityEngine;
 using I2.Loc;
 
+// Allows the addition of custom default and player targeted lines from bosses and other beings to their line pool.
+// Similar to how DogeBosses can have Intro, Execution etc lines without needing the localization file.
+
 namespace EdenGossip_AdditiveLines
 {
     [HarmonyPatch(typeof(TalkBox), nameof(TalkBox.GetRandomLine))]
