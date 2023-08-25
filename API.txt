@@ -283,9 +283,14 @@ MoreLuaPower:
 	void AddEdenGossip (string {Boss}, string {Term}, string {Player}, string {Line})
 		// Adds {Line} as a possible line for {Boss} directed at {Player} during {Term} sequence.
     		// Using "Default" as {Player} will add to the pool of texts {Boss} can say to any character.
-    		// {Term} can be any sequence such as Intro, Execution, Downed etc. A list can be found in Terms.txt
+		
     		// It is recommended to place this function in one like Init() or any function called only once.
-    		// eg. AddBossGossip("Hazel", "Intro", "Saffron", "Heya pal!")
+    		// eg. AddEdenGossip("Hazel", "Intro", "Saffron", "Wrench!")
+
+		// Boss {Term} | Intro, Mercy, Execution, Flawless, Downed, Spare, Death
+		// Terrable {Term} | Finisher, Blocked
+		// Assist {Term} | "Default" as {Player} | Assist, AssistFinal, AssistCampfire
+		// Other {Term} | "Params" as {Boss}, "Default" as {Player} | HostageHelp, HostageThanks, SiloWarning
 
 	void RemoveEdenGossip (string {Boss}, string {Term}, string {Player}, string {Line})
 		// Removes the custom {Line} from the specific {Boss}/{Term}/{Player} pool.
