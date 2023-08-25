@@ -280,6 +280,19 @@ MoreLuaPower:
 		// Useful for scripting tier-based boss attack patterns in lua
 		// Ex: local tier = GetBossTier(item.being)
 
+	void AddEdenGossip (string {Boss}, string {Term}, string {Player}, string {Line})
+		// Adds {Line} as a possible line for {Boss} directed at {Player} during {Term} sequence.
+    		// Using "Default" as {Player} will add to the pool of texts {Boss} can say to any character.
+    		// {Term} can be any sequence such as Intro, Execution, Downed etc. A list can be found in Terms.txt
+    		// It is recommended to place this function in one like Init() or any function called only once.
+    		// eg. AddBossGossip("Hazel", "Intro", "Saffron", "Heya pal!")
+
+	void RemoveEdenGossip (string {Boss}, string {Term}, string {Player}, string {Line})
+		// Removes the custom {Line} from the specific {Boss}/{Term}/{Player} pool.
+
+	List<string> GetEdenGossip (string {Boss}, string {Term}, string {Player})
+		// Returns all custom {Line}s from the specific {Boss}/{Term}/{Player} pool.
+
 	void Log(string {message}, LogLevel {logLevel} = LogLevel.Normal)
 		//Writes {message} to the debug log and/or the console, depending on {logLevel}.
 		// Meant to be a flexible replacement for print() that prints to the console as well
