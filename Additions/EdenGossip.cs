@@ -51,6 +51,9 @@ namespace EdenGossip_AdditiveLines
             BC ctrl = S.I.runCtrl.ctrl;
             List<string> decryption = new List<string>(3);
 
+            string boss = password.Substring(0, password.LastIndexOf("/"));
+            password = password.Replace(boss + "/", "");
+
             string player = (string)ctrl.currentPlayer.beingObj.nameString.Clone();
             if (!password.Contains(player))
             {
@@ -58,11 +61,8 @@ namespace EdenGossip_AdditiveLines
             }
             password = password.Replace(player, "");
 
-            string key = password.Substring(password.LastIndexOf("/") + 1);
-            string boss = password.Replace("/" + key, "");
-
             decryption.Add(boss);
-            decryption.Add(key);
+            decryption.Add(password);
             decryption.Add(player);
 
             return decryption;
@@ -139,18 +139,5 @@ namespace EdenGossip_AdditiveLines
             return new List<string>();
         }
     }
-
-    /* Previous Global Functions
-    [HarmonyPatch(typeof(EffectActions), MethodType.Constructor)]
-    [HarmonyPatch(new Type[] { typeof(string) })]
-    internal class Gossip_Globals
-    {
-        private static void Postfix()
-        {
-            Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["AddEdenGossip"] = new Action<string, string, string, string>(Gossip_Data.AddEdenGossip);
-            Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["RemoveEdenGossip"] = new Action<string, string, string, string>(Gossip_Data.RemoveEdenGossip);
-            Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["GetEdenGossip"] = new Action<string, string, string, string>(Gossip_Data.GetEdenGossip);
-        }
-    }
-    */
+    
 }
