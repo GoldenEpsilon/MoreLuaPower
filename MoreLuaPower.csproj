@@ -136,6 +136,7 @@
     <Compile Include="Additions\CustomXML.cs" />
     <Compile Include="Additions\CustomZones.cs" />
     <Compile Include="Additions\DogeBoss.cs" />
+    <Compile Include="Additions\EdenGossip.cs" />
     <Compile Include="Additions\UtilityFunctions.cs" />
     <Compile Include="Data\CustomFileLoader.cs" />
     <Compile Include="Data\CustomLanguage.cs" />
