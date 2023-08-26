@@ -51,7 +51,7 @@ namespace EdenGossip_AdditiveLines
             BC ctrl = S.I.runCtrl.ctrl;
             List<string> decryption = new List<string>(3);
 
-            string boss = password.Substring(0, password.LastIndexOf("/"));
+            string boss = password.Substring(0, password.IndexOf("/"));
             password = password.Replace(boss + "/", "");
 
             string player = (string)ctrl.currentPlayer.beingObj.nameString.Clone();
