@@ -22,6 +22,12 @@ namespace EdenGossip_AdditiveLines
             List<string> keyMini = new List<string>(DecodeConversation(key));
             List<string> oldLines = new List<string>();
 
+            string currentSkin = S.I.runCtrl.ctrl.currentPlayer.beingObj.animName;
+            if (Gossip_Data.GetEdenGossip(keyMini[0], keyMini[1], keyMini[2] + "/" + currentSkin).Count > 0)
+            {
+                keyMini[2] += "/" + currentSkin;
+            }
+
             int num = 1;
             while (LocalizationManager.GetTranslation(key + num, true, 0, true, false, null, null) != null)
             {
