@@ -146,7 +146,7 @@ class SettingsPatch
 
 			var modSettingsMenu = Object.Instantiate(__instance.settingsPane.gameObject);
 			modSettingsMenu.transform.position = __instance.settingsPane.transform.position;
-			modSettingsMenu.transform.parent = __instance.settingsPane.transform.parent;
+			modSettingsMenu.transform.SetParent(__instance.settingsPane.transform.parent);
 			var settingsPane = modSettingsMenu.GetComponent<SettingsPane>();
 			GameObject _content = settingsPane.content;
 			SlideBody _slideBody = settingsPane.slideBody;
@@ -167,11 +167,16 @@ class SettingsPatch
 			newPane.originButton = _originButton;
 
 			Object.DestroyImmediate(button.GetComponent<Button>());
-			button.gameObject.AddComponent<Button>();
-			button.GetComponent<Button>().onClick.AddListener(() => { S.I.optCtrl.OpenPanel(modSettingsMenu.GetComponent<NavPanel>()); });
-			Traverse.Create(button.GetComponent<UIButton>()).Field("button").SetValue(button.GetComponent<Button>());
+			{
+				EventTrigger.Entry entry = new EventTrigger.Entry();
+				entry.eventID = EventTriggerType.PointerClick;
+				entry.callback.AddListener((data) => { S.I.optCtrl.OpenPanel(modSettingsMenu.GetComponent<NavPanel>()); });
+				EventTrigger trigger = button.gameObject.AddComponent<EventTrigger>();
+				trigger.triggers.Add(entry);
+				trigger.enabled = false;
+			}
 
-			button.GetComponent<UIButton>().onAcceptPress.RemoveAllListeners();
+			//button.GetComponent<UIButton>().onAcceptPress.RemoveAllListeners();
 
 			var navPanelBackground = modSettingsMenu.transform.GetChild(0).GetChild(0);
 			var navPanelButtons = modSettingsMenu.transform.GetChild(0).GetChild(1);

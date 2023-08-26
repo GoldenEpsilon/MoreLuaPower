@@ -7,7 +7,7 @@ class LuaPowerParticles
 {
     static public void ParticleEffect(Being being, Dictionary<string, string> system) {
         GameObject partSys = new GameObject();
-        partSys.transform.parent = being.transform;
+        partSys.transform.SetParent(being.transform);
         var ps = partSys.AddComponent<ParticleSystem>();
         var psrend = partSys.GetComponent<ParticleSystemRenderer>();
         ParticleSystem.MainModule psmain = ps.main;

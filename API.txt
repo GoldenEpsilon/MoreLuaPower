@@ -451,7 +451,8 @@ Lua-based:
 	//Is called every frame, including on menus and when time's stopped.
 
 	GameUpdate:
-	//Is called every physics update, does not run on certain menus intentionally like the main menu and the game over menu. Meant for updating during gameplay.
+	//Is called every physics update, does not run on certain menus intentionally like the main menu and the game over menu. 
+	// Meant for updating during gameplay.
 
 
 [GLOBAL LUA VARIABLES]

@@ -101,7 +101,7 @@ static class LuaPowerBars
                 break;
             case "OverBeing":
                 bar.transform.position = being.transform.position;
-                bar.transform.parent = being.transform;
+                bar.transform.SetParent(being.transform);
                 bar.transform.position = new Vector3(bar.transform.position.x, bar.transform.position.y + 60 + (bar.rect.sizeDelta.y * relativePosition), bar.transform.position.z);
                 bar.transform.localScale = new Vector3(0.35f, 0.5f, 1);
                 bar.gem.transform.localScale = new Vector3(0.6f, 0.4f, 1);
@@ -111,7 +111,7 @@ static class LuaPowerBars
                 break;
             case "UnderBeing":
                 bar.transform.position = being.transform.position;
-                bar.transform.parent = being.transform;
+                bar.transform.SetParent(being.transform);
                 bar.transform.position = new Vector3(bar.transform.position.x, bar.transform.position.y - 12 - (bar.rect.sizeDelta.y * relativePosition), bar.transform.position.z);
                 bar.transform.localScale = new Vector3(0.35f, 0.5f, 1);
                 bar.gem.transform.localScale = new Vector3(0.6f, 0.4f, 1);
@@ -122,7 +122,7 @@ static class LuaPowerBars
             case "BesideBeing":
                 bar.transform.RotateAround(bar.gem.transform.position, new Vector3(0, 0, 1), 90);
                 bar.transform.position = being.transform.position;
-                bar.transform.parent = being.transform;
+                bar.transform.SetParent(being.transform);
                 bar.transform.position = new Vector3(bar.transform.position.x - 25 - (bar.rect.sizeDelta.y * relativePosition), bar.transform.position.y + 20, bar.transform.position.z);
                 bar.transform.localScale = new Vector3(0.45f, 0.45f, 1);
                 bar.gem.transform.localScale = new Vector3(0.45f, 0.45f, 1);
