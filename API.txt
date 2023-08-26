@@ -286,6 +286,7 @@ MoreLuaPower:
 		
     		// It is recommended to place this function in one like Init() or any function called only once.
     		// eg. AddEdenGossip("Hazel", "Intro", "Saffron", "Wrench!")
+		// eg. AddEdenGossip("Gunner", "Intro", "Saffron/SaffronWitch", "Anime!")
 
 		// Boss {Term} | Intro, Mercy, Execution, Flawless, Downed, Spare, Death
 		// Terrable {Term} | Finisher, Blocked
