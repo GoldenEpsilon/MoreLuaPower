@@ -433,6 +433,19 @@ MoreLuaPower:
 		// (starting at {defaultval}).
 		// Settings share names across mods, so make sure your name is not too generic!
 
+	void AddSettingFolder(string {name})
+		// Adds a folder setting named {name} which can be used to sort and organize settings.
+		// The folder setting can be pressed to open a one-page menu of added settings.
+		// Name ({name}) another setting 'FolderName/SettingName' to add it to the folder.
+		// The 'FolderName/' will be removed when viewing the setting in the folder.
+		// Folders can hold an infite amount of settings but will only show 18 as it is a single page.
+
+		// eg. AddSettingFolder ("Hazel's Stuff")
+		//     AddSettingToggle("Hazel's Stuff/Wrench", true)
+		// Pressing the 'Hazel's Stuff' button will show:
+		// Wrench: true
+		// Return?
+
 	bool GetSettingToggle(string name)
 		// Returns the current value of the Toggle setting named {name}.
 
@@ -443,6 +456,9 @@ MoreLuaPower:
 	float GetSettingSlider(string name)
 		// Returns the current value of the Slider setting named {name}.
 		// This ranges from 0-1, assuming players do not make modifications to how sliders or settings work to allow values past maximums.
+
+	List<string> GetSettingFolder(string name)
+		// Returns the list of settings currently in the folder.
 
 Lua-based:
 
