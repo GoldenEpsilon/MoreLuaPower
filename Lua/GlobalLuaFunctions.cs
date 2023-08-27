@@ -89,6 +89,9 @@ class MoreLuaPower_GlobalLuaFunctions
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["AddSettingToggle"] = (Action<string, bool>)MPLCustomSettings.AddSettingToggle;
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["AddSettingRotation"] = (Action<string, List<string>, int>)MPLCustomSettings.AddSettingRotation;
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["AddSettingSlider"] = (Action<string, float>)MPLCustomSettings.AddSettingSlider;
+
+	Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["AddSettingFolder"] = (Action<string>)MPLCustomSettings.AddSettingFolder;
+	Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["GetSettingFolder"] = (Func<string, List<string>>)MPLCustomSettings.GetSettingFolder;
 	}
 }
 
