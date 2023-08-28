@@ -318,9 +318,9 @@ static class MPLCustomSettings
                     }
                     pair.Value.inFolder = true;
 
-                    if (!settings[folder].values.Contains(pair.Value.name))
+                    if (!settings[folder].values.Contains(pair.Key.Replace(folder + "/", "")))
                     {
-                        settings[folder].values.Add(pair.Value.name);
+                        settings[folder].values.Add(pair.Key.Replace(folder + "/", ""));
                     }
                 }
             }
