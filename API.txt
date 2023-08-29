@@ -433,6 +433,10 @@ MoreLuaPower:
 		// (starting at {defaultval}).
 		// Settings share names across mods, so make sure your name is not too generic!
 
+	void AddSettingTextBox( string {name}, string {placeholder} (optional) )
+		// Adds an editable text field setting named {name}.
+		// {placeholder} is shown when no text has been entered into the input field. 
+
 	void AddSettingFolder(string {name})
 		// Adds a folder setting named {name} which can be used to sort and organize settings.
 		// The folder setting can be pressed to open a one-page menu of added settings.
@@ -457,8 +461,11 @@ MoreLuaPower:
 		// Returns the current value of the Slider setting named {name}.
 		// This ranges from 0-1, assuming players do not make modifications to how sliders or settings work to allow values past maximums.
 
+	string GetSettingTextBox (string name)
+		// Returns the current entered text in the text box named {name}/
+
 	List<string> GetSettingFolder(string name)
-		// Returns the list of settings currently in the folder.
+		// Returns the list of settings currently in the folder named {name}.
 
 Lua-based:
 
