@@ -446,9 +446,9 @@ MoreLuaPower:
 
 		// eg. AddSettingFolder ("Hazel's Stuff")
 		//     AddSettingToggle("Hazel's Stuff/Wrench", true)
-		// Pressing the 'Hazel's Stuff' button will show:
-		// Wrench: true
-		// Return?
+
+		// Use the full folder-setting name when getting setting values from settings in folders
+		// eg. GetSettingToggle ("Hazel's Stuff/Wrench")
 
 	bool GetSettingToggle(string name)
 		// Returns the current value of the Toggle setting named {name}.
