@@ -27,6 +27,7 @@ class MPLSetting
     public float defaultSliderValue = 0;
 
     public bool inFolder = false;
+    public string folderKey = "";
 
     public GameObject settingobj;
     public Transform control;
@@ -201,6 +202,7 @@ static class MPLCustomSettings
 
         MPLSetting setting = new MPLSetting();
         setting.name = name;
+        setting.folderKey = name;
         setting.values = new List<string>();
         setting.type = SettingType.Folder;
 
@@ -253,10 +255,13 @@ static class MPLCustomSettings
                 option.settingobj.SetActive(false);
                 if (pair.Key.StartsWith(currentFolder + "/") & pair.Value.inFolder)
                 {
-                    if (controlNum < 18)
+                    if (pair.Key.Substring(0, pair.Key.LastIndexOf("/")) == currentFolder)
                     {
-                        controlNum++;
-                        option.settingobj.SetActive(true);
+                        if (controlNum < 18)
+                        {
+                            controlNum++;
+                            option.settingobj.SetActive(true);
+                        }
                     }
                 }
             }
@@ -346,18 +351,21 @@ static class MPLCustomSettings
         {
             if (pair.Key.Contains("/"))
             {
-                string folder = pair.Key.Substring(0, pair.Key.IndexOf("/"));
+                string folder = pair.Key.Substring(0, pair.Key.LastIndexOf("/"));
                 if (settings.ContainsKey(folder))
                 {
-                    if (pair.Value.name.StartsWith(folder + "/"))
+                    if (settings[folder].type == SettingType.Folder)
                     {
-                        pair.Value.name = pair.Value.name.Substring(pair.Value.name.IndexOf("/") + 1);
-                    }
-                    pair.Value.inFolder = true;
+                        if (pair.Value.name.StartsWith(folder + "/"))
+                        {
+                            pair.Value.name = pair.Value.name.Substring(pair.Value.name.LastIndexOf("/") + 1);
+                        }
+                        pair.Value.inFolder = true;
 
-                    if (!settings[folder].values.Contains(pair.Key.Replace(folder + "/", "")))
-                    {
-                        settings[folder].values.Add(pair.Key.Replace(folder + "/", ""));
+                        if (!settings[folder].values.Contains(pair.Key.Replace(folder + "/", "")))
+                        {
+                            settings[folder].values.Add(pair.Key.Replace(folder + "/", ""));
+                        }
                     }
                 }
             }
@@ -567,7 +575,7 @@ class SettingsPatch
 
                         string _TextBoxText = setting.control.GetComponent<TextMeshProUGUI>().text;
                         float _TextBoxSize1 = setting.control.GetComponent<TextMeshProUGUI>().GetTextInfo(_TextBoxText).characterInfo[0].topLeft.x;
-                        float _TextBoxSize2 = setting.control.GetComponent<TextMeshProUGUI>().GetTextInfo(_TextBoxText).characterInfo[_TextBoxText.Length-1].bottomRight.x;
+                        float _TextBoxSize2 = setting.control.GetComponent<TextMeshProUGUI>().GetTextInfo(_TextBoxText).characterInfo[_TextBoxText.Length - 1].bottomRight.x;
                         float _TextBotSize = _TextBoxSize2 - _TextBoxSize1;
 
                         setting.control.GetComponent<NavTextfield>().transform.GetChild(0).Translate(_TextBotSize + 2, 0, 0);
@@ -614,7 +622,7 @@ class SettingsPatch
                             entry.eventID = EventTriggerType.PointerClick;
                             entry.callback.AddListener((data) => {
                                 MPLCustomSettings.folderActive = true;
-                                MPLCustomSettings.currentFolder = setting.name;
+                                MPLCustomSettings.currentFolder = setting.folderKey;
                                 MPLCustomSettings.UpdateSettingsPage();
                             });
 
@@ -639,6 +647,18 @@ class SettingsPatch
                             entry.eventID = EventTriggerType.PointerClick;
                             entry.callback.AddListener((data) => {
                                 MPLCustomSettings.folderActive = false;
+                                if (MPLCustomSettings.currentFolder.Contains("/"))
+                                {
+                                    if (MPLCustomSettings.settings.ContainsKey( MPLCustomSettings.currentFolder.Substring(0, MPLCustomSettings.currentFolder.LastIndexOf("/") ) )
+                                    )
+                                    {
+                                        if ( MPLCustomSettings.settings[MPLCustomSettings.currentFolder.Substring(0, MPLCustomSettings.currentFolder.LastIndexOf("/") )].type == SettingType.Folder )
+                                        {
+                                            MPLCustomSettings.folderActive = true;
+                                            MPLCustomSettings.currentFolder = MPLCustomSettings.currentFolder.Substring(0, MPLCustomSettings.currentFolder.LastIndexOf("/"));
+                                        }
+                                    }
+                                }
                                 MPLCustomSettings.UpdateSettingsPage();
                             });
 
@@ -721,8 +741,8 @@ class SettingsPatch
             if (__instance.GetComponent<TMP_InputField>() != null)
             {
                 PlayerPrefs.SetString(
-                    __instance.name.Substring("MoreLuaPowerSettingsNavTextField".Length), 
-                    __instance.GetComponent<TMP_InputField>().textComponent.text
+                    __instance.name.Substring("MoreLuaPowerSettingsNavTextField".Length),
+                    __instance.GetComponent<TMP_InputField>().text
                     );
             }
         }
