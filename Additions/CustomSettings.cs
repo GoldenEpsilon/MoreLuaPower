@@ -578,7 +578,7 @@ class SettingsPatch
                         }
                         else
                         {
-                            setting.control.GetComponent<TMP_InputField>().text = "";
+                            setting.control.GetComponent<TMP_InputField>().text = string.Empty;
                         }
 
                         break;
