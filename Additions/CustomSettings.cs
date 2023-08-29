@@ -10,6 +10,7 @@ enum SettingType
     Toggle,
     Rotation,
     Slider,
+    TextField,
     Folder,
 
     Return // Used for folder return button
@@ -85,6 +86,20 @@ static class MPLCustomSettings
         }
         return PlayerPrefs.GetFloat(name);
     }
+    public static string GetSettingTextBox(string name)
+    {
+        if (!settings.ContainsKey(name))
+        {
+            MPLog.Log("Setting " + name + " does not exist!", LogLevel.Major);
+            return null;
+        }
+        if (settings[name].type != SettingType.TextField)
+        {
+            MPLog.Log("Setting " + name + " is a " + settings[name].type.ToString() + ", when a Text Input was asked for.", LogLevel.Major);
+            return null;
+        }
+        return PlayerPrefs.GetString(name);
+    }
     public static List<string> GetSettingFolder(string name)
     {
         if (name == null)
@@ -153,6 +168,24 @@ static class MPLCustomSettings
             MPLog.Log("Setting " + name + " was not added as it was already an initialized setting", LogLevel.Minor);
         }
     }
+    public static void AddSettingTextBox(string name, string placeholder = "Insert Text")
+    {
+        if (!settings.ContainsKey(name))
+        {
+            MPLSetting setting = new MPLSetting();
+            setting.name = name;
+            setting.type = SettingType.TextField;
+            settings.Add(name, setting);
+
+            setting.values = new List<string>();
+            setting.values.Add(name);
+            setting.values.Add(placeholder);
+        }
+        else
+        {
+            MPLog.Log("Setting " + name + " was not added as it was already an initialized setting", LogLevel.Minor);
+        }
+    }
     public static void AddSettingFolder(string name)
     {
         if (name == null)
@@ -201,7 +234,11 @@ static class MPLCustomSettings
 
         foreach (KeyValuePair<string, MPLSetting> pair in settings)
         {
-            pair.Value.control.GetComponent<TextMeshProUGUI>().color = U.I.GetColor(UIColor.White);
+            if (pair.Value.control.position.z < -35) { pair.Value.control.Translate(0, 0, (-5) - pair.Value.control.position.z); }
+            if (pair.Value.control.GetComponent<TextMeshProUGUI>() != null)
+            {
+                pair.Value.control.GetComponent<TextMeshProUGUI>().color = U.I.GetColor(UIColor.White);
+            }
         }
         nextPage.GetChild(0).GetComponent<TextMeshProUGUI>().color = U.I.GetColor(UIColor.White);
         previousPage.GetChild(0).GetComponent<TextMeshProUGUI>().color = U.I.GetColor(UIColor.White);
@@ -492,6 +529,66 @@ class SettingsPatch
                         }
                         PowerMonoBehavior.sliders.Add(setting.settingobj.transform);
                         break;
+                    case SettingType.TextField:
+
+                        Transform InputFieldRef = S.I.heCtrl.content.transform.Find("SeedField");
+                        TextMeshProUGUI InputFieldGUIRef = navPanelButtons.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>();
+
+                        NavTextfield TextBoxInputRef = S.I.heCtrl.content.transform.Find("SeedField").GetComponent<NavTextfield>();
+
+                        setting.settingobj = Object.Instantiate(InputFieldRef.gameObject, navPanelButtons.transform);
+                        setting.settingobj.SetActive(true);
+
+                        setting.control = setting.settingobj.transform;
+                        setting.control.GetComponent<NavTextfield>().btnCtrl = S.I.optCtrl.btnCtrl;
+                        setting.control.GetComponent<NavTextfield>().name = "MoreLuaPowerSettingsNavTextField" + setting.values[0];
+
+                        Object.DestroyImmediate(setting.settingobj.GetComponent<Image>());
+                        setting.settingobj.AddComponent<TextMeshProUGUI>();
+
+                        setting.control.GetComponent<TextMeshProUGUI>().text = setting.name + " :";
+                        setting.control.GetComponent<TextMeshProUGUI>().fontSize = InputFieldGUIRef.fontSize;
+                        setting.control.GetComponent<TextMeshProUGUI>().font = InputFieldGUIRef.font;
+
+                        setting.control.GetComponent<NavTextfield>().navList = PrevButton.GetComponent<NavButton>().navList;
+                        setting.control.GetComponent<NavTextfield>().useParentTransformNav = true;
+                        setting.control.GetComponent<NavTextfield>().transform.GetChild(0).GetChild(0).Translate(0, -1f, 0);
+
+                        setting.control.GetComponent<TMP_InputField>().textComponent.fontSize = InputFieldGUIRef.fontSize;
+                        setting.control.GetComponent<TMP_InputField>().textComponent.color = new Color(0.8f, 0.8f, 0.8f);
+                        setting.control.GetComponent<TMP_InputField>().textComponent.font = InputFieldGUIRef.font;
+                        setting.control.GetComponent<TMP_InputField>().textComponent.alignment = TextAlignmentOptions.Left;
+                        setting.control.GetComponent<TMP_InputField>().placeholder.GetComponent<TextMeshProUGUI>().fontStyle = FontStyles.Normal;
+                        setting.control.GetComponent<TMP_InputField>().placeholder.GetComponent<TextMeshProUGUI>().fontSize = InputFieldGUIRef.fontSize;
+                        setting.control.GetComponent<TMP_InputField>().placeholder.GetComponent<TextMeshProUGUI>().SetText(setting.values[1]);
+                        setting.control.GetComponent<TMP_InputField>().placeholder.GetComponent<I2.Loc.Localize>().Term = "";
+
+                        setting.control.GetComponent<TextMeshProUGUI>().ForceMeshUpdate();
+
+                        string _TextBoxText = setting.control.GetComponent<TextMeshProUGUI>().text;
+                        float _TextBoxSize1 = setting.control.GetComponent<TextMeshProUGUI>().GetTextInfo(_TextBoxText).characterInfo[0].topLeft.x;
+                        float _TextBoxSize2 = setting.control.GetComponent<TextMeshProUGUI>().GetTextInfo(_TextBoxText).characterInfo[_TextBoxText.Length-1].bottomRight.x;
+                        float _TextBotSize = _TextBoxSize2 - _TextBoxSize1;
+
+                        setting.control.GetComponent<NavTextfield>().transform.GetChild(0).Translate(_TextBotSize + 2, 0, 0);
+
+                        if (PlayerPrefs.HasKey(setting.values[0]))
+                        {
+                            setting.control.GetComponent<TMP_InputField>().text = PlayerPrefs.GetString(setting.values[0]);
+                        }
+                        else
+                        {
+                            setting.control.GetComponent<TMP_InputField>().text = "";
+                        }
+
+                        break;
+
+                    //setting.settingobj = Object.Instantiate(navPanelButtons.transform.GetChild(0).gameObject, navPanelButtons.transform);
+                    //setting.settingobj = Object.Instantiate(streamPane.GetChild(0).GetChild(3).gameObject, navPanelButtons.transform);
+                    //buttonNavText.inputField = Object.Instantiate(streamPane.GetChild(0).GetChild(3).GetComponent<NavTextfield>().inputField, setting.control);
+                    //setting.control = Object.Instantiate(S.I.heCtrl.seedInput, setting.settingobj.transform).transform;
+                    //setting.control.gameObject.AddComponent<TMP_InputField>();
+
                     case SettingType.Folder:
                         setting.settingobj = Object.Instantiate(navPanelButtons.transform.GetChild(0).gameObject, navPanelButtons.transform);
                         setting.settingobj.SetActive(true);
@@ -550,9 +647,8 @@ class SettingsPatch
                             trigger.enabled = false;
                         }
                         break;
-
                 }
-                if (setting.type != SettingType.Folder)
+                if (setting.type != SettingType.Folder & setting.control.GetComponent<TextMeshProUGUI>() != null)
                 {
                     setting.control.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Left;
                 }
@@ -582,6 +678,53 @@ class SettingsPatch
             MPLCustomSettings.UpdateSettingsPage();
 
             MPLCustomSettings.SettingsSetUp = true;
+        }
+    }
+
+    [HarmonyPatch(typeof(NavTextfield))]
+    [HarmonyPatch(nameof(NavTextfield.Focus))]
+    [HarmonyPostfix]
+    private static void NavFieldFixIntro(NavTextfield __instance)
+    {
+        if (__instance.name.StartsWith("MoreLuaPowerSettingsNavTextField"))
+        {
+            __instance.canvasGroup.alpha = 1f;
+            if (__instance.GetComponent<TextMeshProUGUI>() != null)
+            {
+                __instance.GetComponent<TextMeshProUGUI>().color = U.I.GetColor(UIColor.Pink);
+            }
+        }
+    }
+
+    [HarmonyPatch(typeof(NavTextfield))]
+    [HarmonyPatch(nameof(NavTextfield.UnFocus))]
+    [HarmonyPostfix]
+    private static void NavFieldFixOutro(NavTextfield __instance)
+    {
+        if (__instance.name.StartsWith("MoreLuaPowerSettingsNavTextField"))
+        {
+            __instance.canvasGroup.alpha = 1f;
+            if (__instance.GetComponent<TextMeshProUGUI>() != null)
+            {
+                __instance.GetComponent<TextMeshProUGUI>().color = U.I.GetColor(UIColor.White);
+            }
+        }
+    }
+
+    [HarmonyPatch(typeof(NavTextfield))]
+    [HarmonyPatch(nameof(NavTextfield.OnEndEdit))]
+    [HarmonyPostfix]
+    private static void NavFieldEndEditSave(NavTextfield __instance)
+    {
+        if (__instance.name.StartsWith("MoreLuaPowerSettingsNavTextField"))
+        {
+            if (__instance.GetComponent<TMP_InputField>() != null)
+            {
+                PlayerPrefs.SetString(
+                    __instance.name.Substring("MoreLuaPowerSettingsNavTextField".Length), 
+                    __instance.GetComponent<TMP_InputField>().textComponent.text
+                    );
+            }
         }
     }
 }
