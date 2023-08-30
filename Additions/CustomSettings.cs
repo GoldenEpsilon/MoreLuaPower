@@ -5,6 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+
 enum SettingType
 {
     Toggle,
@@ -19,6 +20,7 @@ enum SettingType
 class MPLSetting
 {
     public string name;
+    public string key;
     public SettingType type;
     public List<string> values;
 
@@ -27,7 +29,6 @@ class MPLSetting
     public float defaultSliderValue = 0;
 
     public bool inFolder = false;
-    public string folderKey = "";
 
     public GameObject settingobj;
     public Transform control;
@@ -129,6 +130,7 @@ static class MPLCustomSettings
         {
             MPLSetting setting = new MPLSetting();
             setting.name = name;
+            setting.key = name;
             setting.type = SettingType.Toggle;
             setting.defaultValue = defaultval ? 1 : 0;
             settings.Add(name, setting);
@@ -144,6 +146,7 @@ static class MPLCustomSettings
         {
             MPLSetting setting = new MPLSetting();
             setting.name = name;
+            setting.key = name;
             setting.values = values;
             setting.type = SettingType.Rotation;
             setting.defaultValue = defaultval % setting.values.Count; //doing the modulo for extra safety
@@ -160,6 +163,7 @@ static class MPLCustomSettings
         {
             MPLSetting setting = new MPLSetting();
             setting.name = name;
+            setting.key = name;
             setting.type = SettingType.Slider;
             setting.defaultSliderValue = defaultval;
             settings.Add(name, setting);
@@ -175,6 +179,7 @@ static class MPLCustomSettings
         {
             MPLSetting setting = new MPLSetting();
             setting.name = name;
+            setting.key = name;
             setting.type = SettingType.TextField;
             settings.Add(name, setting);
 
@@ -202,7 +207,7 @@ static class MPLCustomSettings
 
         MPLSetting setting = new MPLSetting();
         setting.name = name;
-        setting.folderKey = name;
+        setting.key = name;
         setting.values = new List<string>();
         setting.type = SettingType.Folder;
 
@@ -212,6 +217,13 @@ static class MPLCustomSettings
         sorted.Insert(folderCount, new KeyValuePair<string, MPLSetting>(name, setting));
         settings.Clear();
         foreach (KeyValuePair<string, MPLSetting> pair in sorted) { settings.Add(pair.Key, pair.Value); }
+
+        if (!settings.ContainsKey(folderReturnKey))
+        {
+            MPLSetting returnBtn = new MPLSetting();
+            returnBtn.type = SettingType.Return;
+            settings.Add(folderReturnKey, returnBtn);
+        }
     }
 
     public static void NextSettingsPage()
@@ -232,7 +244,11 @@ static class MPLCustomSettings
     }
     public static void UpdateSettingsPage()
     {
-        if (settings.ContainsKey(folderReturnKey)) { settings[folderReturnKey].settingobj.SetActive(false); }
+        if (settings.ContainsKey(folderReturnKey))
+        {
+            settings[folderReturnKey].settingobj.SetActive(false);
+            settings[folderReturnKey].settingobj.transform.SetAsLastSibling();
+        }
 
         foreach (KeyValuePair<string, MPLSetting> pair in settings)
         {
@@ -241,6 +257,7 @@ static class MPLCustomSettings
             {
                 pair.Value.control.GetComponent<TextMeshProUGUI>().color = U.I.GetColor(UIColor.White);
             }
+            pair.Value.settingobj.SetActive(false);
         }
         nextPage.GetChild(0).GetComponent<TextMeshProUGUI>().color = U.I.GetColor(UIColor.White);
         previousPage.GetChild(0).GetComponent<TextMeshProUGUI>().color = U.I.GetColor(UIColor.White);
@@ -249,19 +266,15 @@ static class MPLCustomSettings
 
         if (folderActive)
         {
-            foreach (KeyValuePair<string, MPLSetting> pair in settings)
+            foreach (string path in settings[currentFolder].values)
             {
-                MPLSetting option = pair.Value;
-                option.settingobj.SetActive(false);
-                if (pair.Key.StartsWith(currentFolder + "/") & pair.Value.inFolder)
+                string activeSettingFile = currentFolder + "/" + path;
+                if (settings.ContainsKey(activeSettingFile))
                 {
-                    if (pair.Key.Substring(0, pair.Key.LastIndexOf("/")) == currentFolder)
+                    if (controlNum < 18)
                     {
-                        if (controlNum < 18)
-                        {
-                            controlNum++;
-                            option.settingobj.SetActive(true);
-                        }
+                        controlNum++;
+                        settings[activeSettingFile].settingobj.SetActive(true);
                     }
                 }
             }
@@ -342,9 +355,15 @@ static class MPLCustomSettings
     }
     internal static void UpdateFolders()
     {
+        List<MPLSetting> trueFolders = new List<MPLSetting>();
         foreach (MPLSetting setting in settings.Values)
         {
-            if (setting.type == SettingType.Folder) { setting.values.Clear(); }
+            if (setting.type == SettingType.Folder) 
+            { 
+                setting.values.Clear();
+                setting.control.GetComponent<TextMeshProUGUI>().text = setting.name;
+                trueFolders.Add(setting);
+            }
         }
 
         foreach (KeyValuePair<string, MPLSetting> pair in settings)
@@ -358,24 +377,31 @@ static class MPLCustomSettings
                     {
                         if (pair.Value.name.StartsWith(folder + "/"))
                         {
-                            pair.Value.name = pair.Value.name.Substring(pair.Value.name.LastIndexOf("/") + 1);
+                            pair.Value.name = pair.Value.name.Replace(folder + "/", string.Empty);
+                            pair.Value.control.GetComponent<TextMeshProUGUI>().text =
+                            pair.Value.control.GetComponent<TextMeshProUGUI>().text.Replace(folder + "/", string.Empty);
                         }
                         pair.Value.inFolder = true;
 
-                        if (!settings[folder].values.Contains(pair.Key.Replace(folder + "/", "")))
+                        if (!settings[folder].values.Contains(pair.Key.Replace(folder + "/", string.Empty)))
                         {
-                            settings[folder].values.Add(pair.Key.Replace(folder + "/", ""));
+                            settings[folder].values.Add(pair.Key.Replace(folder + "/", string.Empty));
                         }
                     }
                 }
             }
         }
 
-        if (!settings.ContainsKey(folderReturnKey))
+        foreach (MPLSetting setting in trueFolders)
         {
-            MPLSetting returnBtn = new MPLSetting();
-            returnBtn.type = SettingType.Return;
-            settings.Add(folderReturnKey, returnBtn);
+            if (setting.values.Count > 0)
+            {
+                setting.control.GetComponent<TextMeshProUGUI>().text += " [ +" + setting.values.Count.ToString() + " ]";
+            }
+            else
+            {
+                setting.control.GetComponent<TextMeshProUGUI>().text += " []";
+            }
         }
     }
 }
@@ -388,7 +414,6 @@ class SettingsPatch
     {
         if (MPLCustomSettings.SettingsSetUp == false)
         {
-            MPLCustomSettings.UpdateFolders();
 
             var button = Object.Instantiate(__instance.navButtonGrid.GetChild(1), __instance.navButtonGrid);
             button.GetComponent<UIButton>().tmpText.text = "MODS";
@@ -484,7 +509,7 @@ class SettingsPatch
                             entry.eventID = EventTriggerType.PointerClick;
                             entry.callback.AddListener((data) => {
                                 setting.activeValue = setting.activeValue > 0 ? 0 : 1;
-                                PlayerPrefs.SetInt(setting.name, setting.activeValue);
+                                PlayerPrefs.SetInt(setting.key, setting.activeValue);
                                 setting.control.GetComponent<TextMeshProUGUI>().text = setting.name + ": " + (setting.activeValue > 0 ? "True" : "False");
                             });
                             EventTrigger trigger = setting.settingobj.AddComponent<EventTrigger>();
@@ -512,7 +537,7 @@ class SettingsPatch
                             entry.eventID = EventTriggerType.PointerClick;
                             entry.callback.AddListener((data) => {
                                 setting.activeValue = (setting.activeValue + 1 < setting.values.Count ? setting.activeValue + 1 : 0);
-                                PlayerPrefs.SetInt(setting.name, setting.activeValue);
+                                PlayerPrefs.SetInt(setting.key, setting.activeValue);
                                 setting.control.GetComponent<TextMeshProUGUI>().text = setting.name + ": " + setting.values[setting.activeValue];
                             });
                             EventTrigger trigger = setting.settingobj.AddComponent<EventTrigger>();
@@ -527,7 +552,7 @@ class SettingsPatch
                         setting.control = setting.settingobj.transform.GetChild(3);
                         setting.control.GetComponent<I2.Loc.Localize>().Term = "-";
 
-                        if (PlayerPrefs.HasKey(setting.name))
+                        if (PlayerPrefs.HasKey(setting.key))
                         {
                             setting.settingobj.GetComponent<Slider>().value = PlayerPrefs.GetFloat(setting.name);
                         }
@@ -602,14 +627,6 @@ class SettingsPatch
                         setting.settingobj.SetActive(true);
                         setting.control = setting.settingobj.transform.GetChild(0);
                         setting.control.GetComponent<TextMeshProUGUI>().text = setting.name;
-                        if (setting.values.Count > 0)
-                        {
-                            setting.control.GetComponent<TextMeshProUGUI>().text += " [ +" + setting.values.Count.ToString() + " ]";
-                        }
-                        else
-                        {
-                            setting.control.GetComponent<TextMeshProUGUI>().text += " []";
-                        }
 
                         setting.control.GetComponent<TextMeshProUGUI>().fontStyle = FontStyles.Bold;
                         setting.control.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.TopLeft;
@@ -622,7 +639,7 @@ class SettingsPatch
                             entry.eventID = EventTriggerType.PointerClick;
                             entry.callback.AddListener((data) => {
                                 MPLCustomSettings.folderActive = true;
-                                MPLCustomSettings.currentFolder = setting.folderKey;
+                                MPLCustomSettings.currentFolder = setting.key;
                                 MPLCustomSettings.UpdateSettingsPage();
                             });
 
@@ -695,6 +712,7 @@ class SettingsPatch
             navPanelExit.GetComponent<Button>().onClick.AddListener(() => { S.I.optCtrl.ClosePanel(modSettingsMenu.GetComponent<NavPanel>()); });
             Traverse.Create(navPanelExit.GetComponent<UIButton>()).Field("button").SetValue(navPanelExit.GetComponent<Button>());
 
+            MPLCustomSettings.UpdateFolders();
             MPLCustomSettings.UpdateSettingsPage();
 
             MPLCustomSettings.SettingsSetUp = true;
