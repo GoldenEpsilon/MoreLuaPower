@@ -286,7 +286,14 @@ static class MPLCustomSettings
 
             foreach (MPLSetting option in settings.Values)
             {
-                if (option.settingobj.activeSelf & S.I.optCtrl.content.activeSelf) { S.I.optCtrl.btnCtrl.SetFocus(option.settingobj); break; }
+                if (option.settingobj.activeSelf & S.I.optCtrl.content.activeSelf) 
+                { 
+                    S.I.optCtrl.btnCtrl.SetFocus(option.settingobj);
+                    if (option.type != SettingType.Return)
+                    {
+                        break;
+                    }
+                }
             }
 
             return;
@@ -380,6 +387,11 @@ static class MPLCustomSettings
                             pair.Value.name = pair.Value.name.Replace(folder + "/", string.Empty);
                             pair.Value.control.GetComponent<TextMeshProUGUI>().text =
                             pair.Value.control.GetComponent<TextMeshProUGUI>().text.Replace(folder + "/", string.Empty);
+
+                            if (pair.Value.type == SettingType.TextField)
+                            {
+                                TextBoxDistanceUpdate(pair.Value);
+                            }
                         }
                         pair.Value.inFolder = true;
 
@@ -404,6 +416,18 @@ static class MPLCustomSettings
             }
         }
     }
+    internal static void TextBoxDistanceUpdate(MPLSetting setting)
+    {
+        setting.control.GetComponent<TextMeshProUGUI>().ForceMeshUpdate();
+
+        string _TextBoxText = setting.control.GetComponent<TextMeshProUGUI>().text;
+        float _TextBoxSize1 = setting.control.GetComponent<TextMeshProUGUI>().GetTextInfo(_TextBoxText).characterInfo[0].topLeft.x;
+        float _TextBoxSize2 = setting.control.GetComponent<TextMeshProUGUI>().GetTextInfo(_TextBoxText).characterInfo[_TextBoxText.Length - 1].bottomRight.x;
+        float _TextBoxDis = setting.control.GetComponent<TextMeshProUGUI>().transform.position.x + (_TextBoxSize2 - _TextBoxSize1 + 2)
+                            - setting.control.GetComponent<NavTextfield>().transform.GetChild(0).position.x;
+
+        setting.control.GetComponent<NavTextfield>().transform.GetChild(0).Translate(_TextBoxDis, 0, 0);
+    }
 }
 
 [HarmonyPatch(typeof(OptionCtrl))]
@@ -414,7 +438,6 @@ class SettingsPatch
     {
         if (MPLCustomSettings.SettingsSetUp == false)
         {
-
             var button = Object.Instantiate(__instance.navButtonGrid.GetChild(1), __instance.navButtonGrid);
             button.GetComponent<UIButton>().tmpText.text = "MODS";
             button.GetChild(0).GetComponent<I2.Loc.Localize>().Term = "MODS";
@@ -596,14 +619,7 @@ class SettingsPatch
                         setting.control.GetComponent<TMP_InputField>().placeholder.GetComponent<TextMeshProUGUI>().SetText(setting.values[1]);
                         setting.control.GetComponent<TMP_InputField>().placeholder.GetComponent<I2.Loc.Localize>().Term = "";
 
-                        setting.control.GetComponent<TextMeshProUGUI>().ForceMeshUpdate();
-
-                        string _TextBoxText = setting.control.GetComponent<TextMeshProUGUI>().text;
-                        float _TextBoxSize1 = setting.control.GetComponent<TextMeshProUGUI>().GetTextInfo(_TextBoxText).characterInfo[0].topLeft.x;
-                        float _TextBoxSize2 = setting.control.GetComponent<TextMeshProUGUI>().GetTextInfo(_TextBoxText).characterInfo[_TextBoxText.Length - 1].bottomRight.x;
-                        float _TextBotSize = _TextBoxSize2 - _TextBoxSize1;
-
-                        setting.control.GetComponent<NavTextfield>().transform.GetChild(0).Translate(_TextBotSize + 2, 0, 0);
+                        MPLCustomSettings.TextBoxDistanceUpdate(setting);
 
                         if (PlayerPrefs.HasKey(setting.values[0]))
                         {
