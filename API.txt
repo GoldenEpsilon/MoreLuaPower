@@ -462,7 +462,7 @@ MoreLuaPower:
 		// This ranges from 0-1, assuming players do not make modifications to how sliders or settings work to allow values past maximums.
 
 	string GetSettingTextBox (string name)
-		// Returns the current entered text in the text box named {name}/
+		// Returns the current entered text in the text box named {name}
 
 	List<string> GetSettingFolder(string name)
 		// Returns the list of settings currently in the folder named {name}.
