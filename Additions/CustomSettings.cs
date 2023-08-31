@@ -387,17 +387,22 @@ static class MPLCustomSettings
                             pair.Value.name = pair.Value.name.Replace(folder + "/", string.Empty);
                             pair.Value.control.GetComponent<TextMeshProUGUI>().text =
                             pair.Value.control.GetComponent<TextMeshProUGUI>().text.Replace(folder + "/", string.Empty);
-
-                            if (pair.Value.type == SettingType.TextField)
-                            {
-                                TextBoxDistanceUpdate(pair.Value);
-                            }
                         }
                         pair.Value.inFolder = true;
 
                         if (!settings[folder].values.Contains(pair.Key.Replace(folder + "/", string.Empty)))
                         {
                             settings[folder].values.Add(pair.Key.Replace(folder + "/", string.Empty));
+                        }
+
+                        if (pair.Value.type == SettingType.TextField)
+                        {
+                            TextBoxDistanceUpdate(pair.Value);
+                        }
+
+                        if (pair.Value.type == SettingType.Slider)
+                        {
+                            pair.Value.control.GetComponent<TextMeshProUGUI>().name = pair.Value.name;
                         }
                     }
                 }
@@ -513,9 +518,9 @@ class SettingsPatch
                 switch (setting.type)
                 {
                     case SettingType.Toggle:
-                        if (PlayerPrefs.HasKey(setting.name))
+                        if (PlayerPrefs.HasKey(setting.key))
                         {
-                            setting.activeValue = PlayerPrefs.GetInt(setting.name);
+                            setting.activeValue = PlayerPrefs.GetInt(setting.key);
                         }
                         else
                         {
@@ -541,9 +546,9 @@ class SettingsPatch
                         }
                         break;
                     case SettingType.Rotation:
-                        if (PlayerPrefs.HasKey(setting.name))
+                        if (PlayerPrefs.HasKey(setting.key))
                         {
-                            setting.activeValue = PlayerPrefs.GetInt(setting.name);
+                            setting.activeValue = PlayerPrefs.GetInt(setting.key);
                         }
                         else
                         {
@@ -571,18 +576,22 @@ class SettingsPatch
                     case SettingType.Slider:
                         setting.settingobj = Object.Instantiate(navPanelButtons.transform.GetChild(5).gameObject, navPanelButtons.transform);
                         setting.settingobj.SetActive(true);
-                        setting.settingobj.transform.name = setting.name;
+                        setting.settingobj.transform.name = setting.key;
                         setting.control = setting.settingobj.transform.GetChild(3);
                         setting.control.GetComponent<I2.Loc.Localize>().Term = "-";
+                        setting.control.GetComponent<TextMeshProUGUI>().name = setting.name;
 
                         if (PlayerPrefs.HasKey(setting.key))
                         {
-                            setting.settingobj.GetComponent<Slider>().value = PlayerPrefs.GetFloat(setting.name);
+                            setting.settingobj.GetComponent<Slider>().value = PlayerPrefs.GetFloat(setting.key);
                         }
                         else
                         {
                             setting.settingobj.GetComponent<Slider>().value = setting.defaultSliderValue;
                         }
+
+                        setting.control.GetComponent<TextMeshProUGUI>().transform.Translate(8, 0, 0);
+
                         PowerMonoBehavior.sliders.Add(setting.settingobj.transform);
                         break;
                     case SettingType.TextField:
