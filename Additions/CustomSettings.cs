@@ -184,7 +184,6 @@ static class MPLCustomSettings
             settings.Add(name, setting);
 
             setting.values = new List<string>();
-            setting.values.Add(name);
             setting.values.Add(placeholder);
         }
         else
@@ -606,7 +605,7 @@ class SettingsPatch
 
                         setting.control = setting.settingobj.transform;
                         setting.control.GetComponent<NavTextfield>().btnCtrl = S.I.optCtrl.btnCtrl;
-                        setting.control.GetComponent<NavTextfield>().name = "MoreLuaPowerSettingsNavTextField" + setting.values[0];
+                        setting.control.GetComponent<NavTextfield>().name = "MoreLuaPowerSettingsNavTextField" + setting.key;
 
                         Object.DestroyImmediate(setting.settingobj.GetComponent<Image>());
                         setting.settingobj.AddComponent<TextMeshProUGUI>();
@@ -622,17 +621,19 @@ class SettingsPatch
                         setting.control.GetComponent<TMP_InputField>().textComponent.fontSize = InputFieldGUIRef.fontSize;
                         setting.control.GetComponent<TMP_InputField>().textComponent.color = new Color(0.8f, 0.8f, 0.8f);
                         setting.control.GetComponent<TMP_InputField>().textComponent.font = InputFieldGUIRef.font;
-                        setting.control.GetComponent<TMP_InputField>().textComponent.alignment = TextAlignmentOptions.Left;
+                        setting.control.GetComponent<TMP_InputField>().textComponent.alignment = TextAlignmentOptions.Left;        
                         setting.control.GetComponent<TMP_InputField>().placeholder.GetComponent<TextMeshProUGUI>().fontStyle = FontStyles.Normal;
                         setting.control.GetComponent<TMP_InputField>().placeholder.GetComponent<TextMeshProUGUI>().fontSize = InputFieldGUIRef.fontSize;
-                        setting.control.GetComponent<TMP_InputField>().placeholder.GetComponent<TextMeshProUGUI>().SetText(setting.values[1]);
+                        setting.control.GetComponent<TMP_InputField>().placeholder.GetComponent<TextMeshProUGUI>().SetText(setting.values[0]);
                         setting.control.GetComponent<TMP_InputField>().placeholder.GetComponent<I2.Loc.Localize>().Term = "";
+
+                        setting.control.GetComponent<TMP_InputField>().characterLimit = 14;
 
                         MPLCustomSettings.TextBoxDistanceUpdate(setting);
 
-                        if (PlayerPrefs.HasKey(setting.values[0]))
+                        if (PlayerPrefs.HasKey(setting.key))
                         {
-                            setting.control.GetComponent<TMP_InputField>().text = PlayerPrefs.GetString(setting.values[0]);
+                            setting.control.GetComponent<TMP_InputField>().text = PlayerPrefs.GetString(setting.key);
                         }
                         else
                         {
