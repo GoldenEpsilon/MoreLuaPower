@@ -221,6 +221,7 @@ public static class MPLCustomSettings
         {
             MPLSetting returnBtn = new MPLSetting();
             returnBtn.type = SettingType.Return;
+            returnBtn.values = new List<string>(1) { string.Empty };
             settings.Add(folderReturnKey, returnBtn);
         }
     }
@@ -283,14 +284,31 @@ public static class MPLCustomSettings
             previousPage.gameObject.SetActive(false);
             nextPage.gameObject.SetActive(false);
 
-            foreach (MPLSetting option in settings.Values)
+            string previousFolder = settings[folderReturnKey].values[0];
+            if (previousFolder.StartsWith(currentFolder) & S.I.optCtrl.content.activeSelf)
             {
-                if (option.settingobj.activeSelf & S.I.optCtrl.content.activeSelf) 
-                { 
-                    S.I.optCtrl.btnCtrl.SetFocus(option.settingobj);
-                    if (option.type != SettingType.Return)
+                if ( settings[currentFolder].values.Contains(previousFolder.Replace(currentFolder + "/", string.Empty)) )
+                {
+                    S.I.optCtrl.btnCtrl.SetFocus(settings[previousFolder].settingobj);
+                    return;
+                }
+            }
+
+            if (S.I.optCtrl.content.activeSelf)
+            {
+                if (settings[currentFolder].values.Count == 0)
+                {
+                    S.I.optCtrl.btnCtrl.SetFocus(settings[folderReturnKey].settingobj);
+                }
+                else
+                {
+                    foreach (MPLSetting option in settings.Values)
                     {
-                        break;
+                        if (option.type != SettingType.Return & option.settingobj.activeSelf)
+                        {
+                            S.I.optCtrl.btnCtrl.SetFocus(option.settingobj);
+                            break;
+                        }
                     }
                 }
             }
@@ -641,13 +659,6 @@ class SettingsPatch
                         }
 
                         break;
-
-                    //setting.settingobj = Object.Instantiate(navPanelButtons.transform.GetChild(0).gameObject, navPanelButtons.transform);
-                    //setting.settingobj = Object.Instantiate(streamPane.GetChild(0).GetChild(3).gameObject, navPanelButtons.transform);
-                    //buttonNavText.inputField = Object.Instantiate(streamPane.GetChild(0).GetChild(3).GetComponent<NavTextfield>().inputField, setting.control);
-                    //setting.control = Object.Instantiate(S.I.heCtrl.seedInput, setting.settingobj.transform).transform;
-                    //setting.control.gameObject.AddComponent<TMP_InputField>();
-
                     case SettingType.Folder:
                         setting.settingobj = Object.Instantiate(navPanelButtons.transform.GetChild(0).gameObject, navPanelButtons.transform);
                         setting.settingobj.SetActive(true);
@@ -699,6 +710,7 @@ class SettingsPatch
                                         if ( MPLCustomSettings.settings[MPLCustomSettings.currentFolder.Substring(0, MPLCustomSettings.currentFolder.LastIndexOf("/") )].type == SettingType.Folder )
                                         {
                                             MPLCustomSettings.folderActive = true;
+                                            setting.values[0] = MPLCustomSettings.currentFolder;
                                             MPLCustomSettings.currentFolder = MPLCustomSettings.currentFolder.Substring(0, MPLCustomSettings.currentFolder.LastIndexOf("/"));
                                         }
                                     }
