@@ -18,17 +18,34 @@ public class PowerMonoBehavior : MonoBehaviour
         for (int i = 0; i < UpdateScripts.Count; i++) {
             S.I.mainCtrl.StartCoroutine(MoreLuaPower_FunctionHelper.EffectRoutine(UpdateBaseScripts[i].CreateCoroutine(UpdateScripts[i])));
         }
-        foreach(Transform slider in sliders) {
-            if (slider == null) { 
-                sliders.Remove(slider);
-                continue;
-            }
-            string temp = slider.GetChild(3).GetComponent<TextMeshProUGUI>().text;
-			slider.GetChild(3).GetComponent<TextMeshProUGUI>().text = string.Format("{0}: {1}", slider.name, slider.GetComponent<Slider>().value) + "%";
-            if (temp != slider.GetChild(3).GetComponent<TextMeshProUGUI>().text) {
-                PlayerPrefs.SetFloat(slider.name, slider.GetComponent<Slider>().value);
-            }
-		}
+
+        foreach(Transform slider in sliders) 
+	{
+  		if (slider == null) 
+    		{ 
+     			sliders.Remove(slider);
+     			continue;
+  		}
+
+  		float sliderVal = slider.GetComponent<Slider>().value;
+  		string sliderKey = slider.name;
+  		if (PlayerPrefs.HasKey(sliderKey))
+  		{
+      			if (PlayerPrefs.GetFloat(sliderKey) != sliderVal)
+      			{
+          			PlayerPrefs.SetFloat(sliderKey, sliderVal);
+      			}
+  		}
+  		else
+  		{
+      			PlayerPrefs.SetFloat(sliderKey, sliderVal);
+  		}
+
+  		string sliderNickname = slider.GetChild(3).GetComponent<TextMeshProUGUI>().name;
+
+  		slider.GetChild(3).GetComponent<TextMeshProUGUI>().text = string.Format("{0}: {1}", sliderNickname, sliderVal) + "%";
+	}
+
         if (Input.GetKeyDown(KeyCode.BackQuote)) {
             EnableDeveloperTools();
         }
