@@ -34,10 +34,10 @@ class MPLSetting
     public Transform control;
 }
 
-static class MPLCustomSettings
+public static class MPLCustomSettings
 {
     public static bool SettingsSetUp = false;
-    public static Dictionary<string, MPLSetting> settings = new Dictionary<string, MPLSetting>();
+    internal static Dictionary<string, MPLSetting> settings = new Dictionary<string, MPLSetting>();
     public static int settingsPage = 0;
     public static Transform previousPage;
     public static Transform nextPage;
