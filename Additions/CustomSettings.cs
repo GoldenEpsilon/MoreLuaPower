@@ -683,6 +683,7 @@ class SettingsPatch
                         setting.control.GetComponent<I2.Loc.Localize>().Term = "-";
 
                         setting.control.GetComponent<TextMeshProUGUI>().fontStyle = FontStyles.Italic;
+                        setting.control.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.BottomLeft;
 
                         Object.DestroyImmediate(setting.settingobj.GetComponent<Button>());
                         {
@@ -711,7 +712,7 @@ class SettingsPatch
                         }
                         break;
                 }
-                if (setting.type != SettingType.Folder & setting.control.GetComponent<TextMeshProUGUI>() != null)
+                if (setting.type != SettingType.Folder & setting.type != SettingType.Return & setting.control.GetComponent<TextMeshProUGUI>() != null)
                 {
                     setting.control.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Left;
                 }
