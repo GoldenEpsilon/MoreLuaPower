@@ -349,6 +349,7 @@ public static class MPLCustomSettings
             {
                 S.I.optCtrl.btnCtrl.SetFocus(settings[currentFolder].settingobj);
                 currentFolder = "FolderSetup|Outside";
+                settings[folderReturnKey].values[0] = string.Empty;
             }
         }
         else
@@ -548,6 +549,7 @@ class SettingsPatch
                         setting.control = setting.settingobj.transform.GetChild(0);
                         setting.control.GetComponent<TextMeshProUGUI>().text = setting.name + ": " + (setting.activeValue > 0 ? "True" : "False");
                         setting.control.GetComponent<I2.Loc.Localize>().Term = "-";
+
                         Object.DestroyImmediate(setting.settingobj.GetComponent<Button>());
                         {
                             EventTrigger.Entry entry = new EventTrigger.Entry();
@@ -615,26 +617,27 @@ class SettingsPatch
 
                         Transform InputFieldRef = S.I.heCtrl.content.transform.Find("SeedField");
                         TextMeshProUGUI InputFieldGUIRef = navPanelButtons.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>();
-
                         NavTextfield TextBoxInputRef = S.I.heCtrl.content.transform.Find("SeedField").GetComponent<NavTextfield>();
 
                         setting.settingobj = Object.Instantiate(InputFieldRef.gameObject, navPanelButtons.transform);
                         setting.settingobj.SetActive(true);
-
                         setting.control = setting.settingobj.transform;
                         setting.control.GetComponent<NavTextfield>().btnCtrl = S.I.optCtrl.btnCtrl;
                         setting.control.GetComponent<NavTextfield>().name = "MoreLuaPowerSettingsNavTextField" + setting.key;
 
                         Object.DestroyImmediate(setting.settingobj.GetComponent<Image>());
+                        //Object.DestroyImmediate(setting.settingobj.GetComponent<TouchScreenKeyboard>());
                         setting.settingobj.AddComponent<TextMeshProUGUI>();
 
                         setting.control.GetComponent<TextMeshProUGUI>().text = setting.name + " :";
                         setting.control.GetComponent<TextMeshProUGUI>().fontSize = InputFieldGUIRef.fontSize;
                         setting.control.GetComponent<TextMeshProUGUI>().font = InputFieldGUIRef.font;
 
-                        setting.control.GetComponent<NavTextfield>().navList = PrevButton.GetComponent<NavButton>().navList;
+                        //setting.control.GetComponent<NavTextfield>().navList = PrevButton.GetComponent<NavButton>().navList;
                         setting.control.GetComponent<NavTextfield>().useParentTransformNav = true;
                         setting.control.GetComponent<NavTextfield>().transform.GetChild(0).GetChild(0).Translate(0, -1f, 0);
+                        setting.control.GetComponent<NavTextfield>().down = null;
+                        setting.control.GetComponent<NavTextfield>().up = null;
 
                         setting.control.GetComponent<TMP_InputField>().textComponent.fontSize = InputFieldGUIRef.fontSize;
                         setting.control.GetComponent<TMP_InputField>().textComponent.color = new Color(0.8f, 0.8f, 0.8f);
