@@ -437,6 +437,15 @@ MoreLuaPower:
 		// Adds an editable text field setting named {name}.
 		// {placeholder} is shown when no text has been entered into the input field. 
 
+	void AddSettingButton( string {name}, List<string> {functions} )
+		// Adds a pressable button setting named {name}.
+		// When pressed, all the function names in the list of {functions} are activated.
+		// eg. AddSettingButton("Button1", {"Function1"})
+		// eg. AddSettingButton("Button2", {"Function1", "Function2", "Function3"})
+
+	void EditSettingButton ( string {name}, List<string> {functions} )
+		// Changes the function list for {name} to {functions}.
+
 	void AddSettingFolder(string {name})
 		// Adds a folder setting named {name} which can be used to sort and organize settings.
 		// The folder setting can be pressed to open a one-page menu of added settings.
