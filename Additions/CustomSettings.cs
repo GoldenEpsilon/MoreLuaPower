@@ -1,4 +1,5 @@
 using HarmonyLib;
+using MoonSharp.Interpreter;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
@@ -12,6 +13,7 @@ enum SettingType
     Rotation,
     Slider,
     TextField,
+    Button,
     Folder,
 
     Return // Used for folder return button
@@ -191,6 +193,22 @@ public static class MPLCustomSettings
             MPLog.Log("Setting " + name + " was not added as it was already an initialized setting", LogLevel.Minor);
         }
     }
+    public static void AddSettingButton(string name, List<string> functions)
+    {
+        if (!settings.ContainsKey(name))
+        {
+            MPLSetting setting = new MPLSetting();
+            setting.name = name;
+            setting.key = name;
+            setting.type = SettingType.Button;
+            setting.values = new List<string>(functions);
+            settings.Add(name, setting);
+        }
+        else
+        {
+            MPLog.Log("Setting " + name + " was not added as it was already an initialized setting", LogLevel.Minor);
+        }
+    }
     public static void AddSettingFolder(string name)
     {
         if (name == null)
@@ -223,6 +241,14 @@ public static class MPLCustomSettings
             returnBtn.type = SettingType.Return;
             returnBtn.values = new List<string>(1) { string.Empty };
             settings.Add(folderReturnKey, returnBtn);
+        }
+    }
+
+    public static void EditSettingButton(string name, List<string> functions)
+    {
+        if (settings.ContainsKey(name))
+        {
+            settings[name].values = new List<string>(functions);
         }
     }
 
@@ -439,6 +465,7 @@ public static class MPLCustomSettings
             }
         }
     }
+
     internal static void TextBoxDistanceUpdate(MPLSetting setting)
     {
         setting.control.GetComponent<TextMeshProUGUI>().ForceMeshUpdate();
@@ -661,6 +688,36 @@ class SettingsPatch
                             setting.control.GetComponent<TMP_InputField>().text = string.Empty;
                         }
 
+                        break;
+                    case SettingType.Button:
+
+                        setting.settingobj = Object.Instantiate(navPanelButtons.transform.GetChild(0).gameObject, navPanelButtons.transform);
+                        setting.settingobj.SetActive(true);
+                        setting.control = setting.settingobj.transform.GetChild(0);
+                        setting.control.GetComponent<TextMeshProUGUI>().text = setting.name;
+                        setting.control.GetComponent<I2.Loc.Localize>().Term = "-";
+
+                        Object.DestroyImmediate(setting.settingobj.GetComponent<Button>());
+                        {
+                            EventTrigger.Entry entry = new EventTrigger.Entry();
+                            entry.eventID = EventTriggerType.PointerClick;
+                            entry.callback.AddListener((data) => {
+                                Script myLuaScript = Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance")
+                                    .GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>();
+
+                                foreach (string function in setting.values)
+                                {
+                                    object buttonPress = myLuaScript.Globals[function];
+                                    if (buttonPress != null)
+                                    {
+                                        S.I.mainCtrl.StartCoroutine(MoreLuaPower_FunctionHelper.EffectRoutine(myLuaScript.CreateCoroutine(buttonPress)));
+                                    }
+                                }
+                            });
+                            EventTrigger trigger = setting.settingobj.AddComponent<EventTrigger>();
+                            trigger.triggers.Add(entry);
+                            trigger.enabled = false;
+                        }
                         break;
                     case SettingType.Folder:
                         setting.settingobj = Object.Instantiate(navPanelButtons.transform.GetChild(0).gameObject, navPanelButtons.transform);
