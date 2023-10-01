@@ -1,5 +1,6 @@
 using HarmonyLib;
 using MoonSharp.Interpreter;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
@@ -228,18 +229,15 @@ public static class MPLCustomSettings
         setting.values = new List<string>();
         setting.type = SettingType.Folder;
 
-        List<KeyValuePair<string, MPLSetting>> sorted = settings.ToList();
-        int folderCount = 0;
-        foreach (MPLSetting value in settings.Values) { if (value.type == SettingType.Folder) { folderCount++; } }
-        sorted.Insert(folderCount, new KeyValuePair<string, MPLSetting>(name, setting));
-        settings.Clear();
-        foreach (KeyValuePair<string, MPLSetting> pair in sorted) { settings.Add(pair.Key, pair.Value); }
+        settings.Add(setting.key, setting);
 
         if (!settings.ContainsKey(folderReturnKey))
         {
             MPLSetting returnBtn = new MPLSetting();
             returnBtn.type = SettingType.Return;
             returnBtn.values = new List<string>(1) { string.Empty };
+            returnBtn.name = folderReturnKey;
+            returnBtn.key = folderReturnKey;
             settings.Add(folderReturnKey, returnBtn);
         }
     }
@@ -270,12 +268,6 @@ public static class MPLCustomSettings
     }
     public static void UpdateSettingsPage()
     {
-        if (settings.ContainsKey(folderReturnKey))
-        {
-            settings[folderReturnKey].settingobj.SetActive(false);
-            settings[folderReturnKey].settingobj.transform.SetAsLastSibling();
-        }
-
         foreach (KeyValuePair<string, MPLSetting> pair in settings)
         {
             if (pair.Value.control.position.z < -35) { pair.Value.control.Translate(0, 0, (-5) - pair.Value.control.position.z); }
@@ -404,6 +396,7 @@ public static class MPLCustomSettings
             nextPage.gameObject.SetActive(false);
         }
     }
+
     internal static void UpdateFolders()
     {
         List<MPLSetting> trueFolders = new List<MPLSetting>();
@@ -464,8 +457,30 @@ public static class MPLCustomSettings
                 setting.control.GetComponent<TextMeshProUGUI>().text += " []";
             }
         }
-    }
 
+    }
+    internal static void SortFolders()
+    {
+        List<KeyValuePair<string, MPLSetting>> sortedSettings = settings.ToList();
+        sortedSettings.Sort((x, y) => SortFoldersX(x.Value, y.Value));
+        settings.Clear();
+        foreach (KeyValuePair<string, MPLSetting> pair in sortedSettings)
+        {
+            settings.Add(pair.Key, pair.Value);
+        }
+    }
+    internal static int SortFoldersX(MPLSetting x, MPLSetting y)
+    {
+        if (x.type == y.type) { return 0; }
+
+        if (x.type == SettingType.Return) { return 1; }
+        if (y.type == SettingType.Return) { return -1; }
+
+        if (x.type != SettingType.Folder & y.type != SettingType.Folder) { return 0; }
+
+        if (x.type == SettingType.Folder) { return -1; }
+        return 1;
+    }
     internal static void TextBoxDistanceUpdate(MPLSetting setting)
     {
         setting.control.GetComponent<TextMeshProUGUI>().ForceMeshUpdate();
@@ -557,6 +572,8 @@ class SettingsPatch
                 trigger.enabled = false;
             }
             MPLCustomSettings.previousPage = PrevButton.transform;
+
+            MPLCustomSettings.SortFolders();
 
             foreach (MPLSetting setting in MPLCustomSettings.settings.Values)
             {
@@ -808,7 +825,9 @@ class SettingsPatch
 
             Object.DestroyImmediate(navPanelExit.GetComponent<Button>());
             navPanelExit.gameObject.AddComponent<Button>();
-            navPanelExit.GetComponent<Button>().onClick.AddListener(() => { S.I.optCtrl.ClosePanel(modSettingsMenu.GetComponent<NavPanel>()); });
+            navPanelExit.GetComponent<Button>().onClick.AddListener(() => {
+                S.I.optCtrl.ClosePanel(modSettingsMenu.GetComponent<NavPanel>());
+            });
             Traverse.Create(navPanelExit.GetComponent<UIButton>()).Field("button").SetValue(navPanelExit.GetComponent<Button>());
 
             MPLCustomSettings.UpdateFolders();
@@ -816,6 +835,46 @@ class SettingsPatch
 
             MPLCustomSettings.SettingsSetUp = true;
         }
+    }
+
+    [HarmonyPatch(typeof(NavPanel), nameof(NavPanel.Open))]
+    [HarmonyPostfix]
+    private static void FirstOpenFocus(NavPanel __instance)
+    {
+       S.I.optCtrl.StartCoroutine(_FirstOpenFocus(__instance));
+    }
+    private static IEnumerator _FirstOpenFocus(NavPanel panel)
+    {
+        Transform child = null;
+        Transform title = null;
+        if (panel.transform.childCount > 0)
+        {
+            child = panel.transform.GetChild(0);
+        }
+        if (child.transform.childCount >= 2)
+        {
+            title = child?.GetChild(2);
+        }
+
+        if (title != null)
+        {
+            if (title.GetComponent<TextMeshProUGUI>() != null)
+            {
+                if (title.GetComponent<TextMeshProUGUI>().text == "MOD SETTINGS")
+                {
+                    yield return new WaitForSecondsRealtime(0.3f);
+
+                    string settingID = MPLCustomSettings.settings.ToList().Find(x => x.Value.settingobj.activeSelf).Key;
+                    if (MPLCustomSettings.settings.ContainsKey(settingID))
+                    {
+                        MPLSetting activeSetting = MPLCustomSettings.settings[settingID];
+                        S.I.optCtrl.btnCtrl.SetFocus(activeSetting.settingobj);
+                    }
+                }
+            }
+        }
+
+        yield break;
     }
 
     [HarmonyPatch(typeof(NavTextfield))]
