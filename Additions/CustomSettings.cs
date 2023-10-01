@@ -462,21 +462,25 @@ public static class MPLCustomSettings
     internal static void SortFolders()
     {
         List<KeyValuePair<string, MPLSetting>> sortedSettings = settings.ToList();
-        sortedSettings.Sort((x, y) => SortFoldersX(x.Value, y.Value));
+        sortedSettings.Sort((x, y) => SortFoldersX(x.Value, y.Value, settings.ToList()));
         settings.Clear();
         foreach (KeyValuePair<string, MPLSetting> pair in sortedSettings)
         {
             settings.Add(pair.Key, pair.Value);
         }
     }
-    internal static int SortFoldersX(MPLSetting x, MPLSetting y)
+    internal static int SortFoldersX(MPLSetting x, MPLSetting y, List<KeyValuePair<string, MPLSetting>> oldList)
     {
-        if (x.type == y.type) { return 0; }
-
         if (x.type == SettingType.Return) { return 1; }
         if (y.type == SettingType.Return) { return -1; }
 
-        if (x.type != SettingType.Folder & y.type != SettingType.Folder) { return 0; }
+        if ((x.type != SettingType.Folder & y.type != SettingType.Folder) || x.type == y.type) 
+        {
+            int xpos = oldList.FindIndex(a => a.Value == x);
+            int ypos = oldList.FindIndex(a => a.Value == y);
+            if (xpos < ypos) { return -1; }
+            return 1; 
+        }
 
         if (x.type == SettingType.Folder) { return -1; }
         return 1;
