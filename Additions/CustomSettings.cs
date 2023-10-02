@@ -503,6 +503,7 @@ public static class MPLCustomSettings
 [HarmonyPatch("Open")]
 class SettingsPatch
 {
+    private static NavPanel modSettingsPanelVar = null;
     static void Prefix(OptionCtrl __instance)
     {
         if (MPLCustomSettings.SettingsSetUp == false)
@@ -539,6 +540,7 @@ class SettingsPatch
                 EventTrigger.Entry entry = new EventTrigger.Entry();
                 entry.eventID = EventTriggerType.PointerClick;
                 entry.callback.AddListener((data) => {
+                    modSettingsPanelVar = modSettingsMenu.GetComponent<NavPanel>();
                     S.I.optCtrl.OpenPanel(modSettingsMenu.GetComponent<NavPanel>());
                 });
                 EventTrigger trigger = button.gameObject.AddComponent<EventTrigger>();
@@ -849,33 +851,17 @@ class SettingsPatch
     }
     private static IEnumerator _FirstOpenFocus(NavPanel panel)
     {
-        Transform child = null;
-        Transform title = null;
-        if (panel.transform.childCount > 0)
+        if (panel == null || modSettingsPanelVar == null || modSettingsPanelVar != panel)
         {
-            child = panel.transform.GetChild(0);
-        }
-        if (child.transform.childCount >= 2)
-        {
-            title = child?.GetChild(2);
+            yield break;
         }
 
-        if (title != null)
+        yield return new WaitForSecondsRealtime(0.3f);
+        string settingID = MPLCustomSettings.settings.ToList().Find(x => x.Value.settingobj.activeSelf).Key;
+        if (MPLCustomSettings.settings.ContainsKey(settingID))
         {
-            if (title.GetComponent<TextMeshProUGUI>() != null)
-            {
-                if (title.GetComponent<TextMeshProUGUI>().text == "MOD SETTINGS")
-                {
-                    yield return new WaitForSecondsRealtime(0.3f);
-
-                    string settingID = MPLCustomSettings.settings.ToList().Find(x => x.Value.settingobj.activeSelf).Key;
-                    if (MPLCustomSettings.settings.ContainsKey(settingID))
-                    {
-                        MPLSetting activeSetting = MPLCustomSettings.settings[settingID];
-                        S.I.optCtrl.btnCtrl.SetFocus(activeSetting.settingobj);
-                    }
-                }
-            }
+            MPLSetting activeSetting = MPLCustomSettings.settings[settingID];
+            S.I.optCtrl.btnCtrl.SetFocus(activeSetting.settingobj);
         }
 
         yield break;
