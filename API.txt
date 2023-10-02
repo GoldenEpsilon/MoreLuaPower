@@ -442,6 +442,9 @@ MoreLuaPower:
 		// When pressed, all the function names in the list of {functions} are activated.
 		// eg. AddSettingButton("Button1", {"Function1"})
 		// eg. AddSettingButton("Button2", {"Function1", "Function2", "Function3"})
+		// As the game is paused, most things in functions triggered will not actually do anything
+		   unless a 'WaitForSeconds(item, 0)' is placed before it. This causes to game to wait until 
+		   the menu is closed to do anything.
 
 	void EditSettingButton ( string {name}, List<string> {functions} )
 		// Changes the function list for {name} to {functions}.
