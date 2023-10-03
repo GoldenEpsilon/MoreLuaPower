@@ -857,11 +857,14 @@ class SettingsPatch
         }
 
         yield return new WaitForSecondsRealtime(0.3f);
-        string settingID = MPLCustomSettings.settings.ToList().Find(x => x.Value.settingobj.activeSelf).Key;
-        if (MPLCustomSettings.settings.ContainsKey(settingID))
+        if (MPLCustomSettings.settings.Count > 0)
         {
-            MPLSetting activeSetting = MPLCustomSettings.settings[settingID];
-            S.I.optCtrl.btnCtrl.SetFocus(activeSetting.settingobj);
+            string settingID = MPLCustomSettings.settings.ToList().Find(x => x.Value.settingobj.activeSelf).Key;
+            if (MPLCustomSettings.settings.ContainsKey(settingID))
+            {
+                MPLSetting activeSetting = MPLCustomSettings.settings[settingID];
+                S.I.optCtrl.btnCtrl.SetFocus(activeSetting.settingobj);
+            }
         }
 
         yield break;
