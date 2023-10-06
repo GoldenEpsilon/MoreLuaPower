@@ -1,4 +1,4 @@
-﻿using HarmonyLib;
+using HarmonyLib;
 using MoonSharp.Interpreter;
 using System;
 using System.Collections;
@@ -80,7 +80,7 @@ class MoreLuaPower_GlobalLuaFunctions
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["AddCustomAchievement"] = (Action<string, string, string, bool>)LuaPowerAchievements.APIV.AddCustomAchievement;
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["UnlockCustomAchievement"] = (Action<string, int>)LuaPowerAchievements.APIV.UnlockCustomAchievement;
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["CreateDrop"] = (Action<List<ItemObject>>)LuaPowerCustomDrops.CreateDrop;
-	Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["AddEdenGossip"] = (Action<string, string, string, string>)EdenGossip_AdditiveLines.Gossip_Data.AddEdenGossip;
+	    Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["AddEdenGossip"] = (Action<string, string, string, string>)EdenGossip_AdditiveLines.Gossip_Data.AddEdenGossip;
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["RemoveEdenGossip"] = (Action<string, string, string, string>)EdenGossip_AdditiveLines.Gossip_Data.RemoveEdenGossip;
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["GetEdenGossip"] = (Func<string, string, string, List<string>>)EdenGossip_AdditiveLines.Gossip_Data.GetEdenGossip;
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["GetSettingToggle"] = (Func<string, bool>)MPLCustomSettings.GetSettingToggle;
@@ -89,7 +89,13 @@ class MoreLuaPower_GlobalLuaFunctions
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["AddSettingToggle"] = (Action<string, bool>)MPLCustomSettings.AddSettingToggle;
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["AddSettingRotation"] = (Action<string, List<string>, int>)MPLCustomSettings.AddSettingRotation;
         Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["AddSettingSlider"] = (Action<string, float>)MPLCustomSettings.AddSettingSlider;
-	}
+	    Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["AddSettingFolder"] = (Action<string>)MPLCustomSettings.AddSettingFolder;
+	    Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["GetSettingFolder"] = (Func<string, List<string>>)MPLCustomSettings.GetSettingFolder;
+	    Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["AddSettingTextBox"] = (Action<string, string>)MPLCustomSettings.AddSettingTextBox;
+	    Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["GetSettingTextBox"] = (Func<string, string>)MPLCustomSettings.GetSettingTextBox;
+        Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["AddSettingButton"] = (Action<string, List<string>>)MPLCustomSettings.AddSettingButton;
+        Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["EditSettingButton"] = (Action<string, List<string>>)MPLCustomSettings.EditSettingButton;
+    }
 }
 
 [HarmonyPatch(typeof(EffectActions))]

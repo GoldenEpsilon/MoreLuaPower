@@ -433,6 +433,35 @@ MoreLuaPower:
 		// (starting at {defaultval}).
 		// Settings share names across mods, so make sure your name is not too generic!
 
+	void AddSettingTextBox( string {name}, string {placeholder} (optional) )
+		// Adds an editable text field setting named {name}.
+		// {placeholder} is shown when no text has been entered into the input field. 
+
+	void AddSettingButton( string {name}, List<string> {functions} )
+		// Adds a pressable button setting named {name}.
+		// When pressed, all the function names in the list of {functions} are activated.
+		// eg. AddSettingButton("Button1", {"Function1"})
+		// eg. AddSettingButton("Button2", {"Function1", "Function2", "Function3"})
+		// As the game is paused, most things in functions triggered will not actually do anything
+		   unless a 'WaitForSeconds(item, 0)' is placed before it. This causes to game to wait until 
+		   the menu is closed to do anything.
+
+	void EditSettingButton ( string {name}, List<string> {functions} )
+		// Changes the function list for {name} to {functions}.
+
+	void AddSettingFolder(string {name})
+		// Adds a folder setting named {name} which can be used to sort and organize settings.
+		// The folder setting can be pressed to open a one-page menu of added settings.
+		// Name ({name}) another setting 'FolderName/SettingName' to add it to the folder.
+		// The 'FolderName/' will be removed when viewing the setting in the folder.
+		// Folders can hold an infite amount of settings but will only show 18 as it is a single page.
+
+		// eg. AddSettingFolder ("Hazel's Stuff")
+		//     AddSettingToggle("Hazel's Stuff/Wrench", true)
+
+		// Use the full folder-setting name when getting setting values from settings in folders
+		// eg. GetSettingToggle ("Hazel's Stuff/Wrench")
+
 	bool GetSettingToggle(string name)
 		// Returns the current value of the Toggle setting named {name}.
 
@@ -443,6 +472,12 @@ MoreLuaPower:
 	float GetSettingSlider(string name)
 		// Returns the current value of the Slider setting named {name}.
 		// This ranges from 0-1, assuming players do not make modifications to how sliders or settings work to allow values past maximums.
+
+	string GetSettingTextBox (string name)
+		// Returns the current entered text in the text box named {name}.
+
+	List<string> GetSettingFolder(string name)
+		// Returns the list of settings currently in the folder named {name}.
 
 Lua-based:
 
