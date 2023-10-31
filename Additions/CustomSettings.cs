@@ -698,7 +698,7 @@ class SettingsPatch
                         setting.control.GetComponent<TMP_InputField>().placeholder.GetComponent<TextMeshProUGUI>().SetText(setting.values[0]);
                         setting.control.GetComponent<TMP_InputField>().placeholder.GetComponent<I2.Loc.Localize>().Term = "";
 
-                        setting.control.GetComponent<TMP_InputField>().characterLimit = 14;
+                        setting.control.GetComponent<TMP_InputField>().characterLimit = 24;
 
                         MPLCustomSettings.TextBoxDistanceUpdate(setting);
 
