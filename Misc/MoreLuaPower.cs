@@ -21,11 +21,11 @@ using static AssetBundles.AssetBundleManager;
 class MoreLuaPower
 {
 	static void Prepare() {
-		Debug.Log("MoreLuaPower Version 2.6.1");
+		Debug.Log("MoreLuaPower Version 2.6.2, Attempted fix 3");
 		LuaPowerData.Setup();
 		LuaPowerCustomEnumsSetup.Setup();
 		LuaPowerCutscenes.Setup();
-		//CustomZoneUtil.Setup();
+		CustomZoneUtil.Setup();
 		//CustomBosses.DataHandler.Setup();
 		if (S.I.GetComponent<PowerMonoBehavior>() == null) {
 			S.I.gameObject.AddComponent<PowerMonoBehavior>();

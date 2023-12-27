@@ -28,9 +28,9 @@ class MoreLuaPower_GlobalLuaTypes
         UserData.RegisterType<GameObject>(InteropAccessMode.Default, null);
         UserData.RegisterType<World>(InteropAccessMode.Default, null);
         UserData.RegisterType<ZoneDot>(InteropAccessMode.Default, null);
-        //UserData.RegisterType<CustomWorldGenerator>(InteropAccessMode.Default, null);
-        //UserData.RegisterType<CustomWorldGenerator.PostProcessZoneGenerator>(InteropAccessMode.Default, null);
-        //UserData.RegisterType<CustomWorldGenerator.ManualZoneGenerator>(InteropAccessMode.Default, null);
+        UserData.RegisterType<CustomWorldGenerator>(InteropAccessMode.Default, null);
+        UserData.RegisterType<CustomWorldGenerator.PostProcessZoneGenerator>(InteropAccessMode.Default, null);
+        UserData.RegisterType<CustomWorldGenerator.ManualZoneGenerator>(InteropAccessMode.Default, null);
         UserData.RegisterType<ArcType>(InteropAccessMode.Default, null);
         UserData.RegisterType<BeingType>(InteropAccessMode.Default, null);
         UserData.RegisterType<Brand>(InteropAccessMode.Default, null);

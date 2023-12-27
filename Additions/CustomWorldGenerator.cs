@@ -11,7 +11,7 @@ using System;
 using UnityEngine.UI;
 
 
-/*
+
 public class CustomWorldGenerator
 {
     public static CustomWorldGenerator CURRENT = null;
@@ -578,9 +578,13 @@ public class CustomWorldGenerator
         foreach (var dot in bar.currentZoneDots)
         {
             dot.nextDots = dot.nextDots.OrderBy<ZoneDot, int>((Func<ZoneDot, int>)(t => t.transform.GetSiblingIndex())).ToList<ZoneDot>();
-            dot.ClearLines();
-            dot.CreateLines();
-        }
+			for (int i = dot.nextLines.Count - 1; i >= 0; i--) {
+				GameObject.Destroy(dot.nextLines[i].gameObject, 0);
+				dot.nextLines.Remove(dot.nextLines[i]);
+			}
+			//dot.ClearLines();
+			dot.CreateLines();
+		}
 
         foreach (var dot in bar.currentZoneDots)
         {
@@ -1006,4 +1010,3 @@ public class CustomWorldGenerator
     }
 }
 
-*/
