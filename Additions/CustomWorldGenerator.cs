@@ -16,6 +16,8 @@ public class CustomWorldGenerator
 {
     public static CustomWorldGenerator CURRENT = null;
 
+    public static bool AutoGeneration = false;
+
     public static List<object> WorldInitScripts = new List<object>();
     public static List<Script> WorldInitBaseScripts = new List<Script>();
 
@@ -416,6 +418,9 @@ public class CustomWorldGenerator
 
             if (!manual)
             {
+			    CustomWorldGenerator.AutoGeneration = true;
+                return;
+                /*
                 bar.GenerateWorldBar(-666);
                 foreach (var step in bar.currentZoneSteps)
                 {
@@ -429,6 +434,7 @@ public class CustomWorldGenerator
                         return;
                     }
                 }
+                */
             }
             else
             {

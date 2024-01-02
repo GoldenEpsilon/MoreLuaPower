@@ -98,28 +98,49 @@ public static class CustomZoneMiscPatches
 [HarmonyPatch]
 public static class WorldBarPatches
 {
+    static CustomWorldGenerator gen;
+
     //Run custom world generation.
     [HarmonyPrefix]
     [HarmonyPatch(typeof(WorldBar), nameof(WorldBar.GenerateWorldBar))]
     public static bool WorldGenerationPrefix(WorldBar __instance, ref int numSteps)
     {
-        if (numSteps == -666)
-        {
-            numSteps = __instance.runCtrl.currentWorld.numZones;
-            return true;
-        }
         World world = __instance.runCtrl.currentWorld;
         if ((world.nameString == "Genocide" || world.nameString == "Pacfifist" || world.nameString == "Normal") && __instance.runCtrl != null && __instance.runCtrl.currentRun != null)
         {
             __instance.runCtrl.currentRun.unvisitedWorldNames.Clear();
         }
-        var gen = new CustomWorldGenerator(__instance);
+        gen = new CustomWorldGenerator(__instance);
         gen.Generate();
+		if (CustomWorldGenerator.AutoGeneration) {
+			numSteps = __instance.runCtrl.currentWorld.numZones;
+			return true;
+		}
         return false;
-    }
+	}
+	[HarmonyPostfix]
+	[HarmonyPatch(typeof(WorldBar), nameof(WorldBar.GenerateWorldBar))]
+	public static void WorldGenerationPostfix(WorldBar __instance, ref int numSteps) {
+        if (CustomWorldGenerator.AutoGeneration) {
+			World world = __instance.runCtrl.currentWorld;
+			foreach (var step in __instance.currentZoneSteps) {
+				if (step.Count > 0) {
+					CustomWorldGenerator.CURRENT.columnTransforms.Add((RectTransform)step[0].transform.parent);
+				} else {
+					Debug.LogError("Failed to get transforms of dot columns in non manual world generation!");
+					return;
+				}
+			}
 
-    //Slight safety.
-    [HarmonyPrefix]
+			world.numZones = __instance.currentZoneSteps.Count - 1;
+
+			CustomWorldGenerator.CURRENT.RunPostProcessGenerators(false);
+			CustomWorldGenerator.AutoGeneration = false;
+		}
+	}
+
+	//Slight safety.
+	[HarmonyPrefix]
     [HarmonyPatch(typeof(WorldBar), nameof(WorldBar.Open))]
     public static bool OpenPrefix(WorldBar __instance)
     {
