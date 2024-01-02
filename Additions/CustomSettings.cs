@@ -600,6 +600,7 @@ class SettingsPatch
                         setting.control.GetComponent<TextMeshProUGUI>().text = setting.name + ": " + (setting.activeValue > 0 ? "True" : "False");
                         setting.control.GetComponent<I2.Loc.Localize>().Term = "-";
 
+                        PlayerPrefs.SetInt(setting.key, setting.activeValue);
                         Object.DestroyImmediate(setting.settingobj.GetComponent<Button>());
                         {
                             EventTrigger.Entry entry = new EventTrigger.Entry();
@@ -628,6 +629,8 @@ class SettingsPatch
                         setting.control = setting.settingobj.transform.GetChild(0);
                         setting.control.GetComponent<TextMeshProUGUI>().text = setting.name + ": " + setting.values[setting.activeValue];
                         setting.control.GetComponent<I2.Loc.Localize>().Term = "-";
+
+                        PlayerPrefs.SetInt(setting.key, setting.activeValue);
                         Object.DestroyImmediate(setting.settingobj.GetComponent<Button>());
                         {
                             EventTrigger.Entry entry = new EventTrigger.Entry();
