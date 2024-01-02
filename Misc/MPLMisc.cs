@@ -153,3 +153,25 @@ static class MoreLuaPower_InstallSpeed
             	yield break;
         }
 }
+
+[HarmonyPatch(typeof(UnlockCtrl), nameof(UnlockCtrl.ShowNextUnlock))]
+static class MoreLuaPower_BaseFixes
+{
+    [HarmonyPostfix]
+    internal static void FixUnlockCardSprites()
+    {
+        ChoiceCard shownCard = S.I.unCtrl.shownUnlocks[S.I.unCtrl.shownUnlocks.Count - 1];
+        CharacterCard unlockCard = shownCard.GetComponent<CharacterCard>();
+
+        if (!S.I.itemMan.animations.ContainsKey(unlockCard.beingObj.animName)
+            && S.I.itemMan.spriteAnimClips.ContainsKey(unlockCard.beingObj.animName + "_idle")
+            && unlockCard.gameObject.GetComponent<SpriteAnimator>() == null
+            && unlockCard.charRend != null)
+        {
+            SpriteAnimator animator = unlockCard.gameObject.AddComponent<SpriteAnimator>();
+            animator.spriteRend = unlockCard.charRend;
+            animator.AssignClip(S.I.itemMan.GetClip(unlockCard.beingObj.animName + "_idle"));
+            unlockCard.charAnim.enabled = false;
+        }
+    }
+}
