@@ -1,6 +1,6 @@
 /*
  *  More Lua Power, started by Golden Epsilon
- *  Tons of stuff added by Sunreal, Shenanigans, Lea, DecoyDoge, Cwolfcommander, and Hana
+ *  Tons of stuff added by Sunreal, Shenanigans, Lea, DecoyDoge, Cwolfcommander, and Hanaお茶
  *  Other Contributors: stephanreiken, tongo
  *  Workshop URL: https://steamcommunity.com/sharedfiles/filedetails/?id=2066319533
  *  GitHub Page: https://github.com/GoldenEpsilon/MoreLuaPower
