@@ -1,4 +1,4 @@
-﻿using HarmonyLib;
+using HarmonyLib;
 using MoonSharp.Interpreter;
 using System;
 using System.Collections;
@@ -37,7 +37,21 @@ static class MoreLuaPower_CustomDropChecks
 				Script mainscr = Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>();
 				if (!mainscr.Call(mainscr.Globals[LuaPowerData.dropChecks[__result[i].itemID]], new object[] { __result[i] }).Boolean) {
 					__result.Remove(__result[i]);
-					__result.Add(__instance.GetItems(rarity, 1, itemType, unique, brand, bannedList)[0]);
+
+					List<ItemObject> newBannedList = new List<ItemObject>();
+					if (bannedList != null)
+					{
+						newBannedList.AddRange(bannedList);
+					}
+					foreach (ItemObject itemObj in __result)
+					{
+						if (!newBannedList.Contains(itemObj)) 
+						{ 
+							newBannedList.Add(itemObj);
+						}
+					}
+
+					__result.Add(__instance.GetItems(rarity, 1, itemType, unique, brand, newBannedList)[0]);
 				}
 			}
 		}
@@ -62,14 +76,25 @@ static class MoreLuaPower_CustomDropChecks_Boss
 					{
 						string removedID = finalOptions[i].itemID;
 						finalOptions.Remove(finalOptions[i]);
+
 						List<ArtifactObject> source = S.I.itemMan.bossRewards;
-						if (S.I.batCtrl.currentPlayer.health.current == S.I.batCtrl.currentPlayer.health.max)
-							source = source.Where<ArtifactObject>((Func<ArtifactObject, bool>)(t => !t.tags.Contains(Tag.Heal))).Where(a => a.itemID != removedID).ToList<ArtifactObject>();
-						finalOptions.Add((ItemObject)source[S.I.runCtrl.NextPsuedoRand(0, source.Count)].Clone());
+						List<ItemObject> currentRewards = new List<ItemObject>(finalOptions);
+
+                        source = source.Where(a => a.itemID != removedID).Where(a => currentRewards.FindAll(x => x.itemID == a.itemID).Count == 0).ToList<ArtifactObject>();
+                        if (S.I.batCtrl.currentPlayer.health.current == S.I.batCtrl.currentPlayer.health.max)
+						{
+                            source = source.Where(t => !t.tags.Contains(Tag.Heal)).ToList<ArtifactObject>();
+                        }
+							
+						if (source.Count > 0)
+						{
+                            finalOptions.Add((ItemObject)source[S.I.runCtrl.NextPsuedoRand(0, source.Count)].Clone());
+                        }
 					}
 				}
 			}
 		}
+
 		//Regenerate miniboss reward
 		if(S.I.runCtrl.currentZoneDot.type == ZoneType.Miniboss)
         {
@@ -82,10 +107,20 @@ static class MoreLuaPower_CustomDropChecks_Boss
 					{
 						string removedID = finalOptions[i].itemID;
 						finalOptions.Remove(finalOptions[i]);
+
 						List<ArtifactObject> source = S.I.itemMan.minibossRewards;
-						if (S.I.batCtrl.currentPlayer.health.current == S.I.batCtrl.currentPlayer.health.max)
-							source = source.Where<ArtifactObject>((Func<ArtifactObject, bool>)(t => !t.tags.Contains(Tag.Heal))).Where(a => a.itemID != removedID).ToList<ArtifactObject>();
-						finalOptions.Add((ItemObject)source[S.I.runCtrl.NextPsuedoRand(0, source.Count)].Clone());
+                        List<ItemObject> currentRewards = new List<ItemObject>(finalOptions);
+
+                        source = source.Where(a => a.itemID != removedID).Where(a => currentRewards.FindAll(x => x.itemID == a.itemID).Count == 0).ToList<ArtifactObject>();
+                        if (S.I.batCtrl.currentPlayer.health.current == S.I.batCtrl.currentPlayer.health.max)
+						{
+                            source = source.Where(t => !t.tags.Contains(Tag.Heal)).ToList<ArtifactObject>();
+                        }
+						
+						if (source.Count > 0)
+						{
+                            finalOptions.Add((ItemObject)source[S.I.runCtrl.NextPsuedoRand(0, source.Count)].Clone());
+                        }
 					}
 				}
 			}

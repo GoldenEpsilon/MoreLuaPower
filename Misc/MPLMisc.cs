@@ -36,6 +36,18 @@ static class MoreLuaPower_InstallSpeed
 		return true;
 	}
 
+	[HarmonyPatch(typeof(Debug), nameof(Debug.LogWarning))]
+	[HarmonyPatch(new Type[] { typeof(object) })]
+	[HarmonyPrefix]
+	private static bool UnnecessaryWarnings(ref object message) 
+	{
+		if (message.ToString().StartsWith("Animations does not contain key of")) 
+		{
+			return false;
+		}
+		return true;
+	}
+
 	// ---------------- // STORE LOGS // ---------------- //
 
 	public static List<object> afterLogs = new List<object>();
@@ -44,6 +56,8 @@ static class MoreLuaPower_InstallSpeed
 
 	public static bool afterRelease = true;
 
+	[HarmonyPatch(typeof(Debug), nameof(Debug.Log))]
+	[HarmonyPatch(new Type[] { typeof(object) })]
 	[HarmonyPrefix]
 	[HarmonyPriority(Priority.Last)]
 	
