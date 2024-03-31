@@ -563,7 +563,7 @@ public class CustomWorldGenerator
         column_uses.Clear();
         for (int i = 0; i < bar.currentZoneSteps.Count; i++) column_uses.Add(i, new Dictionary<string, int>());
 
-        world.numZones = bar.currentZoneSteps.Count - 1;
+        //world.numZones = bar.currentZoneSteps.Count - 1;
 
         for (int j = 0; j < 4; j++)
         {

@@ -34,6 +34,8 @@ Table of Contents:
 	[ORGANIZATION]
 	[PETS]
 	[BOSSES]
+	[ASSISTS]
+	[WORLD GENERATION]
 
 [MISC FEATURES]
 	Subfolder Loading
@@ -921,3 +923,59 @@ Vanilla:
 
 	You can also create assists that appear in the final cutscene of a Pacifist run. These assists follow the same format but also include an "F" at the end,
 	such as "EffestaAssistF". Again, you can look at existing "AssistF" structures as reference.
+
+[WORLD GENERATION]
+	NOTE: The developer of this feature did not have comprehensive notes. If someone wants to go and make a better explanation for the API please do!
+
+	Custom worldgen notes:
+		Base game zones.XML
+			Defines the types of stages/rooms and what enemies are in them.  Can have multiple SETS per stage category for normal fights
+			<stage num="x">
+				<set>
+					enemies you want in a room go here. Need the following line PER ENEMY
+					<enemy name= "enemyname as in Enemies.XML"></enemy>
+				</set>
+			</stage>
+		Note: in the base game shops, Hazards, and Distress Beacon rooms are NOT editable
+
+
+		custom world gen LUA options:
+
+		From the C# code:
+
+		NumOfColumns()
+			Call function in LUA
+			Datatype: INT
+			returns the number of columns in a world.  Default (base game) is 8.
+
+		CreateManualGenerator()
+			Call function in LUA
+			adds a new manual zone generator to the list(?) of manual zone generators
+			returns the gen
+
+		CreateColumns(int num)
+			Takes an integer value
+			Adds columns in the world to the specified value
+			Does not return anything
+
+		CreateColumn()
+			Function that actually creates the room/dot on the map (?) 
+			NEED TO TEST/VERIFY USE
+			Does not return anything
+	
+		InsertNewColumn(int index)
+			Inserts a column at the given index and shifts all other colums to the right by 1
+			does not return anything
+	
+		CreatePostProcessGenerator()
+			creates a post process generator and adds it to the dictionary/list
+			returns ??
+	
+
+		From deciphering sample LUA files:	
+
+		WorldPost -- modifier function called to make world modifications
+
+		world.nameString = name of world as defined in Zones.XML
+
+		.setinvisible -- makes a zone invisible UNTIL the activationkey and condition are met
