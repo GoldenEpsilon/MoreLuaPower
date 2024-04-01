@@ -106,7 +106,7 @@ public static class WorldBarPatches
     public static bool WorldGenerationPrefix(WorldBar __instance, ref int numSteps)
     {
         World world = __instance.runCtrl.currentWorld;
-        if ((world.nameString == "Genocide" || world.nameString == "Pacfifist" || world.nameString == "Normal") && __instance.runCtrl != null && __instance.runCtrl.currentRun != null)
+        if ((world.nameString == "Genocide" || world.nameString == "Pacifist" || world.nameString == "Normal") && __instance.runCtrl != null && __instance.runCtrl.currentRun != null)
         {
             __instance.runCtrl.currentRun.unvisitedWorldNames.Clear();
         }
@@ -122,21 +122,21 @@ public static class WorldBarPatches
 	[HarmonyPatch(typeof(WorldBar), nameof(WorldBar.GenerateWorldBar))]
 	public static void WorldGenerationPostfix(WorldBar __instance, ref int numSteps) {
         if (CustomWorldGenerator.AutoGeneration) {
-			World world = __instance.runCtrl.currentWorld;
-			foreach (var step in __instance.currentZoneSteps) {
-				if (step.Count > 0) {
-					CustomWorldGenerator.CURRENT.columnTransforms.Add((RectTransform)step[0].transform.parent);
-				} else {
-					Debug.LogError("Failed to get transforms of dot columns in non manual world generation!");
-					return;
-				}
-			}
+            World world = __instance.runCtrl.currentWorld;
+            foreach (var step in __instance.currentZoneSteps) {
+                if (step.Count > 0) {
+                    CustomWorldGenerator.CURRENT.columnTransforms.Add((RectTransform)step[0].transform.parent);
+                } else {
+                    Debug.LogError("Failed to get transforms of dot columns in non manual world generation!");
+                    return;
+                }
+            }
 
-			world.numZones = __instance.currentZoneSteps.Count - 1;
+            CustomWorldGenerator.CURRENT.RunPostProcessGenerators(false);
+            CustomWorldGenerator.AutoGeneration = false;
+        }
 
-			CustomWorldGenerator.CURRENT.RunPostProcessGenerators(false);
-			CustomWorldGenerator.AutoGeneration = false;
-		}
+		__instance.runCtrl.currentWorld.numZones = S.I.zonesPerWorld;
 	}
 
 	//Slight safety.

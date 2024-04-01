@@ -53,17 +53,22 @@ internal static class CustomFileLoader
             FindCustomFileTypes(directoryInfo, temp, tempAssemblies, true);
             list.AddRange(temp);
         }
-        if (SteamManager.Initialized) {
-            foreach (LapinerTools.Steam.Data.WorkshopItem workshopItem in (Traverse.Create(LapinerTools.Steam.SteamMainBase<LapinerTools.Steam.SteamWorkshopMain>.Instance).Field("m_activeItems").GetValue() as IDictionary).Values) {
-                if (workshopItem.IsActive) {
-                    DirectoryInfo dir = new DirectoryInfo(workshopItem.InstalledLocalFolder);
-                    var temp = new List<CustomFileType>();
-                    var tempAssemblies = new List<FileInfo>();
-                    FindCustomFileTypes(dir, temp, tempAssemblies, true);
-                    list.AddRange(temp);
+        try {
+            Action f = delegate () {
+                if (SteamManager.Initialized) {
+                    foreach (LapinerTools.Steam.Data.WorkshopItem workshopItem in (Traverse.Create(LapinerTools.Steam.SteamMainBase<LapinerTools.Steam.SteamWorkshopMain>.Instance).Field("m_activeItems").GetValue() as IDictionary).Values) {
+                        if (workshopItem.IsActive) {
+                            DirectoryInfo dir = new DirectoryInfo(workshopItem.InstalledLocalFolder);
+                            var temp = new List<CustomFileType>();
+                            var tempAssemblies = new List<FileInfo>();
+                            FindCustomFileTypes(dir, temp, tempAssemblies, true);
+                            list.AddRange(temp);
+                        }
+                    }
                 }
-            }
-        }
+            };
+            f();
+        } catch {}
         ReadAllFiles(list, strArray);
         S.I.modCtrl.luaMods = S.I.modCtrl.luaMods.Distinct().ToList();
         S.I.modCtrl.pactMods = S.I.modCtrl.pactMods.Distinct().ToList();
@@ -196,16 +201,21 @@ internal static class CustomFileLoader
             string str = Path.Combine(ModCtrl.MODS_PATH, path2);
             DirectoryInfo directoryInfo = new DirectoryInfo(str);
             ReadAllFilesInDirectory(types, directoryInfo, true);
-        }
-        if (SteamManager.Initialized) {
-            foreach (LapinerTools.Steam.Data.WorkshopItem workshopItem in (Traverse.Create(LapinerTools.Steam.SteamMainBase<LapinerTools.Steam.SteamWorkshopMain>.Instance).Field("m_activeItems").GetValue() as IDictionary).Values) {
-                if (workshopItem.IsActive) {
-                    var directory = new DirectoryInfo(workshopItem.InstalledLocalFolder);
-                    ReadAllFilesInDirectory(types, directory, true);
+		}
+		try {
+            Action f = delegate () {
+                if (SteamManager.Initialized) {
+                    foreach (LapinerTools.Steam.Data.WorkshopItem workshopItem in (Traverse.Create(LapinerTools.Steam.SteamMainBase<LapinerTools.Steam.SteamWorkshopMain>.Instance).Field("m_activeItems").GetValue() as IDictionary).Values) {
+                        if (workshopItem.IsActive) {
+                            var directory = new DirectoryInfo(workshopItem.InstalledLocalFolder);
+                            ReadAllFilesInDirectory(types, directory, true);
+                        }
+                    }
                 }
-            }
-        }
-    }
+            };
+			f();
+		} catch { }
+	}
 
     public static List<string> disabledFolders = new List<string>(new string[] {"disabled", "bin", "obj", "packages", "obj", "dependencies" });
 
