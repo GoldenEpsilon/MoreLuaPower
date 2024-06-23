@@ -126,6 +126,7 @@
     <Compile Include="Additions\CustomBars.cs" />
     <Compile Include="Additions\CustomBosses.cs" />
     <Compile Include="Additions\CustomBrands.cs" />
+    <Compile Include="Additions\CustomCardAesthetics.cs" />
     <Compile Include="Additions\CustomCheatcodes.cs" />
     <Compile Include="Additions\CustomCutscenes.cs" />
     <Compile Include="Additions\CustomDrops.cs" />
