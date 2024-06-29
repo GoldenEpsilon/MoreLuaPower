@@ -273,6 +273,26 @@ MoreLuaPower:
 		// {denyList} is any list of Enhancements to not add (can be empty)
 		// Ex: ApplyRandomUpgrade(mySpell, {}) or ApplyRandomUpgrade(mySpell, {Enhancement.Frost, Enhancement.Fragile})
 
+	void ChangeCardBackground (string {itemID}, Sprite {sprite})
+		// Changes the background image for the given spell, weapon, artifact or pact.
+		// {itemID} is the ItemID of the spell, weapon, artifact or pact.
+		// {sprite} is the sprite to become the background. Used in tandem with GetSprite("")
+		//eg. ChangeCardBackground("Thunder", GetSprite("PurpleCardBackground"))
+
+	void ChangeCardBorder (string {itemID}, Sprite {sprite})
+		// Changes the border image for the given spell, weapon, artifact or pact.
+		// {itemID} is the ItemID of the spell, weapon, artifact or pact.
+		// {sprite} is the sprite to become the border. Used in tandem with GetSprite("")
+			// set {sprite} as nil to remove the border entirely
+		//eg. ChangeCardBorder("Thunder", GetSprite("PinkCardBorder"))
+		//eg. ChangeCardBorder("Thunder", nil)
+
+	void ChangeCardTextColor (string {itemID}, List<float> {rgbValues})
+		// Changes the text color of the given spell, weapon, artifact or pact.
+		// {itemID} is the ItemID of the spell, weapon, artifact or pact.
+		// {rgbValues} is a list of 3 floats representing the color. eg. {55, 155, 255}
+		// eg. ChangeCardTextColor("Thunder", {255, 200, 255})
+
 	void MakeZoneGenocideLenient(string {zoneName})
 		//Makes the zone not matter for the game's route (pacifist, neutral, genocide)
 		// Meant for older custom bosses before sparing was figured out, or for zones that you don't want to affect the ending
