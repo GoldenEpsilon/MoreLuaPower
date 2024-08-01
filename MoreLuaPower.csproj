@@ -1,6 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -9,7 +8,8 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>MoreLuaPower</RootNamespace>
     <AssemblyName>MoreLuaPower</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>  
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
   </PropertyGroup>
@@ -32,149 +32,118 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony, Version=2.0.0.9, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\..\Managed\0Harmony.dll</HintPath>
+      <HintPath>GameLibraryFiles\0Harmony.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Assembly-CSharp, Version=20.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Managed\Assembly-CSharp.dll</HintPath>
+      <HintPath>GameLibraryFiles\Assembly-CSharp.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\..\Managed\Assembly-CSharp-firstpass.dll</HintPath>
+      <HintPath>GameLibraryFiles\Assembly-CSharp-firstpass.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="E7.Introloop, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <Private>False</Private>
-      <HintPath>..\..\..\Managed\E7.Introloop.dll</HintPath>
+      <HintPath>GameLibraryFiles\E7.Introloop.dll</HintPath>
     </Reference>
     <Reference Include="NAudio, Version=1.10.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\NAudio.1.10.0\lib\net35\NAudio.dll</HintPath>
     </Reference>
     <Reference Include="Rewired_Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\..\Managed\Rewired_Core.dll</HintPath>
+      <HintPath>GameLibraryFiles\Rewired_Core.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Sirenix.Serialization, Version=2.0.20.0, Culture=neutral, PublicKeyToken=null">
       <Private>False</Private>
-      <HintPath>..\..\..\Managed\Sirenix.Serialization.dll</HintPath>
+      <HintPath>GameLibraryFiles\Sirenix.Serialization.dll</HintPath>
     </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
+    
+    <Reference Include="System">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>GameLibraryFiles\System.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>GameLibraryFiles\System.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Forms">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>GameLibraryFiles\System.Windows.Forms.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>GameLibraryFiles\System.Xml.Linq.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>GameLibraryFiles\System.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>GameLibraryFiles\System.Net.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>GameLibraryFiles\System.Xml.dll</HintPath>
+    </Reference>
+
     <Reference Include="Unity.TextMeshPro, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Managed\Unity.TextMeshPro.dll</HintPath>
+      <HintPath>GameLibraryFiles\Unity.TextMeshPro.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>..\..\..\Managed\UnityEngine.dll</HintPath>
+      <HintPath>GameLibraryFiles\UnityEngine.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.AnimationModule">
-      <HintPath>..\..\..\Managed\UnityEngine.AnimationModule.dll</HintPath>
+      <HintPath>GameLibraryFiles\UnityEngine.AnimationModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.AudioModule">
-      <HintPath>..\..\..\Managed\UnityEngine.AudioModule.dll</HintPath>
+      <HintPath>GameLibraryFiles\UnityEngine.AudioModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
-      <HintPath>..\..\..\Managed\UnityEngine.CoreModule.dll</HintPath>
+      <HintPath>GameLibraryFiles\UnityEngine.CoreModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.ParticleSystemModule">
-      <HintPath>..\..\..\Managed\UnityEngine.ParticleSystemModule.dll</HintPath>
+      <HintPath>GameLibraryFiles\UnityEngine.ParticleSystemModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UI">
-      <HintPath>..\..\..\Managed\UnityEngine.UI.dll</HintPath>
+      <HintPath>GameLibraryFiles\UnityEngine.UI.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UIModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Managed\UnityEngine.UIModule.dll</HintPath>
+      <HintPath>GameLibraryFiles\UnityEngine.UIModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UNETModule">
-      <HintPath>..\..\..\Managed\UnityEngine.UNETModule.dll</HintPath>
+      <HintPath>GameLibraryFiles\UnityEngine.UNETModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UnityWebRequestAudioModule">
-      <HintPath>..\..\..\Managed\UnityEngine.UnityWebRequestAudioModule.dll</HintPath>
+      <HintPath>GameLibraryFiles\UnityEngine.UnityWebRequestAudioModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UnityWebRequestModule">
-      <HintPath>..\..\..\Managed\UnityEngine.UnityWebRequestModule.dll</HintPath>
+      <HintPath>GameLibraryFiles\UnityEngine.UnityWebRequestModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UnityWebRequestTextureModule">
-      <HintPath>..\..\..\Managed\UnityEngine.UnityWebRequestTextureModule.dll</HintPath>
+      <HintPath>GameLibraryFiles\UnityEngine.UnityWebRequestTextureModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.VideoModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Managed\UnityEngine.VideoModule.dll</HintPath>
+      <HintPath>GameLibraryFiles\UnityEngine.VideoModule.dll</HintPath>
     </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Additions\CustomSettings.cs" />
-    <Compile Include="Additions\CustomAchievements.cs" />
-    <Compile Include="Additions\CustomBars.cs" />
-    <Compile Include="Additions\CustomBosses.cs" />
-    <Compile Include="Additions\CustomBrands.cs" />
-    <Compile Include="Additions\CustomCardAesthetics.cs" />
-    <Compile Include="Additions\CustomCheatcodes.cs" />
-    <Compile Include="Additions\CustomCutscenes.cs" />
-    <Compile Include="Additions\CustomDrops.cs" />
-    <Compile Include="Additions\CustomFTriggers.cs" />
-    <Compile Include="Additions\CustomTooltips.cs" />
-    <Compile Include="Additions\CustomUpgrades.cs" />
-    <Compile Include="Additions\CustomWorldGenerator.cs" />
-    <Compile Include="Additions\CustomXML.cs" />
-    <Compile Include="Additions\CustomZones.cs" />
-    <Compile Include="Additions\DogeBoss.cs" />
-    <Compile Include="Additions\EdenGossip.cs" />
-    <Compile Include="Additions\UtilityFunctions.cs" />
-    <Compile Include="Data\CustomFileLoader.cs" />
-    <Compile Include="Data\CustomLanguage.cs" />
-    <Compile Include="Data\MP3Loader.cs" />
-    <Compile Include="Data\MPLHook.cs" />
-    <Compile Include="Lua\BeingVariables.cs" />
-    <Compile Include="Data\CustomData.cs" />
-    <Compile Include="Data\CustomEnums.cs" />
-    <Compile Include="Additions\CustomParticles.cs" />
-    <Compile Include="Additions\CustomSound.cs" />
-    <Compile Include="Additions\CustomSprites.cs" />
-    <Compile Include="Mechanics\GenocideLeniency.cs" />
-    <Compile Include="Mechanics\KickerCast.cs" />
-    <Compile Include="Lua\LuaHooks.cs" />
-    <Compile Include="Mechanics\Multicast.cs" />
-    <Compile Include="Misc\MPLMisc.cs" />
-    <Compile Include="Misc\MPLLogging.cs" />
-    <Compile Include="Misc\PowerMonoBehavior.cs" />
-    <Compile Include="Additions\CustomStatusEffects.cs" />
-    <Compile Include="Lua\GlobalLuaFunctions.cs" />
-    <Compile Include="Lua\GlobalLuaVariables.cs" />
-    <Compile Include="Lua\GlobalLuaTypes.cs" />
-    <Compile Include="Misc\MoreLuaPower.cs" />
-    <Compile Include="Mechanics\ProgramAdvance.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-    <None Include="PetBuff.lua" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="README.txt" />
-    <Content Include="TODO.txt" />
-    <Content Include="API.txt" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
