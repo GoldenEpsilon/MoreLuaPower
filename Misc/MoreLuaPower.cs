@@ -21,7 +21,7 @@ using static AssetBundles.AssetBundleManager;
 class MoreLuaPower
 {
 	static void Prepare() {
-		Debug.Log("MoreLuaPower Version 2.7.2");
+		Debug.Log("MoreLuaPower Version 2.7.3");
 		LuaPowerData.Setup();
 		LuaPowerCustomEnumsSetup.Setup();
 		LuaPowerCutscenes.Setup();

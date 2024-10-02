@@ -39,7 +39,8 @@ class MoreLuaPower_CustomEnumsParse
         FieldInfo v = __result.GetType().GetField("Values", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
 
         foreach (Type i in LuaPowerData.customEnums.Keys) {
-            if ((Type)enumType == i && LuaPowerData.customEnums[i].Count > 0) {
+            string[] names = (string[])n.GetValue(__result);
+            if ((Type)enumType == i && LuaPowerData.customEnums[i].Count > names.Length) {
                 if (getNames) {
                     n.SetValue(__result, LuaPowerData.customEnums[i].ToArray());
                 }
