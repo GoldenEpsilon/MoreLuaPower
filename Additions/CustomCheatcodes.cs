@@ -14,6 +14,13 @@ class UseCustomCheats
                 __instance.GetComponent<TauntReviver>().thePlayer = __instance;
             }
 
+            if (PetReviverList.charlist.Contains(__instance.beingObj.beingID) || (__instance.animOverrider != null && PetReviverList.charlist.Contains(__instance.animOverrider.controllerName)))
+            {
+                __instance.gameObject.AddComponent<PetReviver>();
+
+                __instance.GetComponent<PetReviver>().thePlayer = __instance;
+            }
+
             foreach (CustomCheatcode Cheatcode in CustomCheatcodesList.CheatsList) {
                 if (Cheatcode.CharName == __instance.beingObj.beingID) {
                     if (__instance.rewiredPlayer.GetButton(Cheatcode.ButtonName)) {
@@ -59,12 +66,31 @@ public static class TauntReviverList
     }
 }
 
+public class PetReviver : MonoBehaviour
+
+{
+    public Player thePlayer;
+
+    public virtual void Update()
+    {
+        if (thePlayer.currentPets.Count > 0)
+        {
+            if (thePlayer.rewiredPlayer.GetButtonDown("RemoveSpell") && thePlayer.petSnap == true)
+            { 
+                thePlayer.anim.SetTrigger("pet");
+            }
+        }
+    }
+}
+
 public class TauntReviver : MonoBehaviour
 {
     public Player thePlayer;
 
     public virtual void Update() {
-        if (thePlayer.rewiredPlayer.GetButtonDown("RemoveSpell") & thePlayer.rewiredPlayer.GetButtonDown("Shuffle")) {
+        if (thePlayer.rewiredPlayer.GetButton("RemoveSpell") & thePlayer.rewiredPlayer.GetButtonDown("Shuffle")) {
+            thePlayer.anim.Play("idle");
+            thePlayer.anim.Play("taunt");
             thePlayer.anim.SetTrigger("taunt");
         }
     }

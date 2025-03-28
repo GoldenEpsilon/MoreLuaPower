@@ -71,6 +71,7 @@ class MoreLuaPower_GlobalLuaFunctions
 	// Player Functions
 	GLOBAL_LUA["GetPlayer"] = (Func<Player>)MoreLuaPower.GetPlayer;
 	GLOBAL_LUA["CharSetupTaunt"] = (Action<string>)TauntReviverList.AddCharacter;
+    	GLOBAL_LUA["CharSetupPet"] = (Action<string>)PetReviverList.AddCharacter;
 	GLOBAL_LUA["GetCustomInput"] = (Func<KeyCode, bool>)PowerMonoBehavior.GetCustomInput;
 	GLOBAL_LUA["OverrideAnimator"] = (Action<Being, string>)UtilityFunctions.OverrideAnimator;
 
