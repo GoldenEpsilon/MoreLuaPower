@@ -66,6 +66,18 @@ public static class TauntReviverList
     }
 }
 
+
+public static class PetReviverList
+{
+    public static List<string> charlist = new List<string>();
+
+    public static void AddCharacter(string Charname)
+    {
+        charlist.Add(Charname);
+    }
+}
+
+
 public class PetReviver : MonoBehaviour
 
 {
