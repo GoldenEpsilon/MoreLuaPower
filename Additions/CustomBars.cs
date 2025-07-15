@@ -201,9 +201,11 @@ static class LuaPowerBars
 		if (CustomBars_Data.customBars.ContainsKey(name)) {
 			try {
 				FillBar fillBar = CustomBars_Data.customBars[name].fillBar;
-				CustomBars_Data.customBars[name].fillBar.gameObject.SetActive(false);
+				if (fillBar != null) {
+					CustomBars_Data.customBars[name].fillBar.gameObject.SetActive(false);
+					UnityEngine.GameObject.Destroy(CustomBars_Data.customBars[name].fillBar);
+				}
 				CustomBars_Data.customBars.Remove(name);
-				UnityEngine.GameObject.Destroy(CustomBars_Data.customBars[name].fillBar);
 			} catch { Debug.Log("RemoveBar: Bar does not exist"); }
 		}
 	}
