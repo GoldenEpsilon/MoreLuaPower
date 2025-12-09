@@ -15,6 +15,7 @@ class MoreLuaPower_GlobalLuaTypes
         UserData.RegisterType<Rewired.Player>(InteropAccessMode.Default, null);
         UserData.RegisterType<S>(InteropAccessMode.Default, null);
         UserData.RegisterType<Run>(InteropAccessMode.Default, null);
+        UserData.RegisterType<WorldBar>(InteropAccessMode.Default, null);
         UserData.RegisterType<ItemObject>(InteropAccessMode.Default, null);
         UserData.RegisterType<SpellListCard>(InteropAccessMode.Default, null);
         UserData.RegisterType<ListCard>(InteropAccessMode.Default, null);
@@ -26,6 +27,8 @@ class MoreLuaPower_GlobalLuaTypes
         UserData.RegisterType<Texture2D>(InteropAccessMode.Default, null);
         UserData.RegisterType<AnimationOverrider>(InteropAccessMode.Default, null);
         UserData.RegisterType<GameObject>(InteropAccessMode.Default, null);
+        UserData.RegisterType<UnityEngine.RectTransform>(InteropAccessMode.Default, null);
+        UserData.RegisterType<UnityEngine.Vector2>(InteropAccessMode.Default, null);
         UserData.RegisterType<World>(InteropAccessMode.Default, null);
         UserData.RegisterType<ZoneDot>(InteropAccessMode.Default, null);
         UserData.RegisterType<CustomWorldGenerator>(InteropAccessMode.Default, null);
@@ -58,6 +61,7 @@ class MoreLuaPower_GlobalLuaTypes
         UserData.RegisterType<UIColor>(InteropAccessMode.Default, null);
         UserData.RegisterType<ZoneType>(InteropAccessMode.Default, null);
         UserData.RegisterType<BGCtrl>(InteropAccessMode.Default, null);
+        UserData.RegisterType<MusicCtrl>(InteropAccessMode.Default, null);
         UserData.RegisterType<DiskReference>(InteropAccessMode.Default, null);
         UserData.RegisterType<ShuffleTrail>(InteropAccessMode.Default, null);
         UserData.RegisterType<LogLevel>(InteropAccessMode.Default, null);
