@@ -132,7 +132,7 @@ static class LuaPowerBars
 		//Debug.Log("Bar updated");
 		CustomBars_Data.customBars.Add(name, new LuaPowerBar(sprite, bar, being, barPosition));
 		//Debug.Log("Bar saved");
-		FixBarLinesScale(bar, segments - 1);
+		FixBarLineScaling(bar, segments - 1);
 
 		//Component[] components = bar.gem.GetComponents(typeof(Component));
 		//foreach (Component component in components)
@@ -182,7 +182,7 @@ static class LuaPowerBars
 		}
 	}
 
-    public static void FixBarLinesScale(FillBar bar, int lines)
+    public static void FixBarLineScaling(FillBar bar, int lines)
     {
         bar.maxLines = lines;
         bar.displayedMax = lines + 1;

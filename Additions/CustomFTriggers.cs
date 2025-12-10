@@ -157,7 +157,10 @@ static class LuaPowerFTriggerPatches
         }
 
         MPLog.Log("OnTileCrack hook triggering", LogLevel.Info);
-        Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>().Globals["lastTileCrackedGlobal"] = __instance;
+
+        Script mainscr = Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>();
+        mainscr.Globals["LastTileCracked"] = __instance;
+
         S.I.deCtrl.TriggerAllArtifacts((FTrigger)Enum.Parse(typeof(FTrigger), "OnTileCrack"), __instance.battleGrid);
     }
 }
