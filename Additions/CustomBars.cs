@@ -2,10 +2,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
+
 using Object = UnityEngine.Object;
 
 static class LuaPowerBars
@@ -130,6 +132,7 @@ static class LuaPowerBars
 		//Debug.Log("Bar updated");
 		CustomBars_Data.customBars.Add(name, new LuaPowerBar(sprite, bar, being, barPosition));
 		//Debug.Log("Bar saved");
+		FixBarLineScaling(bar, segments - 1);
 
 		//Component[] components = bar.gem.GetComponents(typeof(Component));
 		//foreach (Component component in components)
@@ -146,7 +149,7 @@ static class LuaPowerBars
 		}
 	}
 
-	public static void ChangeBarSprite(string name, Sprite sprite) {
+    public static void ChangeBarSprite(string name, Sprite sprite) {
 		if (CustomBars_Data.customBars.ContainsKey(name) && sprite != null) {
 			CustomBars_Data.customBars[name].sprite = sprite;
 			try {
@@ -179,7 +182,33 @@ static class LuaPowerBars
 		}
 	}
 
-	public static void HideBar(string name) {
+    public static void FixBarLineScaling(FillBar bar, int lines)
+    {
+        bar.maxLines = lines;
+        bar.displayedMax = lines + 1;
+
+        FieldInfo manaLines = bar.GetType().GetField("createdManaLines", BindingFlags.NonPublic | BindingFlags.Instance);
+
+        while (((List<GameObject>)manaLines.GetValue(bar)).Count > 0)
+        {
+            GameObject line = ((List<GameObject>)manaLines.GetValue(bar))[0];
+            ((List<GameObject>)manaLines.GetValue(bar)).Remove(line);
+            UnityEngine.Object.Destroy(line);
+        }
+
+        float x = bar.barContainer.sizeDelta.x * bar.transform.localScale.x;
+        float distance = x / (lines + 1f);
+
+        for (int i = 1; i <= lines; i++)
+        {
+            Vector3 vector = bar.lineGrid.transform.position + bar.lineGrid.transform.rotation * Vector3.right * (x / 2f - i * distance);
+            GameObject manaline = SimplePool.Spawn(bar.manaLinePrefab, vector, bar.lineGrid.transform.rotation, bar.lineGrid, false);
+            manaline.SetActive(true);
+            ((List<GameObject>)manaLines.GetValue(bar)).Add(manaline);
+        }
+    }
+
+    public static void HideBar(string name) {
 		if (CustomBars_Data.customBars.ContainsKey(name)) {
 			((Canvas)CustomBars_Data.customBars[name].fillBar.GetComponent(typeof(Canvas))).enabled = false;
 			((Canvas)CustomBars_Data.customBars[name].fillBar.gem.GetComponent(typeof(Canvas))).enabled = false;

@@ -52,7 +52,8 @@ class MoreLuaPower
 		if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("OnMoveEffect")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("OnMoveEffect"); }
 		if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("OnAddStatus")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("OnAddStatus"); }
 		if (!LuaPowerData.customEnums[typeof(Check)].Contains("AddedStatus")) { LuaPowerData.customEnums[typeof(Check)].Add("AddedStatus"); }
-	}
+        if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("OnTileCrack")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("OnTileCrack"); }
+    }
 	static public Player GetPlayer() {
 		return S.I.batCtrl.currentPlayer;
 	}
@@ -111,6 +112,7 @@ class MoreLuaPowerReset
 		if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("OnMoveEffect")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("OnMoveEffect"); }
 		if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("OnAddStatus")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("OnAddStatus"); }
 		if (!LuaPowerData.customEnums[typeof(Check)].Contains("AddedStatus")) { LuaPowerData.customEnums[typeof(Check)].Add("AddedStatus"); }
+        if (!LuaPowerData.customEnums[typeof(FTrigger)].Contains("OnTileCrack")) { LuaPowerData.customEnums[typeof(FTrigger)].Add("OnTileCrack"); }
     }
 }
 /*

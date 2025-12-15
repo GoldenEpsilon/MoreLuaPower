@@ -141,4 +141,26 @@ static class LuaPowerFTriggerPatches
         }
         return true;
     }
+
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(Tile), nameof(Tile.SetType), new Type[] { typeof(TileType) })]
+    static void OnTileCrack(Tile __instance, TileType newType)
+    {
+        if (!(newType == TileType.Cracked || (newType == TileType.Broken && __instance.occupation > 0)))
+        {
+            return;
+        }
+
+        if (__instance.type == TileType.Cracked || __instance.type == TileType.Broken)
+        {
+            return;
+        }
+
+        MPLog.Log("OnTileCrack hook triggering", LogLevel.Info);
+
+        Script mainscr = Traverse.Create(Traverse.Create<EffectActions>().Field("_Instance").GetValue<EffectActions>()).Field("myLuaScript").GetValue<Script>();
+        mainscr.Globals["LastTileCracked"] = __instance;
+
+        S.I.deCtrl.TriggerAllArtifacts((FTrigger)Enum.Parse(typeof(FTrigger), "OnTileCrack"), __instance.battleGrid);
+    }
 }
